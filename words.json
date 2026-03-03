@@ -30,7 +30,7 @@
             {"en": "Complete", "ja": "完了させる、完全な", "ex": "記入を終える際などにも使う。", "sEn": "Please complete this form.", "sJa": "この用紙に記入してください。"},
             {"en": "Accept", "ja": "受け入れる", "ex": "提案や招待を承諾すること。", "sEn": "We accept major credit cards.", "sJa": "主要なクレジットカードを受け付けています。"},
             {"en": "Offer", "ja": "提供する、申し出", "ex": "仕事のオファーや割引の提供。", "sEn": "They offered me a job.", "sJa": "彼らは私に仕事をオファーしました。"},
-            {"en": "Receive", "ja": "受け取る", "ex": "手紙や賞などをもらうこと。", "sEn": "I received an email from him.", "sJa": "彼からメールを受け取りました。"}
+            {"en": "Receive", "ja": "受け取る", "ex": "手紙や賞などをもらうこと。", "sEn": "I received an email from him.", "sJa": "彼からメールを受け取りました。"},
               {"en": "Suggest", "ja": "提案する", "ex": "アイデアや計画を持ちかけること。", "sEn": "I suggest we take a break.", "sJa": "休憩を取ることを提案します。"},
   {"en": "Improve", "ja": "改善する", "ex": "より良くすること。品質やスキルの向上。", "sEn": "We need to improve our service.", "sJa": "私たちはサービスを改善する必要があります。"},
   {"en": "Discount", "ja": "割引", "ex": "価格を安くすること。買い物の文脈で頻出。", "sEn": "Can you give me a discount?", "sJa": "割引してくれませんか？"},
@@ -60,7 +60,7 @@
   {"en": "Borrow", "ja": "借りる", "ex": "人から無料で物やお金を一時的に借りること。", "sEn": "Can I borrow your pen?", "sJa": "ペンを借りてもいいですか？"},
   {"en": "Mention", "ja": "言及する", "ex": "話題に少し触れること。", "sEn": "He didn't mention the problem.", "sJa": "彼はその問題について言及しませんでした。"},
   {"en": "Reply", "ja": "返信する", "ex": "メールや手紙に返事を書くこと。", "sEn": "She didn't reply to my email.", "sJa": "彼女は私のメールに返信しませんでした。"},
-  {"en": "Visit", "ja": "訪問する", "ex": "場所や人を訪ねること。", "sEn": "I plan to visit the factory.", "sJa": "工場を訪問する予定です。"}
+  {"en": "Visit", "ja": "訪問する", "ex": "場所や人を訪ねること。", "sEn": "I plan to visit the factory.", "sJa": "工場を訪問する予定です。"},
   {"en": "Check", "ja": "確認する、小切手", "ex": "内容を確かめる、または支払い用の小切手。", "sEn": "Please check the attached file.", "sJa": "添付ファイルを確認してください。"},
   {"en": "Detail", "ja": "詳細", "ex": "細かい部分や詳しい情報のこと。", "sEn": "For more details, visit our website.", "sJa": "詳細は当社のウェブサイトをご覧ください。"},
   {"en": "Form", "ja": "用紙、記入用紙", "ex": "申し込みやアンケートなどの紙・データ。", "sEn": "Please fill out this form.", "sJa": "この用紙に記入してください。"},
@@ -90,7 +90,7 @@
   {"en": "Event", "ja": "イベント、行事", "ex": "計画された特別な出来事。", "sEn": "The main event will start at noon.", "sJa": "メインイベントは正午に始まります。"},
   {"en": "Area", "ja": "地域、エリア", "ex": "特定の場所や範囲。", "sEn": "Smoking is not allowed in this area.", "sJa": "このエリアでは喫煙は禁止されています。"},
   {"en": "Condition", "ja": "状態、条件", "ex": "物や人の状態、または契約の条件。", "sEn": "The car is in good condition.", "sJa": "その車は良い状態です。"},
-  {"en": "Experience", "ja": "経験", "ex": "実際に見たり行ったりして得た知識。", "sEn": "She has a lot of experience in sales.", "sJa": "彼女は営業の経験が豊富です。"}
+  {"en": "Experience", "ja": "経験", "ex": "実際に見たり行ったりして得た知識。", "sEn": "She has a lot of experience in sales.", "sJa": "彼女は営業の経験が豊富です。"},
   {"en": "Address", "ja": "宛先、演説する", "ex": "手紙の宛名や、問題に取り組むという意味もある。", "sEn": "Please write your name and address.", "sJa": "名前と宛先を書いてください。"},
   {"en": "Advantage", "ja": "利点、強み", "ex": "他より優れている点のこと。", "sEn": "This product has a big advantage.", "sJa": "この製品には大きな利点があります。"},
   {"en": "Advertisement", "ja": "広告", "ex": "商品やサービスを宣伝するもの。adと略される。", "sEn": "I saw your advertisement in the newspaper.", "sJa": "新聞であなたの広告を見ました。"},
@@ -120,7 +120,7 @@
   {"en": "Industry", "ja": "産業、業界", "ex": "特定の事業分野。自動車産業など。", "sEn": "He works in the IT industry.", "sJa": "彼はIT業界で働いています。"},
   {"en": "Interview", "ja": "面接、インタビュー", "ex": "就職の面接や、記者からの取材。", "sEn": "I have a job interview tomorrow.", "sJa": "明日、就職面接があります。"},
   {"en": "Join", "ja": "参加する、加わる", "ex": "クラブや会社、会議などに入ること。", "sEn": "Would you like to join us for lunch?", "sJa": "一緒にランチに参加しませんか？"},
-  {"en": "List", "ja": "リスト、一覧表", "ex": "項目を書き並べたもの。", "sEn": "Please add his name to the guest list.", "sJa": "ゲストリストに彼の名前を追加してください。"}
+  {"en": "List", "ja": "リスト、一覧表", "ex": "項目を書き並べたもの。", "sEn": "Please add his name to the guest list.", "sJa": "ゲストリストに彼の名前を追加してください。"},
   {"en": "Machine", "ja": "機械", "ex": "工場やオフィスで使われる機器。", "sEn": "This machine is out of order.", "sJa": "この機械は故障しています。"},
   {"en": "Manager", "ja": "マネージャー、部長", "ex": "部門の責任者や管理職。", "sEn": "I need to speak to the manager.", "sJa": "マネージャーと話す必要があります。"},
   {"en": "Meeting", "ja": "会議、打ち合わせ", "ex": "仕事で話し合うための集まり。", "sEn": "The meeting starts at 2 PM.", "sJa": "会議は午後2時に始まります。"},
@@ -265,7 +265,7 @@
   {"en": "Clarify", "ja": "明確にする", "ex": "わかりにくかったことをはっきりさせること。", "sEn": "Could you clarify this point?", "sJa": "この点を明確にしていただけますか？"},
   {"en": "Consult", "ja": "相談する", "ex": "専門家などに意見を求めること。", "sEn": "I need to consult my lawyer.", "sJa": "弁護士に相談する必要があります。"},
   {"en": "Convince", "ja": "納得させる", "ex": "人に理屈や事実で信じさせること。", "sEn": "He convinced me to join the team.", "sJa": "彼は私をチームに加わるよう納得させました。"},
-  {"en": "Exceed", "ja": "超える、上回る", "ex": "予想や限度をオーバーすること。", "sEn": "The results exceeded our expectations.", "sJa": "結果は私たちの期待を上回りました。"}
+  {"en": "Exceed", "ja": "超える、上回る", "ex": "予想や限度をオーバーすること。", "sEn": "The results exceeded our expectations.", "sJa": "結果は私たちの期待を上回りました。"},
   {"en": "Accompany", "ja": "同行する", "ex": "人について行く、または物事に付随すること。", "sEn": "I will accompany you to the station.", "sJa": "駅まで同行します。"},
   {"en": "Adjust", "ja": "調整する", "ex": "状況に合わせて変えたり、機器を合わせること。", "sEn": "We need to adjust the schedule.", "sJa": "スケジュールを調整する必要があります。"},
   {"en": "Attribute", "ja": "起因すると考える", "ex": "「AはBのおかげだ」という意味合いで使う。", "sEn": "He attributed his success to hard work.", "sJa": "彼は成功を努力の賜物だと考えました。"},
@@ -315,7 +315,7 @@
   {"en": "Benefit", "ja": "利益、恩恵", "ex": "福利厚生や、役立つこと。", "sEn": "This policy offers many benefits.", "sJa": "この制度には多くの利点があります。"},
   {"en": "Campaign", "ja": "キャンペーン、運動", "ex": "宣伝活動や政治的な運動。", "sEn": "We started a new marketing campaign.", "sJa": "新しいマーケティングキャンペーンを始めました。"},
   {"en": "Category", "ja": "範疇、カテゴリー", "ex": "種類やグループ分けのこと。", "sEn": "Please select a product category.", "sJa": "製品カテゴリーを選択してください。"},
-  {"en": "Certificate", "ja": "証明書", "ex": "資格や終了を証明する公式な文書。", "sEn": "He received a certificate of completion.", "sJa": "彼は修了証書を受け取りました。"}
+  {"en": "Certificate", "ja": "証明書", "ex": "資格や終了を証明する公式な文書。", "sEn": "He received a certificate of completion.", "sJa": "彼は修了証書を受け取りました。"},
   {"en": "Commercial", "ja": "商業の、コマーシャル", "ex": "ビジネスに関する、またはテレビ広告。", "sEn": "The district is mainly commercial.", "sJa": "その地区は主に商業地です。"},
   {"en": "Committee", "ja": "委員会", "ex": "特定の目的のために選ばれた人々の集まり。", "sEn": "The committee meets every Tuesday.", "sJa": "委員会は毎週火曜日に開かれます。"},
   {"en": "Competition", "ja": "競争、競技会", "ex": "他社と競い合うこと。", "sEn": "There is fierce competition in the market.", "sJa": "市場には激しい競争があります。"},
@@ -451,7 +451,7 @@
   {"en": "Imperative", "ja": "必須の、急務の", "ex": "絶対にやらなければならない重要なこと。", "sEn": "It is imperative that we act now.", "sJa": "私たちが今行動することが急務です。"},
   {"en": "Imply", "ja": "ほのめかす、暗示する", "ex": "はっきり言わずに暗に意味すること。", "sEn": "What does the author imply?", "sJa": "著者は何をほのめかしていますか？"},
   {"en": "Infer", "ja": "推測する、察する", "ex": "事実や証拠から結論を導き出すこと。", "sEn": "I inferred from his tone that he was angry.", "sJa": "彼の口調から、彼が怒っていると推測しました。"},
-  {"en": "Initiative", "ja": "主導権、新しい計画", "ex": "自発的に率先して行動することや、新構想。", "sEn": "She took the initiative in the project.", "sJa": "彼女はプロジェクトで主導権を握りました。"}
+  {"en": "Initiative", "ja": "主導権、新しい計画", "ex": "自発的に率先して行動することや、新構想。", "sEn": "She took the initiative in the project.", "sJa": "彼女はプロジェクトで主導権を握りました。"},
   {"en": "Integrate", "ja": "統合する", "ex": "別々のものを一つにまとめること。", "sEn": "We plan to integrate the two systems.", "sJa": "2つのシステムを統合する計画です。"},
   {"en": "Intervene", "ja": "介入する", "ex": "問題や事態に割って入って調停すること。", "sEn": "The manager had to intervene in the dispute.", "sJa": "マネージャーはその論争に介入せざるを得なかった。"},
   {"en": "Legitimate", "ja": "合法的な、妥当な", "ex": "法律や規則にかなっている、または正当な理由があること。", "sEn": "He has a legitimate reason for being late.", "sJa": "彼には遅刻する正当な理由があります。"},
@@ -602,7 +602,7 @@
   {"en": "Correlate", "ja": "相関する、関連づける", "ex": "2つの物事の間に密接な関係があること。", "sEn": "High stress often correlates with poor health.", "sJa": "高いストレスはしばしば健康不良と相関します。"},
   {"en": "Corroborate", "ja": "確証する、裏付ける", "ex": "証拠などを提供して正しさを強めること。", "sEn": "The witness corroborated his story.", "sJa": "目撃者が彼の話を裏付けました。"},
   {"en": "Credible", "ja": "信用できる、確かな", "ex": "情報や人が信じるに足る様子。", "sEn": "We need a credible source of information.", "sJa": "信頼できる情報源が必要です。"},
-              {"en": "Criterion", "ja": "基準", "ex": "判断や評価のための基準（複数形はcriteria）。", "sEn": "Cost is the main criterion for our choice.", "sJa": "費用が私たちの選択の主な基準です。"},
+  {"en": "Criterion", "ja": "基準", "ex": "判断や評価のための基準（複数形はcriteria）。", "sEn": "Cost is the main criterion for our choice.", "sJa": "費用が私たちの選択の主な基準です。"},
   {"en": "Cumulative", "ja": "累積する、蓄積された", "ex": "次々と重なって増えていく様子。", "sEn": "The cumulative effect of the policy is significant.", "sJa": "その政策の累積的な効果は大きいです。"},
   {"en": "Curb", "ja": "抑制する", "ex": "よくないことの広がりを抑え込むこと。", "sEn": "We must take measures to curb inflation.", "sJa": "インフレを抑制する対策を講じなければなりません。"},
   {"en": "Cynical", "ja": "皮肉な、冷笑的な", "ex": "人の善意や物事の成功を信じない様子。", "sEn": "He has a cynical view of the industry.", "sJa": "彼は業界に対して皮肉な見方をしています。"},
@@ -837,7 +837,7 @@
   {"en": "Docile", "ja": "素直な、従順な", "ex": "おとなしく、教えたり扱ったりしやすい様子。", "sEn": "The horse was surprisingly docile.", "sJa": "その馬は驚くほどおとなしかったです。"},
   {"en": "Documentary", "ja": "記録の、実録の", "ex": "事実を記録した映画や、文書による証拠。", "sEn": "We need documentary proof of your age.", "sJa": "年齢を証明する文書による証拠が必要です。"},
   {"en": "Dogmatic", "ja": "独断的な", "ex": "自分の意見を絶対だと信じて他人に押し付けること。", "sEn": "His dogmatic approach made cooperation difficult.", "sJa": "彼の独断的なやり方のせいで協力が困難でした。"},
-      {"en": "Equivocal", "ja": "曖昧な、はっきりしない", "ex": "意図的に複数の解釈ができるようにして、真実をぼかす様子。", "sEn": "The politician gave an equivocal answer to the question.", "sJa": "その政治家は質問に対して曖昧な回答をした。"},
+  {"en": "Equivocal", "ja": "曖昧な、はっきりしない", "ex": "意図的に複数の解釈ができるようにして、真実をぼかす様子。", "sEn": "The politician gave an equivocal answer to the question.", "sJa": "その政治家は質問に対して曖昧な回答をした。"},
   {"en": "Exacerbate", "ja": "悪化させる", "ex": "すでに悪い状態や病気を、さらにひどくすること。", "sEn": "Her comments only served to exacerbate the situation.", "sJa": "彼女のコメントは状況を悪化させただけだった。"},
   {"en": "Exemplary", "ja": "模範的な、立派な", "ex": "他人が見習うべきほど、質や行いが優れていること。", "sEn": "The company is known for its exemplary safety record.", "sJa": "その会社は模範的な安全記録で知られている。"},
   {"en": "Exonerate", "ja": "無罪とする、免除する", "ex": "疑いや非難から人を解放し、無実であることを証明すること。", "sEn": "New DNA evidence helped exonerate the prisoner.", "sJa": "新しいDNA証拠がその囚人の無実を証明する助けとなった。"},
@@ -886,7 +886,7 @@
   {"en": "Paramount", "ja": "最高の、主要な", "ex": "他の何よりも優先されるべき、最も重要なこと。", "sEn": "The safety of the passengers is of paramount importance.", "sJa": "乗客の安全は最高の重要事項である。"},
   {"en": "Pensive", "ja": "物思いに沈んだ", "ex": "静かに、そして少し悲しげに何かを深く考えている様子。", "sEn": "She looked pensive as she stared out the window.", "sJa": "窓の外を眺める彼女は、物思いに沈んでいるように見えた。"},
   {"en": "Perfunctory", "ja": "おざなりの、形式的な", "ex": "熱意がなく、ただ義務として表面だけなぞる様子。", "sEn": "He gave a perfunctory nod as he passed by.", "sJa": "彼は通り過ぎる時に、おざなりな会釈をした。"},
-  {"en": "Peripheral", "ja": "周辺の、重要でない", "ex": "物事の中心ではなく、端の方にある些細なこと。", "sEn": "Let's not get distracted by peripheral issues.", "sJa": "周辺的な（重要でない）問題に気を取られないようにしよう。"}
+  {"en": "Peripheral", "ja": "周辺の、重要でない", "ex": "物事の中心ではなく、端の方にある些細なこと。", "sEn": "Let's not get distracted by peripheral issues.", "sJa": "周辺的な（重要でない）問題に気を取られないようにしよう。"},
   {"en": "Philanthropy", "ja": "慈善活動、博愛", "ex": "社会貢献や寄付などの慈善的な活動。", "sEn": "His philanthropy helped build several hospitals.", "sJa": "彼の慈善活動により、いくつかの病院が建設されました。"},
   {"en": "Pertinent", "ja": "関連する、適切な", "ex": "特定の事項に直接関連しており、重要なこと。", "sEn": "Please provide any pertinent information regarding the case.", "sJa": "その件に関する関連情報をすべて提供してください。"},
   {"en": "Pervasive", "ja": "蔓延している、普及した", "ex": "至る所に広まっている状態。", "sEn": "Corruption is pervasive in the local government.", "sJa": "地方政府には汚職が蔓延しています。"},
