@@ -10,7 +10,17 @@
             {"en": "Instruction", "ja": "指示、説明書", "ex": "組み立て方ややり方。", "sEn": "Please follow the instructions carefully.", "sJa": "説明書に注意深く従ってください。"},
             {"en": "Refund", "ja": "払い戻し", "ex": "お金を返してもらうこと。", "sEn": "You can ask for a full refund.", "sJa": "全額払い戻しを求めることができます。"},
             {"en": "Feedback", "ja": "意見、感想", "ex": "アンケート等での顧客の生の声。", "sEn": "We appreciate your valuable feedback.", "sJa": "貴重なご意見に感謝いたします。"},
-            {"en": "Participate", "ja": "参加する", "ex": "joinの硬い表現。", "sEn": "Many people participated in the event.", "sJa": "多くの人がそのイベントに参加しました。"}
+            {"en": "Participate", "ja": "参加する", "ex": "joinの硬い表現。", "sEn": "Many people participated in the event.", "sJa": "多くの人がそのイベントに参加しました。"},
+            {"en": "Schedule", "ja": "予定、スケジュール", "ex": "予定を立てる動詞としても使う。", "sEn": "The meeting is scheduled for 10 AM.", "sJa": "会議は午前10時に予定されています。"},
+            {"en": "Delay", "ja": "遅らせる、遅延", "ex": "飛行機や電車の遅れに頻出。", "sEn": "The flight was delayed due to bad weather.", "sJa": "悪天候のためフライトが遅れました。"},
+            {"en": "Announce", "ja": "発表する", "ex": "公式な知らせや社内通達。", "sEn": "They announced a new product.", "sJa": "彼らは新製品を発表しました。"},
+            {"en": "Employee", "ja": "従業員", "ex": "雇われている人（employerは雇う側）。", "sEn": "We have over 500 employees.", "sJa": "当社には500名以上の従業員がいます。"},
+            {"en": "Signature", "ja": "署名、サイン", "ex": "契約書などの正式なサイン。", "sEn": "Please put your signature here.", "sJa": "ここに署名をお願いします。"},
+            {"en": "Contact", "ja": "連絡する", "ex": "get in touch withと同義。", "sEn": "Please contact our support team.", "sJa": "サポートチームにご連絡ください。"},
+            {"en": "Policy", "ja": "方針、規定", "ex": "会社のルールや保険の証書。", "sEn": "It is against company policy.", "sJa": "それは会社の方針に反します。"},
+            {"en": "Include", "ja": "含む", "ex": "料金に〜が含まれる際などに使う。", "sEn": "Breakfast is included in the room rate.", "sJa": "朝食は宿泊料金に含まれています。"},
+            {"en": "Provide", "ja": "提供する", "ex": "サービスや情報を与えること。", "sEn": "We provide excellent customer service.", "sJa": "優れた顧客サービスを提供します。"},
+            {"en": "Request", "ja": "要請する、お願い", "ex": "ask forの丁寧な表現。", "sEn": "We request your prompt response.", "sJa": "迅速なご返答をお願いいたします。"}
         ]
     },
     "600": {
@@ -24,7 +34,17 @@
             {"en": "Negotiate", "ja": "交渉する", "ex": "価格や条件を話し合って決める。", "sEn": "We managed to negotiate a better price.", "sJa": "より良い価格を交渉できました。"},
             {"en": "Proposal", "ja": "提案", "ex": "企画書や提案書。", "sEn": "They rejected our initial proposal.", "sJa": "彼らは最初の提案を却下しました。"},
             {"en": "Ensure", "ja": "確実にする", "ex": "ミスがないように保証する。", "sEn": "Please ensure all windows are closed.", "sJa": "すべての窓が閉まっているか確認してください。"},
-            {"en": "Evaluate", "ja": "評価する", "ex": "価値やパフォーマンスを測る。", "sEn": "We will evaluate his performance.", "sJa": "彼の業績を評価します。"}
+            {"en": "Evaluate", "ja": "評価する", "ex": "価値やパフォーマンスを測る。", "sEn": "We will evaluate his performance.", "sJa": "彼の業績を評価します。"},
+            {"en": "Alternative", "ja": "代わりの、選択肢", "ex": "他の手段や代案。", "sEn": "We need to find an alternative route.", "sJa": "代わりのルートを見つける必要があります。"},
+            {"en": "Distribution", "ja": "流通、配布", "ex": "商品を市場に届けるプロセス。", "sEn": "Our distribution center is in Tokyo.", "sJa": "当社の物流センターは東京にあります。"},
+            {"en": "Consider", "ja": "よく考える、検討する", "ex": "何かを決める前に熟考する。", "sEn": "Please consider my proposal.", "sJa": "私の提案をご検討ください。"},
+            {"en": "Commute", "ja": "通勤する", "ex": "家から職場までの移動。", "sEn": "I commute to work by train.", "sJa": "私は電車で通勤しています。"},
+            {"en": "Temporary", "ja": "一時的な", "ex": "永久(permanent)の対義語。", "sEn": "This is only a temporary solution.", "sJa": "これは一時的な解決策に過ぎません。"},
+            {"en": "Representative", "ja": "担当者、代表者", "ex": "customer service representative(カスタマーサポート担当)。", "sEn": "A sales representative will contact you.", "sJa": "営業担当者がご連絡します。"},
+            {"en": "Guarantee", "ja": "保証する", "ex": "製品の品質などを約束すること。", "sEn": "We guarantee 100% satisfaction.", "sJa": "100%の満足を保証します。"},
+            {"en": "Accommodate", "ja": "収容する、対応する", "ex": "要望に応えたり、人を泊めたりする。", "sEn": "The hotel can accommodate 500 guests.", "sJa": "そのホテルは500人の客を収容できます。"},
+            {"en": "Enclose", "ja": "同封する", "ex": "手紙や書類と一緒に封筒に入れること。", "sEn": "I have enclosed my resume.", "sJa": "履歴書を同封いたしました。"},
+            {"en": "Indicate", "ja": "示す、指摘する", "ex": "調査結果などが何かを指し示しているとき。", "sEn": "The survey indicates a change in trend.", "sJa": "調査はトレンドの変化を示しています。"}
         ]
     },
     "800": {
@@ -38,7 +58,17 @@
             {"en": "Mandatory", "ja": "義務的な", "ex": "絶対にやらなければならないこと。", "sEn": "Attendance at the meeting is mandatory.", "sJa": "会議への出席は義務です。"},
             {"en": "Lucrative", "ja": "儲かる", "ex": "利益がたくさん出るビジネスなど。", "sEn": "She started a lucrative business.", "sJa": "彼女は儲かるビジネスを始めました。"},
             {"en": "Facilitate", "ja": "促進する", "ex": "物事をスムーズに進めること。", "sEn": "The new software will facilitate the process.", "sJa": "新ソフトがプロセスを促進します。"},
-            {"en": "Preliminary", "ja": "予備の、事前の", "ex": "本番前の一時的な段階。", "sEn": "We received the preliminary results.", "sJa": "事前結果を受け取りました。"}
+            {"en": "Preliminary", "ja": "予備の、事前の", "ex": "本番前の一時的な段階。", "sEn": "We received the preliminary results.", "sJa": "事前結果を受け取りました。"},
+            {"en": "Feasibility", "ja": "実現可能性", "ex": "計画が本当に実行できるかどうかの度合い。", "sEn": "We are conducting a feasibility study.", "sJa": "実現可能性の調査を行っています。"},
+            {"en": "Fluctuate", "ja": "変動する", "ex": "価格や数値が上がったり下がったりする。", "sEn": "Oil prices fluctuate daily.", "sJa": "原油価格は日々変動します。"},
+            {"en": "Redundant", "ja": "余分な、解雇された", "ex": "不要になった人員やシステム。", "sEn": "The system makes manual entry redundant.", "sJa": "そのシステムは手入力を不要にします。"},
+            {"en": "Consecutive", "ja": "連続した", "ex": "3日間連続(three consecutive days)など。", "sEn": "It rained for five consecutive days.", "sJa": "5日間連続で雨が降りました。"},
+            {"en": "Allocate", "ja": "割り当てる", "ex": "予算や資源を特定の目的に振り分ける。", "sEn": "We need to allocate more funds to marketing.", "sJa": "マーケティングにより多くの資金を割り当てる必要があります。"},
+            {"en": "Retrieve", "ja": "取り戻す、検索する", "ex": "データを取り出したり、失ったものを回収する。", "sEn": "You can retrieve the deleted files.", "sJa": "削除されたファイルを復元できます。"},
+            {"en": "Incorporate", "ja": "組み込む、法人化する", "ex": "新しい要素を取り入れること。", "sEn": "We will incorporate your feedback.", "sJa": "あなたのご意見を組み込みます。"},
+            {"en": "Obsolete", "ja": "時代遅れの", "ex": "古くなって使われなくなった技術など。", "sEn": "Typewriters are now obsolete.", "sJa": "タイプライターは今や時代遅れです。"},
+            {"en": "Overhaul", "ja": "徹底的に見直す", "ex": "機械の分解修理やシステムの大幅な改修。", "sEn": "The entire system needs a major overhaul.", "sJa": "システム全体の大規模な見直しが必要です。"},
+            {"en": "Alleviate", "ja": "軽減する", "ex": "痛みや苦難を和らげる（mitigateと類義）。", "sEn": "This medicine will alleviate the pain.", "sJa": "この薬は痛みを和らげます。"}
         ]
     },
     "900": {
@@ -52,7 +82,17 @@
             {"en": "Solicit", "ja": "求める", "ex": "意見や寄付を強くお願いすること。", "sEn": "They are soliciting donations for the charity.", "sJa": "彼らは慈善活動の寄付を求めています。"},
             {"en": "Deteriorate", "ja": "悪化する", "ex": "状況や天候が徐々に悪くなること。", "sEn": "The weather condition began to deteriorate.", "sJa": "天候が悪化し始めました。"},
             {"en": "Unprecedented", "ja": "前例のない", "ex": "これまで一度も起きたことがない。", "sEn": "An unprecedented level of success.", "sJa": "前例のないレベルの成功。"},
-            {"en": "Expedite", "ja": "早める", "ex": "プロセスや配送を迅速に行うこと。", "sEn": "Please expedite the shipping process.", "sJa": "配送プロセスを早めてください。"}
+            {"en": "Expedite", "ja": "早める", "ex": "プロセスや配送を迅速に行うこと。", "sEn": "Please expedite the shipping process.", "sJa": "配送プロセスを早めてください。"},
+            {"en": "Pertain", "ja": "関連する", "ex": "pertain to 〜 で「〜に関係する」の意味。", "sEn": "The rules pertain to all employees.", "sJa": "その規則は全従業員に適用されます。"},
+            {"en": "Exacerbate", "ja": "悪化させる", "ex": "すでに悪い状況をさらに悪くする（worsenの硬い語）。", "sEn": "His comments only exacerbated the situation.", "sJa": "彼のコメントは状況を悪化させただけだった。"},
+            {"en": "Disseminate", "ja": "普及させる、散布する", "ex": "情報や知識を広く行き渡らせる。", "sEn": "We must disseminate the information quickly.", "sJa": "その情報を迅速に広めなければならない。"},
+            {"en": "Proximity", "ja": "近接、近いこと", "ex": "in close proximity to (〜のすぐ近くに)。", "sEn": "The hotel is in close proximity to the station.", "sJa": "ホテルは駅のすぐ近くにあります。"},
+            {"en": "Incur", "ja": "（負債などを）被る", "ex": "費用や罰金などマイナスなものを負うこと。", "sEn": "You will incur a late fee.", "sJa": "延滞料金が発生します。"},
+            {"en": "Coerce", "ja": "強制する", "ex": "脅して無理やり何かをさせること。", "sEn": "He was coerced into signing the contract.", "sJa": "彼は契約書にサインするよう強要された。"},
+            {"en": "Remuneration", "ja": "報酬、給与", "ex": "給料や謝礼などのフォーマルな表現。", "sEn": "He received generous remuneration for his work.", "sJa": "彼は仕事に対して寛大な報酬を受け取った。"},
+            {"en": "Stipulate", "ja": "規定する、明記する", "ex": "契約書などが条件を明確に定めること。", "sEn": "The contract stipulates a 30-day notice.", "sJa": "契約は30日前の通知を規定している。"},
+            {"en": "Resilient", "ja": "回復力のある、弾力のある", "ex": "逆境から立ち直る力が強いこと。", "sEn": "The economy proved to be highly resilient.", "sJa": "経済は高い回復力があることが証明された。"},
+            {"en": "Eradicate", "ja": "根絶する", "ex": "病気や社会問題を完全に無くすこと。", "sEn": "The goal is to eradicate the disease completely.", "sJa": "目標はその病気を完全に根絶することだ。"}
         ]
     }
 }
