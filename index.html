@@ -165,7 +165,7 @@
         </div>
         <div class="px-6 py-2"><div class="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full bg-blue-500 w-0 transition-all duration-300"></div></div></div>
         
-        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-xs py-1"><i class="fas fa-microphone"></i> 答え（A, B, C, D）を発声してください</div>
+        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-xs py-1"><i class="fas fa-microphone"></i> 回答（A, B, C, D）を聞き取り中...</div>
 
         <div class="flex-grow scroll-v px-6 pt-2 pb-10">
             <div class="glass-card mb-4">
@@ -287,18 +287,16 @@ const ctrl = {
     buildQs: (mode, words) => {
         return words.map(w => {
             let q = (mode === 1 || mode === 6) ? w.en : w.ja;
-            let a_val = (mode === 1 || mode === 6) ? w.ja : w.en;
             let others = words.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
             let choices = [w, ...others].sort(() => Math.random() - 0.5);
             
-            // 全ての日本語選択肢の後ろに英単語を括弧で表示する
-            let opts = choices.map(c => {
-                if (mode === 1 || mode === 6) return `${c.ja} (${c.en})`;
-                return c.en;
-            });
-
-            let a = (mode === 1 || mode === 6) ? `${w.ja} (${w.en})` : w.en;
-            return { ...w, q, a, opts };
+            // 選択肢オブジェクトをそのまま持つ（英単語を隠すため）
+            return { 
+                ...w, 
+                q, 
+                a: (mode === 1 || mode === 6) ? w.ja : w.en, 
+                choiceData: choices // 各選択肢の元の単語データを保持
+            };
         }).sort(() => Math.random() - 0.5).slice(0, 10);
     },
 
@@ -332,10 +330,13 @@ const ctrl = {
         if (!ctrl.state.recog) {
             ctrl.state.recog = new webkitSpeechRecognition();
             ctrl.state.recog.continuous = true;
+            ctrl.state.recog.interimResults = false; // 確定した結果のみ採用
             ctrl.state.recog.lang = 'ja-JP';
             ctrl.state.recog.onresult = (e) => {
                 if (ctrl.state.isChecking) return;
+                // 最新の確定結果を取得
                 const res = e.results[e.results.length - 1][0].transcript.toUpperCase();
+                console.log("Recognized:", res);
                 if (/(A|エー|エイ|えー|ア)/.test(res)) ctrl.triggerVoiceAnswer(0);
                 else if (/(B|ビー|びー)/.test(res)) ctrl.triggerVoiceAnswer(1);
                 else if (/(C|シー|しー)/.test(res)) ctrl.triggerVoiceAnswer(2);
@@ -368,11 +369,15 @@ const ctrl = {
 
         const choiceArea = document.getElementById('q-choices');
         choiceArea.innerHTML = "";
-        q.opts.forEach((opt, i) => {
+        q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
             btn.className = "ios-btn glass-card flex items-center font-bold text-sm py-4 mb-3 border dark:border-gray-600";
-            btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 flex items-center justify-center text-xs mr-4">${String.fromCharCode(65+i)}</span> <span class="flex-1 choice-label">${opt}</span>`;
-            btn.onclick = () => ctrl.check(btn, opt);
+            
+            // 解答前は日本語のみ表示
+            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
+            btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 flex items-center justify-center text-xs mr-4">${String.fromCharCode(65+i)}</span> <span class="flex-1 choice-label" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
+            
+            btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
         });
 
@@ -383,14 +388,16 @@ const ctrl = {
             msgWord.lang = 'en-US';
             msgWord.rate = 0.85;
             msgWord.onend = () => {
+                // 問題読み上げ完了後、3秒待ってから選択肢読み上げ
                 setTimeout(() => {
-                    const optsText = `A、${q.opts[0]}。 B、${q.opts[1]}。 C、${q.opts[2]}。 D、${q.opts[3]}。`;
+                    if (ctrl.state.isChecking) return;
+                    const optsText = q.choiceData.map((c, i) => `${String.fromCharCode(65+i)}、${c.ja}`).join('。');
                     const msgOpts = new SpeechSynthesisUtterance(optsText);
                     msgOpts.lang = 'ja-JP';
                     msgOpts.rate = 1.0;
                     msgOpts.onend = () => ctrl.startVoice();
                     window.speechSynthesis.speak(msgOpts);
-                }, 500);
+                }, 3000); 
             };
             window.speechSynthesis.speak(msgWord);
         }
@@ -406,13 +413,21 @@ const ctrl = {
         ctrl.stopVoice();
         window.speechSynthesis.cancel();
 
-        // 全ボタンを走査して正解をハイライトする
+        // 全ボタンを走査して正解をハイライトし、英単語を追記
         const allBtns = document.querySelectorAll('#q-choices div');
         allBtns.forEach(b => {
-            const label = b.querySelector('.choice-label').innerText;
-            if (label === q.a) {
+            const labelEl = b.querySelector('.choice-label');
+            const originalJa = labelEl.getAttribute('data-ja');
+            const originalEn = labelEl.getAttribute('data-en');
+            
+            // 解答後に (英単語) を表示する
+            if (ctrl.state.mode === 1 || ctrl.state.mode === 6) {
+                labelEl.innerText = `${originalJa} (${originalEn})`;
+            }
+
+            if (originalJa === q.ja) {
                 b.classList.add('border-green-500', 'bg-green-100', 'dark:bg-green-900/40');
-                b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>'; // 正解の目印
+                b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>'; 
             }
         });
 
@@ -427,16 +442,16 @@ const ctrl = {
             if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
         }
 
-        // 日本語(英単語) の形式で解説を表示
         document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
         document.getElementById('ex-en').innerText = q.sEn;
         document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
         
         if (ctrl.state.mode === 6) {
+            // Arukiモード時、5秒後に次へ
             setTimeout(() => {
                 if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next();
-            }, 3500); 
+            }, 5000); 
         }
     },
 
@@ -456,7 +471,7 @@ const ctrl = {
             return;
         }
 
-        cardInner.classList.remove('flipped'); // 次へ行く前に必ず表面に戻す
+        cardInner.classList.remove('flipped');
 
         setTimeout(() => {
             cardContainer.classList.add('fly-up');
