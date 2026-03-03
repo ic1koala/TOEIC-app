@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TOEIC Trainer Pro</title>
+    <title>TOEIC Word Practice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --ios-blue: #007AFF;
@@ -18,7 +20,8 @@
             margin: 0;
             background: linear-gradient(160deg, #c1c1ff 0%, #ffd1ff 100%);
             height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* 英語部分にMerriweatherを適用 */
+            font-family: 'Merriweather', -apple-system, BlinkMacSystemFont, sans-serif;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -33,347 +36,342 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.1);
         }
-        /* ガラス調パネル */
+        /* 縦を20%ほど詰めるための調整 */
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+            border-radius: 15px; /* 少し小さく */
+            padding: 1rem !important; /* 全体的にパディングを縮小 */
         }
-        /* ボタンアニメーション */
         .ios-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
-        .ios-btn:active {
-            transform: scale(0.95);
-            opacity: 0.8;
+        .ios-btn:active { transform: scale(0.95); opacity: 0.8; }
+        
+        /* 復習ページのスクロール修正 */
+        .scroll-v { 
+            overflow-y: auto; 
+            scrollbar-width: none; 
+            max-height: 100%;
+            padding-bottom: 100px; /* 下部ボタンと被らないよう余白 */
         }
-        /* プログレスバー */
-        .progress-track {
-            height: 6px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 3px;
-            margin: 10px 20px;
-            overflow: hidden;
-        }
-        #progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--ios-blue);
-            transition: width 0.4s ease;
-        }
-        .scroll-v { overflow-y: auto; scrollbar-width: none; }
         .scroll-v::-webkit-scrollbar { display: none; }
+        
+        /* 正解時の赤丸アニメーション */
+        .correct-mark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border: 15px solid rgba(255, 45, 85, 0.7); /* 赤丸 */
+            border-radius: 50%;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+            animation: ring-pulse 0.6s ease-out;
+        }
+        @keyframes ring-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
+<div id="correct-effect" class="correct-mark"></div>
+
 <div class="app-shell">
-    <div class="px-6 py-4 flex justify-between items-center text-gray-800 text-xs font-bold">
+    <div class="px-6 py-2 flex justify-between items-center text-gray-800 text-[10px] font-bold">
         <span id="time-display">12:00</span>
-        <div class="flex gap-1.5">
-            <i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i>
-        </div>
+        <div class="flex gap-1.5"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div>
     </div>
 
-    <div id="scr-level" class="flex-grow flex flex-col p-8">
-        <h1 class="text-3xl font-black text-gray-900 mt-10 mb-2">TOEIC®</h1>
-        <p class="text-gray-600 mb-10 font-medium">目標レベルを選択してください</p>
-        <div class="space-y-4">
-            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card p-6 flex justify-between items-center">
-                <span class="font-bold text-gray-800">400点級 基礎固め</span>
-                <i class="fas fa-chevron-right text-blue-500"></i>
+    <div id="scr-level" class="flex-grow flex flex-col p-6">
+        <h1 class="text-2xl font-black text-gray-900 mt-4 mb-1">TOEIC Word Practice</h1>
+        <p class="text-xs text-gray-600 mb-6">目標レベルを選択してください</p>
+        <div class="space-y-3">
+            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-gray-800 text-sm">400点級 基礎固め</span>
+                <i class="fas fa-chevron-right text-blue-500 text-xs"></i>
             </div>
-            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card p-6 flex justify-between items-center">
-                <span class="font-bold text-gray-800">600点級 中堅突破</span>
-                <i class="fas fa-chevron-right text-green-500"></i>
+            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-gray-800 text-sm">600点級 中堅突破</span>
+                <i class="fas fa-chevron-right text-green-500 text-xs"></i>
             </div>
-            <div onclick="ctrl.setLevel(800)" class="ios-btn glass-card p-6 flex justify-between items-center">
-                <span class="font-bold text-gray-800">800点級 高得点圏</span>
-                <i class="fas fa-chevron-right text-purple-500"></i>
             </div>
-            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card p-6 flex justify-between items-center">
-                <span class="font-bold text-gray-800">900点級 満点挑戦</span>
-                <i class="fas fa-chevron-right text-pink-500"></i>
-            </div>
-        </div>
     </div>
 
-    <div id="scr-mode" class="flex-grow hidden p-8 flex flex-col">
-        <button onclick="ctrl.showLevel()" class="text-blue-600 font-bold mb-6 flex items-center gap-1"><i class="fas fa-chevron-left"></i> 戻る</button>
-        <h2 class="text-2xl font-bold mb-8 text-gray-800">トレーニング</h2>
-        <div class="grid gap-4">
-            <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-3xl text-white shadow-xl" style="background: var(--ios-blue);">
-                <i class="fas fa-font text-2xl mb-4 block"></i>
-                <p class="font-bold text-lg leading-tight">英単語 → 日本語<br><span class="text-xs opacity-70">6択問題</span></p>
+    <div id="scr-mode" class="flex-grow hidden p-6 flex flex-col">
+        <button onclick="ctrl.showLevel()" class="text-blue-600 text-xs font-bold mb-4 flex items-center gap-1"><i class="fas fa-chevron-left"></i> 戻る</button>
+        <h2 class="text-xl font-bold mb-4 text-gray-800">トレーニング</h2>
+        <div class="grid grid-cols-2 gap-3">
+            <div onclick="ctrl.start(1)" class="ios-btn p-4 rounded-2xl text-white shadow-lg" style="background: var(--ios-blue);">
+                <i class="fas fa-font text-xl mb-2 block"></i>
+                <p class="font-bold text-sm">英 → 日</p>
             </div>
-            <div onclick="ctrl.start(2)" class="ios-btn p-6 rounded-3xl text-white shadow-xl" style="background: var(--ios-green);">
-                <i class="fas fa-language text-2xl mb-4 block"></i>
-                <p class="font-bold text-lg leading-tight">日本語 → 英単語<br><span class="text-xs opacity-70">6択問題</span></p>
+            <div onclick="ctrl.start(2)" class="ios-btn p-4 rounded-2xl text-white shadow-lg" style="background: var(--ios-green);">
+                <i class="fas fa-language text-xl mb-2 block"></i>
+                <p class="font-bold text-sm">日 → 英</p>
             </div>
-            <div onclick="ctrl.start(3)" class="ios-btn p-6 rounded-3xl text-white shadow-xl" style="background: var(--ios-purple);">
-                <i class="fas fa-file-alt text-2xl mb-4 block"></i>
-                <p class="font-bold text-lg leading-tight">20文 読解演習<br><span class="text-xs opacity-70">5択・長文読解</span></p>
+            <div onclick="ctrl.start(3)" class="ios-btn p-4 rounded-2xl text-white shadow-lg" style="background: var(--ios-purple);">
+                <i class="fas fa-file-alt text-xl mb-2 block"></i>
+                <p class="font-bold text-sm">20文 読解</p>
             </div>
-            <div onclick="ctrl.start(4)" class="ios-btn p-6 rounded-3xl text-white shadow-xl" style="background: var(--ios-pink);">
-                <i class="fas fa-redo text-2xl mb-4 block"></i>
-                <p class="font-bold text-lg leading-tight">弱点総復習<br><span class="text-xs opacity-70">間違えた問題のみ</span></p>
+            <div onclick="ctrl.start(4)" class="ios-btn p-4 rounded-2xl text-white shadow-lg" style="background: var(--ios-pink);">
+                <i class="fas fa-redo text-xl mb-2 block"></i>
+                <p class="font-bold text-sm">弱点復習</p>
             </div>
         </div>
     </div>
 
-    <div id="scr-quiz" class="flex-grow hidden flex flex-col">
-        <div class="px-6 py-4 flex justify-between items-center">
-            <span id="quiz-mode-label" class="text-[10px] font-black uppercase tracking-widest text-gray-400">Vocabulary</span>
-            <span id="quiz-count" class="text-xs font-bold text-gray-500">1 / 10</span>
+    <div id="scr-quiz" class="flex-grow hidden flex flex-col h-full">
+        <div class="px-6 py-2 flex justify-between items-center">
+            <span id="quiz-mode-label" class="text-[9px] font-black uppercase text-gray-400">Vocabulary</span>
+            <span id="quiz-count" class="text-[10px] font-bold text-gray-500">1 / 10</span>
         </div>
-        <div class="progress-track"><div id="progress-fill"></div></div>
+        <div class="progress-track mx-6 mb-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div id="progress-fill" class="h-full bg-blue-500 w-0 transition-all duration-300"></div>
+        </div>
         
-        <div class="flex-grow scroll-v px-6 pt-2 pb-10">
-            <div class="glass-card p-6 mb-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 id="q-main-text" class="text-2xl font-bold text-gray-800 leading-tight"></h3>
-                    <button id="speaker-btn" onclick="ctrl.speak()" class="ios-btn w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <i class="fas fa-volume-up text-lg"></i>
+        <div class="flex-grow scroll-v px-6">
+            <div class="glass-card mb-4">
+                <div class="flex justify-between items-start">
+                    <h3 id="q-main-text" class="text-xl font-bold text-gray-800 leading-tight"></h3>
+                    <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="fas fa-volume-up text-sm"></i>
                     </button>
                 </div>
-                <div id="q-reading-box" class="hidden text-sm text-gray-600 leading-relaxed p-4 bg-white/50 rounded-2xl border border-white/50 max-h-60 overflow-y-auto mb-4"></div>
+                <div id="q-reading-box" class="hidden text-sm text-gray-600 mt-3 p-3 bg-white/50 rounded-xl border max-h-40 overflow-y-auto"></div>
             </div>
 
-            <div id="q-choices" class="space-y-3 mb-8"></div>
+            <div id="q-choices" class="space-y-2 mb-6"></div>
 
-            <div id="expl-panel" class="hidden glass-card p-6 border-l-8 border-blue-500 animate-in fade-in slide-in-from-bottom-4">
-                <h4 class="font-black text-blue-600 text-xs uppercase tracking-widest mb-2">Explanation</h4>
-                <p id="expl-text" class="text-sm text-gray-700 leading-relaxed font-medium"></p>
-                <button onclick="ctrl.next()" class="ios-btn w-full mt-6 py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-2xl">次へ進む</button>
+            <div id="expl-panel" class="hidden glass-card border-l-4 border-blue-500">
+                <h4 class="font-black text-blue-600 text-[10px] uppercase mb-1">Explanation</h4>
+                <p id="expl-text" class="text-xs text-gray-700 leading-relaxed"></p>
+                <button onclick="ctrl.next()" class="ios-btn w-full mt-4 py-3 bg-gray-900 text-white rounded-xl font-bold text-sm">次へ</button>
             </div>
         </div>
     </div>
 
-    <div id="scr-result" class="flex-grow hidden flex flex-col justify-center items-center p-8 text-center">
-        <div class="glass-card p-12 w-full mb-8">
-            <p class="text-gray-400 font-bold text-xs uppercase tracking-widest mb-4">Your Score</p>
-            <h2 class="text-7xl font-black text-gray-900 mb-2"><span id="res-score">0</span><span class="text-2xl text-gray-300">/10</span></h2>
-            <p id="res-comment" class="text-blue-500 font-bold"></p>
+    <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
+        <div class="glass-card text-center mb-4">
+            <p class="text-gray-400 font-bold text-[10px] uppercase mb-2">Score</p>
+            <h2 class="text-5xl font-black text-gray-900"><span id="res-score">0</span><span class="text-xl text-gray-300">/10</span></h2>
         </div>
-        <button onclick="ctrl.showMode()" class="ios-btn w-full py-5 bg-blue-600 text-white rounded-3xl font-black shadow-xl">メニューへ戻る</button>
+        
+        <div class="glass-card mb-6">
+            <h4 class="text-xs font-bold text-gray-800 mb-3"><i class="fas fa-chart-line mr-2"></i>学習分析 (個人記録)</h4>
+            <div id="analysis-content" class="text-[11px] text-gray-600 space-y-1">
+                記録収集中...
+            </div>
+        </div>
+        
+        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm">メニューへ戻る</button>
     </div>
 
-    <div class="h-24 glass-card rounded-none rounded-t-3xl flex justify-around items-center px-6 pb-4">
-        <div class="text-blue-600 flex flex-col items-center"><i class="fas fa-pencil-alt text-xl"></i><span class="text-[10px] mt-1 font-bold">学習</span></div>
-        <div class="text-gray-300 flex flex-col items-center"><i class="fas fa-chart-pie text-xl"></i><span class="text-[10px] mt-1 font-bold">分析</span></div>
-        <div class="text-gray-300 flex flex-col items-center"><i class="fas fa-user text-xl"></i><span class="text-[10px] mt-1 font-bold">会員</span></div>
+    <div class="h-16 glass-card rounded-none rounded-t-3xl flex justify-around items-center px-10">
+        <div onclick="ctrl.showMode()" class="text-blue-600 flex flex-col items-center ios-btn">
+            <i class="fas fa-pencil-alt text-lg"></i>
+            <span class="text-[9px] mt-1 font-bold">学習</span>
+        </div>
+        <div onclick="ctrl.showAnalysis()" class="text-gray-400 flex flex-col items-center ios-btn">
+            <i class="fas fa-chart-pie text-lg"></i>
+            <span class="text-[9px] mt-1 font-bold">分析</span>
+        </div>
     </div>
 </div>
 
 <script>
-/**
- * データベース構築 (TOEICレベル別)
- */
 const DB = {
     400: {
         words: [
-            {en: "Requirement", ja: "必要条件", ex: "求人広告の「応募資格」などで必須の条件を指します。"},
-            {en: "Purchase", ja: "購入する", ex: "buyの硬い表現。レシートや注文確認メールで頻出。"},
-            {en: "Description", ja: "説明", ex: "商品のスペックや特徴を説明する際に使われます。"},
-            {en: "Available", ja: "利用可能な", ex: "「在庫がある」「予約が空いている」など広い意味。"},
-            {en: "Submit", ja: "提出する", ex: "書類やレポート、申請書を公式に出す際に使います。"},
-            {en: "Confirmation", ja: "確認", ex: "ホテルの予約確認や注文確定の際によく出ます。"},
-            {en: "Instruction", ja: "指示、説明書", ex: "電化製品などの組み立て説明書を指すことが多いです。"},
-            {en: "Equipment", ja: "設備、備品", ex: "オフィス用品や工場の機械類を指す不可算名詞。"},
-            {en: "Feedback", ja: "意見、感想", ex: "顧客アンケートなどで「感想を聞かせて」という際に使用。"},
-            {en: "Refund", ja: "払い戻し", ex: "返品した際にお金を返してもらうことを指します。"}
+            {en: "Requirement", ja: "必要条件", ex: "求人広告などで必須の条件を指します。"},
+            {en: "Purchase", ja: "購入する", ex: "buyの硬い表現。レシート等で頻出。"},
+            {en: "Description", ja: "説明", ex: "商品のスペック説明などで使われます。"},
+            {en: "Available", ja: "利用可能な", ex: "「在庫がある」「空いている」などの意味。"},
+            {en: "Submit", ja: "提出する", ex: "書類やレポートを出す際に使います。"},
+            {en: "Confirmation", ja: "確認", ex: "予約確認や注文確定の際に出ます。"},
+            {en: "Instruction", ja: "指示、説明書", ex: "組み立て説明書などを指します。"},
+            {en: "Equipment", ja: "設備、備品", ex: "オフィス用品などを指す不可算名詞。"},
+            {en: "Feedback", ja: "意見、感想", ex: "アンケートなどでよく使われます。"},
+            {en: "Refund", ja: "払い戻し", ex: "返品時のお金の返却を指します。"}
         ],
-        reading: "Notice: New System Requirements. From next Monday, all purchase records will be digital. Please read the description carefully. Support is available 24/7. Submit your feedback by Friday to receive a refund..."
-    },
-    600: {
-        words: [
-            {en: "Approximately", ja: "おおよそ", ex: "Aboutの丁寧な言い方。時間や金額の前に置かれます。"},
-            {en: "Colleague", ja: "同僚", ex: "職場の仲間。Co-workerと同じ意味で使われます。"},
-            {en: "Procedure", ja: "手続き", ex: "特定の作業を行うための公式な手順。"},
-            {en: "Complimentary", ja: "無料の", ex: "ホテルの朝食やアメニティなど、サービスの一環。"},
-            {en: "Procedure", ja: "手順", ex: "仕事の進め方や申請のプロセス。"},
-            {en: "Significant", ja: "重要な、かなりの", ex: "変化や増加が目に見えて大きいとき。"},
-            {en: "Implementation", ja: "実施、導入", ex: "新しい制度やシステムを動かし始めること。"},
-            {en: "Authorization", ja: "許可、権限", ex: "公式な許可が必要な区域などの説明に出ます。"},
-            {en: "Prospective", ja: "見込みのある", ex: "将来顧客になりそうな人（Prospective clients）。"},
-            {en: "Discrepancy", ja: "相違、不一致", ex: "請求書の金額と中身が合わないときなどに頻出。"}
-        ],
-        reading: "Attention Colleagues: Approximately 50 people will attend. The implementation of the new procedure starts soon. Complimentary lunch is available for authorized personnel. We found a discrepancy in the report..."
+        reading: "Notice: New System Requirements. From next Monday, all purchase records will be digital. Please read the description carefully."
     }
-    // 800, 900も同様の構造で拡張可能
 };
 
-/**
- * アプリケーション制御ロジック
- */
 const ctrl = {
     state: {
         level: 400, mode: 1, idx: 0, score: 0,
         questions: [], wrongPool: []
     },
 
-    // 画面切り替え
     switchScr: (id) => {
         ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result'].forEach(s => 
             document.getElementById(s).classList.add('hidden')
         );
         document.getElementById(id).classList.remove('hidden');
+        // 切り替え時に一番上へ
+        const scrollArea = document.querySelector(`#${id}.scroll-v`);
+        if(scrollArea) scrollArea.scrollTo(0,0);
     },
 
     showLevel: () => ctrl.switchScr('scr-level'),
     showMode: () => ctrl.switchScr('scr-mode'),
-
-    setLevel: (l) => {
-        ctrl.state.level = l;
-        ctrl.showMode();
+    
+    // 分析画面の表示
+    showAnalysis: () => {
+        ctrl.updateAnalysisUI();
+        ctrl.switchScr('scr-result');
     },
 
-    // クイズ開始
+    setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
+
     start: (mode) => {
         ctrl.state.mode = mode;
         ctrl.state.idx = 0;
         ctrl.state.score = 0;
         
+        const data = DB[ctrl.state.level] || DB[400];
         if (mode === 4) {
-            if (ctrl.state.wrongPool.length === 0) {
-                alert("復習する問題がありません！"); return;
-            }
+            if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！"); return; }
             ctrl.state.questions = [...ctrl.state.wrongPool].sort(() => Math.random() - 0.5);
         } else {
-            ctrl.state.questions = ctrl.buildQuestions(mode);
+            ctrl.state.questions = ctrl.buildQuestions(mode, data);
         }
 
         ctrl.switchScr('scr-quiz');
         ctrl.render();
     },
 
-    // 問題生成ロジック
-    buildQuestions: (mode) => {
-        const data = DB[ctrl.state.level] || DB[400];
+    buildQuestions: (mode, data) => {
         let qs = [];
-
         if (mode === 3) {
-            // 長文読解（5択）
-            const longText = data.reading.repeat(5); // 20センテンス相当
             for(let i=0; i<10; i++) {
                 qs.push({
-                    q: `Q${i+1}: 文脈から判断して、正しい選択肢を選んでください。`,
-                    txt: longText,
-                    a: "適切な手続きを行うこと",
-                    ex: "本文中に『Please read the description carefully（詳しく読んでください）』等の指示があるため。",
-                    opts: ["適切な手続きを行うこと", "営業時間の短縮", "新製品の発売中止", "役員交代の知らせ", "駅の移転案"].sort(() => Math.random() - 0.5)
+                    q: `読解Q${i+1}: 内容に合うものを選べ`, txt: data.reading, a: "デジタル化",
+                    ex: "Text says 'records will be digital'.",
+                    opts: ["デジタル化", "紙の廃止", "営業停止", "新築"].sort(() => Math.random() - 0.5)
                 });
             }
         } else {
-            // 単語（6択）
             data.words.forEach(w => {
-                let correct = (mode === 1) ? w.ja : w.en;
-                let qText = (mode === 1) ? w.en : w.ja;
+                let q = (mode === 1) ? w.en : w.ja;
+                let a = (mode === 1) ? w.ja : w.en;
                 let pool = data.words.filter(x => x.en !== w.en).map(x => (mode === 1 ? x.ja : x.en));
-                let opts = [correct, ...pool.slice(0, 5)].sort(() => Math.random() - 0.5);
-                qs.push({ q: qText, a: correct, ex: w.ex, opts: opts });
+                let opts = [a, ...pool.slice(0, 3)].sort(() => Math.random() - 0.5);
+                qs.push({ q, a, ex: w.ex, opts });
             });
         }
         return qs.sort(() => Math.random() - 0.5).slice(0, 10);
     },
 
-    // 問題表示
     render: () => {
         const q = ctrl.state.questions[ctrl.state.idx];
-        const total = ctrl.state.questions.length;
-
-        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${total}`;
-        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / total) * 100}%`;
+        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${ctrl.state.questions.length}`;
+        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / ctrl.state.questions.length) * 100}%`;
         document.getElementById('q-main-text').innerText = q.q;
         document.getElementById('expl-panel').classList.add('hidden');
-        document.getElementById('quiz-mode-label').innerText = (ctrl.state.mode === 3) ? "Reading" : "Vocabulary";
 
         const rBox = document.getElementById('q-reading-box');
-        if (ctrl.state.mode === 3) {
-            rBox.innerText = q.txt;
-            rBox.classList.remove('hidden');
-        } else {
-            rBox.classList.add('hidden');
-        }
+        if (ctrl.state.mode === 3) { rBox.innerText = q.txt; rBox.classList.remove('hidden'); }
+        else { rBox.classList.add('hidden'); }
 
         const choiceArea = document.getElementById('q-choices');
         choiceArea.innerHTML = "";
         q.opts.forEach((opt, i) => {
             const btn = document.createElement('div');
-            btn.className = "ios-btn glass-card p-5 flex items-center font-bold text-gray-700";
-            btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs mr-4">${String.fromCharCode(65+i)}</span> ${opt}`;
+            btn.className = "ios-btn glass-card flex items-center font-bold text-gray-700 text-sm py-3";
+            btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] mr-3">${String.fromCharCode(65+i)}</span> ${opt}`;
             btn.onclick = () => ctrl.check(btn, opt);
             choiceArea.appendChild(btn);
         });
     },
 
-    // 判定
     check: (btn, val) => {
         const q = ctrl.state.questions[ctrl.state.idx];
         const btns = document.querySelectorAll('#q-choices div');
         btns.forEach(b => b.onclick = null);
 
-        if (val === q.a) {
+        const isCorrect = (val === q.a);
+        if (isCorrect) {
             ctrl.state.score++;
-            btn.style.background = "rgba(52, 199, 89, 0.2)";
             btn.style.borderColor = "var(--ios-green)";
+            btn.classList.add("bg-green-100");
+            // 赤丸エフェクトを表示
+            const effect = document.getElementById('correct-effect');
+            effect.style.display = 'block';
+            setTimeout(() => { effect.style.display = 'none'; }, 600);
         } else {
-            btn.style.background = "rgba(255, 45, 85, 0.2)";
             btn.style.borderColor = "var(--ios-pink)";
+            btn.classList.add("bg-red-100");
             if(!ctrl.state.wrongPool.some(x => x.q === q.q)) ctrl.state.wrongPool.push(q);
-            
-            // 正解をハイライト
-            btns.forEach(b => {
-                if(b.innerText.includes(q.a)) b.style.background = "rgba(52, 199, 89, 0.1)";
-            });
         }
+        
+        // 個人記録の保存（キャッシュ利用）
+        ctrl.saveToCache(isCorrect);
 
         document.getElementById('expl-text').innerText = q.ex;
         document.getElementById('expl-panel').classList.remove('hidden');
-        // 解説まで自動スクロール
-        setTimeout(() => document.querySelector('.scroll-v').scrollTo({top: 9999, behavior:'smooth'}), 100);
+    },
+
+    saveToCache: (isCorrect) => {
+        let stats = JSON.parse(localStorage.getItem('toeic_stats')) || { total: 0, correct: 0, history: [] };
+        stats.total++;
+        if (isCorrect) stats.correct++;
+        // 直近10回の履歴
+        stats.history.push(isCorrect ? 1 : 0);
+        if (stats.history.length > 10) stats.history.shift();
+        localStorage.setItem('toeic_stats', JSON.stringify(stats));
+    },
+
+    updateAnalysisUI: () => {
+        const stats = JSON.parse(localStorage.getItem('toeic_stats'));
+        const el = document.getElementById('analysis-content');
+        if (!stats) { el.innerHTML = "まだデータがありません。学習を始めましょう！"; return; }
+        
+        const rate = ((stats.correct / stats.total) * 100).toFixed(1);
+        el.innerHTML = `
+            <p>累計回答数: ${stats.total} 問</p>
+            <p>通算正解率: <span class="text-blue-600 font-bold">${rate}%</span></p>
+            <p>直近10問の傾向: ${stats.history.map(h => h ? '🔴' : '❌').join('')}</p>
+        `;
     },
 
     next: () => {
         ctrl.state.idx++;
-        if (ctrl.state.idx < ctrl.state.questions.length) {
-            ctrl.render();
-            document.querySelector('.scroll-v').scrollTo(0,0);
-        } else {
-            ctrl.finish();
-        }
+        if (ctrl.state.idx < ctrl.state.questions.length) { ctrl.render(); }
+        else { ctrl.finish(); }
     },
 
     finish: () => {
         document.getElementById('res-score').innerText = ctrl.state.score;
-        document.getElementById('res-comment').innerText = ctrl.state.score >= 8 ? "素晴らしい！" : "その調子です！";
+        ctrl.updateAnalysisUI();
         ctrl.switchScr('scr-result');
     },
 
     speak: () => {
         const q = ctrl.state.questions[ctrl.state.idx];
-        const text = (ctrl.state.mode === 1) ? q.q : (ctrl.state.mode === 2 ? q.a : q.txt);
-        const msg = new SpeechSynthesisUtterance(text);
+        const msg = new SpeechSynthesisUtterance(ctrl.state.mode === 1 ? q.q : q.a);
         msg.lang = 'en-US';
-        msg.rate = 0.9;
         window.speechSynthesis.speak(msg);
     }
 };
 
-// 時計更新
 setInterval(() => {
     const n = new Date();
     document.getElementById('time-display').innerText = n.getHours() + ":" + String(n.getMinutes()).padStart(2, '0');
 }, 1000);
 </script>
-
 </body>
 </html>
