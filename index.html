@@ -23,7 +23,6 @@
             --bg-grad: linear-gradient(160deg, #c1c1ff 0%, #ffd1ff 100%);
         }
         
-        /* ダークモード時のカスタム変数 */
         html.dark {
             --glass: rgba(30, 41, 59, 0.85);
             --bg-grad: linear-gradient(160deg, #1e1e2f 0%, #2a2a40 100%);
@@ -67,7 +66,6 @@
         .scroll-v { overflow-y: auto; scrollbar-width: none; height: 100%; }
         .scroll-v::-webkit-scrollbar { display: none; }
         
-        /* エフェクト */
         .effect-mark {
             position: fixed;
             top: 50%; left: 50%;
@@ -84,14 +82,12 @@
             100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
         }
 
-        /* ボトムナビのURL被り回避用の余白設定 */
         .bottom-nav {
             padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
             box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
             z-index: 50;
         }
 
-        /* 単語カードアニメーション */
         .card-container { perspective: 1000px; }
         .card-inner {
             transition: transform 0.6s;
@@ -107,6 +103,16 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .card-back { transform: rotateY(180deg); }
+
+        /* 追加：単語カードが飛んでいくアニメーション */
+        .fly-up {
+            transform: translateY(-150%) rotate(15deg) !important;
+            opacity: 0;
+            transition: transform 0.5s ease-in, opacity 0.5s ease-in !important;
+        }
+        .no-transition {
+            transition: none !important;
+        }
 
         .hidden { display: none !important; }
     </style>
@@ -144,7 +150,7 @@
             <div onclick="ctrl.start(1)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-blue);"><i class="fas fa-font text-xl mb-2"></i><p class="font-bold text-xs">英 → 日</p></div>
             <div onclick="ctrl.start(2)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-green);"><i class="fas fa-language text-xl mb-2"></i><p class="font-bold text-xs">日 → 英</p></div>
             <div onclick="ctrl.start(5)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-purple);"><i class="fas fa-clone text-xl mb-2"></i><p class="font-bold text-xs">単語カード</p></div>
-            <div onclick="ctrl.start(6)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center bg-orange-500"><i class="fas fa-walking text-xl mb-2"></i><p class="font-bold text-xs">ウォーキング</p></div>
+            <div onclick="ctrl.start(6)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center bg-orange-500"><i class="fas fa-walking text-xl mb-2"></i><p class="font-bold text-xs">Aruki</p></div>
             <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-4 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-pink);"><i class="fas fa-redo mb-2"></i><p class="font-bold text-xs">弱点復習</p></div>
         </div>
     </div>
@@ -156,7 +162,7 @@
         </div>
         <div class="px-6 py-2"><div class="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full bg-blue-500 w-0 transition-all duration-300"></div></div></div>
         
-        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-xs py-1"><i class="fas fa-microphone"></i> 音声認識中 (A, B, C, Dと発声)</div>
+        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-xs py-1"><i class="fas fa-microphone"></i> 答え（A, B, C, D）を発声してください</div>
 
         <div class="flex-grow scroll-v px-6 pt-2 pb-10">
             <div class="glass-card mb-4">
@@ -183,9 +189,9 @@
         <div class="card-container w-full max-w-sm aspect-video mb-8" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
             <div class="card-inner glass-card p-0 rounded-3xl border-2 border-blue-400 dark:border-blue-600 cursor-pointer shadow-xl">
                 <div class="card-front text-3xl font-black text-gray-900 dark:text-white"><span id="fc-en">Word</span></div>
-                <div class="card-back px-4 text-center">
-                    <span id="fc-ja" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-3 block">意味</span>
-                    <span id="fc-ex" class="text-xs text-gray-600 dark:text-gray-300">例文</span>
+                <div class="card-back px-6 text-center w-full overflow-hidden">
+                    <span id="fc-ja" class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2 block">意味</span>
+                    <div id="fc-ex" class="text-[11px] text-gray-600 dark:text-gray-300 w-full"></div>
                 </div>
             </div>
         </div>
@@ -208,13 +214,12 @@
     <div class="bottom-nav glass-card rounded-none rounded-t-[30px] flex justify-around items-center pt-3 pb-8 w-full shrink-0">
         <div onclick="ctrl.showMode()" class="text-blue-600 dark:text-blue-400 flex flex-col items-center ios-btn"><i class="fas fa-pencil-alt text-lg"></i><span class="text-[9px] font-bold mt-1">学習</span></div>
         <div onclick="ctrl.start(5)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-clone text-lg"></i><span class="text-[9px] font-bold mt-1">カード</span></div>
-        <div onclick="ctrl.start(6)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-walking text-lg"></i><span class="text-[9px] font-bold mt-1">歩行</span></div>
+        <div onclick="ctrl.start(6)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-walking text-lg"></i><span class="text-[9px] font-bold mt-1">Aruki</span></div>
         <div onclick="ctrl.showAnalysis()" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-chart-pie text-lg"></i><span class="text-[9px] font-bold mt-1">分析</span></div>
     </div>
 </div>
 
 <script>
-// 各レベル10問ずつに拡充
 const DB = {
     400: {
         words: [
@@ -275,16 +280,15 @@ const DB = {
 };
 
 const ctrl = {
-    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null },
+    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false },
 
     init: () => {
-        // ダークモードの判定 (18時〜朝7時)
         const h = new Date().getHours();
         if (h >= 18 || h < 7) document.documentElement.classList.add('dark');
     },
 
     switchScr: (id) => {
-        ctrl.stopVoice(); // 画面遷移時は音声を強制停止
+        ctrl.stopVoice();
         window.speechSynthesis.cancel();
         ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
@@ -302,7 +306,7 @@ const ctrl = {
         ctrl.state.score = 0;
         const data = DB[ctrl.state.level] || DB[400];
         
-        if (mode === 4) { // 復習モード
+        if (mode === 4) {
             if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！"); return; }
             ctrl.state.questions = [...ctrl.state.wrongPool].sort(() => Math.random() - 0.5);
         } else {
@@ -310,12 +314,12 @@ const ctrl = {
         }
 
         if (mode === 5) { // 単語カード
+            ctrl.state.flashcardInit = false; // 初期化フラグ
             ctrl.switchScr('scr-flashcard');
             ctrl.nextFlash();
         } else {
             ctrl.switchScr('scr-quiz');
             ctrl.render();
-            if(mode === 6) ctrl.startVoice(); // ウォーキング
         }
     },
 
@@ -329,7 +333,32 @@ const ctrl = {
         }).sort(() => Math.random() - 0.5).slice(0, 10);
     },
 
-    // --- ウォーキング・音声機能 ---
+    // 変更：正解時のピンポン音を作成
+    playCorrectSound: () => {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1046.50, ctx.currentTime); // C6
+            osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.15); // E6
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.5);
+        } catch(e) {}
+    },
+
+    // 変更：不正解時のOh...音を作成
+    playWrongSound: () => {
+        const msg = new SpeechSynthesisUtterance("Oh...");
+        msg.lang = 'en-US';
+        msg.pitch = 0.5;
+        msg.rate = 0.8;
+        window.speechSynthesis.speak(msg);
+    },
+
     startVoice: () => {
         document.getElementById('mic-status').classList.remove('hidden');
         if (!('webkitSpeechRecognition' in window)) {
@@ -339,7 +368,7 @@ const ctrl = {
         if (!ctrl.state.recog) {
             ctrl.state.recog = new webkitSpeechRecognition();
             ctrl.state.recog.continuous = true;
-            ctrl.state.recog.lang = 'ja-JP'; // A, B, C等の発音を拾いやすくするため日本語設定
+            ctrl.state.recog.lang = 'ja-JP';
             ctrl.state.recog.onresult = (e) => {
                 const res = e.results[e.results.length - 1][0].transcript.toUpperCase();
                 if (res.includes('A') || res.includes('エー')) ctrl.triggerVoiceAnswer(0);
@@ -347,28 +376,21 @@ const ctrl = {
                 else if (res.includes('C') || res.includes('シー')) ctrl.triggerVoiceAnswer(2);
                 else if (res.includes('D') || res.includes('ディー')) ctrl.triggerVoiceAnswer(3);
             };
-            ctrl.state.recog.onend = () => { if(ctrl.state.mode === 6) ctrl.state.recog.start(); };
         }
         ctrl.state.recog.start();
     },
 
     stopVoice: () => {
         document.getElementById('mic-status').classList.add('hidden');
-        if (ctrl.state.recog) {
-            ctrl.state.recog.onend = null;
-            ctrl.state.recog.stop();
-        }
+        if (ctrl.state.recog) ctrl.state.recog.stop();
     },
 
     triggerVoiceAnswer: (index) => {
         const btns = document.querySelectorAll('#q-choices div');
         if (btns[index] && document.getElementById('expl-panel').classList.contains('hidden')) {
             btns[index].click(); // 自動クリック
-        } else if (!document.getElementById('expl-panel').classList.contains('hidden')) {
-            ctrl.next(); // 解説画面なら次へ
         }
     },
-    // ----------------------------
 
     render: () => {
         const q = ctrl.state.questions[ctrl.state.idx];
@@ -376,7 +398,7 @@ const ctrl = {
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / ctrl.state.questions.length) * 100}%`;
         document.getElementById('q-main-text').innerText = q.q;
         document.getElementById('expl-panel').classList.add('hidden');
-        document.getElementById('quiz-mode-label').innerText = ctrl.state.mode === 6 ? "Walking Mode" : "Quiz";
+        document.getElementById('quiz-mode-label').innerText = ctrl.state.mode === 6 ? "Aruki Mode" : "Quiz";
 
         const choiceArea = document.getElementById('q-choices');
         choiceArea.innerHTML = "";
@@ -388,8 +410,30 @@ const ctrl = {
             choiceArea.appendChild(btn);
         });
 
-        // ウォーキングモード時は問題を読み上げ
-        if(ctrl.state.mode === 6) ctrl.speak(q.en + ". プリーズ チューズ. A, B, C, D");
+        // 変更：Arukiモードの読み上げ順序・タイミングの修正（スキップバグ対応）
+        if (ctrl.state.mode === 6) {
+            window.speechSynthesis.cancel();
+            ctrl.stopVoice(); // マイクの誤検知を防ぐため一旦停止
+
+            const msgWord = new SpeechSynthesisUtterance(q.en);
+            msgWord.lang = 'en-US';
+            msgWord.rate = 0.85;
+            msgWord.onend = () => {
+                // 2秒待ってから選択肢を読み上げ
+                setTimeout(() => {
+                    const optsText = `A、${q.opts[0]}。 B、${q.opts[1]}。 C、${q.opts[2]}。 D、${q.opts[3]}。`;
+                    const msgOpts = new SpeechSynthesisUtterance(optsText);
+                    msgOpts.lang = 'ja-JP';
+                    msgOpts.rate = 0.9;
+                    msgOpts.onend = () => {
+                        // 選択肢を読み終わってからマイクをオンにする
+                        ctrl.startVoice();
+                    };
+                    window.speechSynthesis.speak(msgOpts);
+                }, 2000);
+            };
+            window.speechSynthesis.speak(msgWord);
+        }
     },
 
     check: (btn, val) => {
@@ -397,6 +441,14 @@ const ctrl = {
         const isCorrect = (val === q.a);
         const btns = document.querySelectorAll('#q-choices div');
         btns.forEach(b => b.onclick = null);
+
+        // Arukiモードの場合の処理
+        if (ctrl.state.mode === 6) {
+            ctrl.stopVoice(); // 正解が入ったらマイクをすぐ止める
+            window.speechSynthesis.cancel();
+            if (isCorrect) ctrl.playCorrectSound();
+            else ctrl.playWrongSound();
+        }
 
         if (isCorrect) {
             ctrl.state.score++;
@@ -417,8 +469,10 @@ const ctrl = {
         stats.total++; if(isCorrect) stats.correct++;
         localStorage.setItem('toeic_v2', JSON.stringify(stats));
 
-        // ウォーキング時は自動で次へ
-        if (ctrl.state.mode === 6) setTimeout(() => ctrl.next(), 3500);
+        // Arukiモードは音声を待ってから自動で次へ（以前の固定3.5秒スキップバグを解消）
+        if (ctrl.state.mode === 6) {
+            setTimeout(() => ctrl.next(), 2500); 
+        }
     },
 
     triggerEffect: (id) => {
@@ -427,18 +481,52 @@ const ctrl = {
         setTimeout(() => { el.style.display = 'none'; }, 600);
     },
 
-    // 単語カードロジック
+    // 変更：単語カードが飛んでいくアニメーションと内容の修正
     nextFlash: () => {
-        if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0; // ループ
-        const q = ctrl.state.questions[ctrl.state.idx];
-        document.querySelector('.card-inner').classList.remove('flipped');
-        
+        const cardInner = document.querySelector('.card-inner');
+        const cardContainer = document.querySelector('.card-container');
+
+        // 初回表示時はアニメーションさせない
+        if (!ctrl.state.flashcardInit) {
+            ctrl.state.flashcardInit = true;
+            ctrl.updateFlashcardContent();
+            return;
+        }
+
+        // 上に飛んでいくアニメーション付与
+        cardContainer.classList.add('fly-up');
+
         setTimeout(() => {
-            document.getElementById('fc-en').innerText = q.en;
-            document.getElementById('fc-ja').innerText = q.ja;
-            document.getElementById('fc-ex').innerText = `${q.sEn}\n${q.sJa}`;
-        }, 150); // 裏返るアニメーション中に文字入れ替え
-        ctrl.state.idx++;
+            ctrl.state.idx++;
+            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
+            
+            // 見えない状態で元の位置に戻し、内容を更新
+            cardContainer.classList.add('no-transition');
+            cardContainer.classList.remove('fly-up');
+            cardInner.classList.remove('flipped');
+            ctrl.updateFlashcardContent();
+            
+            // 一瞬待ってからトランジションを復活（ふわっと表示させる）
+            setTimeout(() => {
+                cardContainer.classList.remove('no-transition');
+            }, 50);
+        }, 500); // CSSのtransition時間と合わせる
+    },
+
+    updateFlashcardContent: () => {
+        const q = ctrl.state.questions[ctrl.state.idx];
+        document.getElementById('fc-en').innerText = q.en;
+        document.getElementById('fc-ja').innerText = q.ja;
+        // 説明と例文を構造的に挿入
+        document.getElementById('fc-ex').innerHTML = `
+            <div class="mb-2 text-left bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                <span class="font-bold text-gray-700 dark:text-gray-200 block mb-1">説明:</span> ${q.ex}
+            </div>
+            <div class="text-left bg-blue-50 dark:bg-blue-900/30 p-2 rounded">
+                <span class="italic text-blue-700 dark:text-blue-300 block mb-1">${q.sEn}</span>
+                <span class="text-gray-600 dark:text-gray-400">${q.sJa}</span>
+            </div>
+        `;
     },
 
     updateAnalysisUI: () => {
@@ -478,7 +566,6 @@ const ctrl = {
     }
 };
 
-// アプリケーション初期化
 ctrl.init();
 </script>
 </body>
