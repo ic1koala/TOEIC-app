@@ -89,7 +89,6 @@
             z-index: 50;
         }
 
-        /* 単語カードアニメーション (iOS対応の修正版) */
         .card-container { perspective: 1000px; }
         .card-inner {
             transition: transform 0.6s;
@@ -99,13 +98,13 @@
         }
         .card-inner.flipped { transform: rotateY(180deg); }
         .card-front, .card-back {
-            -webkit-backface-visibility: hidden; /* iOS Safari用 */
+            -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 1.5rem; /* 角丸を強制 */
-            -webkit-transform: translate3d(0,0,0); /* チラつき防止 */
+            border-radius: 1.5rem;
+            -webkit-transform: translate3d(0,0,0);
         }
         .card-back { transform: rotateY(180deg); }
 
@@ -229,7 +228,7 @@
 let DB = {};
 
 const ctrl = {
-    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false },
+    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false },
 
     init: async () => {
         const h = new Date().getHours();
@@ -245,8 +244,7 @@ const ctrl = {
             btns.classList.remove('pointer-events-none', 'opacity-50');
         } catch (error) {
             console.error('単語データの取得に失敗:', error);
-            document.getElementById('loading-msg').innerText = "データの読み込みに失敗しました。words.jsonを確認してください。";
-            document.getElementById('loading-msg').classList.add('text-red-500');
+            document.getElementById('loading-msg').innerText = "データの読み込みに失敗しました。";
         }
     },
 
@@ -260,13 +258,13 @@ const ctrl = {
     showLevel: () => ctrl.switchScr('scr-level'),
     showMode: () => ctrl.switchScr('scr-mode'),
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
-
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
     start: (mode) => {
         ctrl.state.mode = mode;
         ctrl.state.idx = 0;
         ctrl.state.score = 0;
+        ctrl.state.isChecking = false;
         const data = DB[ctrl.state.level] || DB[400];
         
         if (mode === 4) {
@@ -291,7 +289,7 @@ const ctrl = {
             let q = (mode === 1 || mode === 6) ? w.en : w.ja;
             let a = (mode === 1 || mode === 6) ? w.ja : w.en;
             let pool = words.filter(x => x.en !== w.en).map(x => (mode === 1 || mode === 6 ? x.ja : x.en));
-            let opts = [a, ...pool.slice(0, 3)].sort(() => Math.random() - 0.5);
+            let opts = [a, ...pool.sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
             return { ...w, q, a, opts };
         }).sort(() => Math.random() - 0.5).slice(0, 10);
     },
@@ -313,34 +311,27 @@ const ctrl = {
     },
 
     playWrongSound: () => {
-        const msg = new SpeechSynthesisUtterance("Oh...");
+        const msg = new SpeechSynthesisUtterance("Ohhhh....");
         msg.lang = 'en-US';
-        msg.pitch = 0.5;
+        msg.pitch = 0.6;
         msg.rate = 0.8;
         window.speechSynthesis.speak(msg);
     },
 
     startVoice: () => {
+        if (!('webkitSpeechRecognition' in window)) return;
         document.getElementById('mic-status').classList.remove('hidden');
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("このブラウザは音声認識非対応です（Safari/Chrome推奨）。");
-            return;
-        }
         if (!ctrl.state.recog) {
             ctrl.state.recog = new webkitSpeechRecognition();
             ctrl.state.recog.continuous = true;
             ctrl.state.recog.lang = 'ja-JP';
             ctrl.state.recog.onresult = (e) => {
+                if (ctrl.state.isChecking) return;
                 const res = e.results[e.results.length - 1][0].transcript.toUpperCase();
                 if (/(A|エー|エイ|えー|ア)/.test(res)) ctrl.triggerVoiceAnswer(0);
                 else if (/(B|ビー|びー)/.test(res)) ctrl.triggerVoiceAnswer(1);
                 else if (/(C|シー|しー)/.test(res)) ctrl.triggerVoiceAnswer(2);
                 else if (/(D|ディー|でぃー)/.test(res)) ctrl.triggerVoiceAnswer(3);
-            };
-            ctrl.state.recog.onend = () => {
-                if (ctrl.state.mode === 6 && document.getElementById('expl-panel').classList.contains('hidden') && !document.getElementById('scr-quiz').classList.contains('hidden')) {
-                    try { ctrl.state.recog.start(); } catch(err){}
-                }
             };
         }
         try { ctrl.state.recog.start(); } catch(err){}
@@ -349,19 +340,17 @@ const ctrl = {
     stopVoice: () => {
         document.getElementById('mic-status').classList.add('hidden');
         if (ctrl.state.recog) {
-            ctrl.state.recog.onend = null; 
-            ctrl.state.recog.stop();
+            try { ctrl.state.recog.stop(); } catch(e) {}
         }
     },
 
     triggerVoiceAnswer: (index) => {
         const btns = document.querySelectorAll('#q-choices div');
-        if (btns[index] && document.getElementById('expl-panel').classList.contains('hidden')) {
-            btns[index].click(); 
-        }
+        if (btns[index]) btns[index].click();
     },
 
     render: () => {
+        ctrl.state.isChecking = false;
         const q = ctrl.state.questions[ctrl.state.idx];
         document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${ctrl.state.questions.length}`;
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / ctrl.state.questions.length) * 100}%`;
@@ -380,8 +369,8 @@ const ctrl = {
         });
 
         if (ctrl.state.mode === 6) {
+            ctrl.stopVoice();
             window.speechSynthesis.cancel();
-            ctrl.stopVoice(); 
 
             const msgWord = new SpeechSynthesisUtterance(q.en);
             msgWord.lang = 'en-US';
@@ -391,37 +380,34 @@ const ctrl = {
                     const optsText = `A、${q.opts[0]}。 B、${q.opts[1]}。 C、${q.opts[2]}。 D、${q.opts[3]}。`;
                     const msgOpts = new SpeechSynthesisUtterance(optsText);
                     msgOpts.lang = 'ja-JP';
-                    msgOpts.rate = 0.9;
-                    msgOpts.onend = () => {
-                        ctrl.startVoice();
-                    };
+                    msgOpts.rate = 1.0;
+                    msgOpts.onend = () => ctrl.startVoice();
                     window.speechSynthesis.speak(msgOpts);
-                }, 1000);
+                }, 500);
             };
             window.speechSynthesis.speak(msgWord);
         }
     },
 
     check: (btn, val) => {
+        if (ctrl.state.isChecking) return;
+        ctrl.state.isChecking = true;
+        
         const q = ctrl.state.questions[ctrl.state.idx];
         const isCorrect = (val === q.a);
-        const btns = document.querySelectorAll('#q-choices div');
-        btns.forEach(b => b.onclick = null);
-
-        if (ctrl.state.mode === 6) {
-            ctrl.stopVoice(); 
-            window.speechSynthesis.cancel();
-            if (isCorrect) ctrl.playCorrectSound();
-            else ctrl.playWrongSound();
-        }
+        
+        ctrl.stopVoice();
+        window.speechSynthesis.cancel();
 
         if (isCorrect) {
             ctrl.state.score++;
             btn.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900');
             ctrl.triggerEffect('correct-effect');
+            if (ctrl.state.mode === 6) ctrl.playCorrectSound();
         } else {
             btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900');
             ctrl.triggerEffect('wrong-effect');
+            if (ctrl.state.mode === 6) ctrl.playWrongSound();
             if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
         }
 
@@ -430,12 +416,11 @@ const ctrl = {
         document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
         
-        let stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
-        stats.total++; if(isCorrect) stats.correct++;
-        localStorage.setItem('toeic_v2', JSON.stringify(stats));
-
         if (ctrl.state.mode === 6) {
-            setTimeout(() => ctrl.next(), 2500); 
+            setTimeout(() => {
+                if (document.getElementById('scr-quiz').classList.contains('hidden')) return;
+                ctrl.next();
+            }, 3000); 
         }
     },
 
@@ -455,6 +440,8 @@ const ctrl = {
             return;
         }
 
+        cardInner.classList.remove('flipped'); // 次のカードへ行く前に強制的に表面に戻す
+
         cardContainer.classList.add('fly-up');
 
         setTimeout(() => {
@@ -463,7 +450,6 @@ const ctrl = {
             
             cardContainer.classList.add('no-transition');
             cardContainer.classList.remove('fly-up');
-            cardInner.classList.remove('flipped');
             ctrl.updateFlashcardContent();
             
             setTimeout(() => {
