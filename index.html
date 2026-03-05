@@ -83,7 +83,7 @@
             100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
         }
 
-        /* --- HOME BUTTON (Updated) --- */
+        /* --- HOME BUTTON --- */
         .bottom-nav {
             padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
             box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
@@ -92,13 +92,13 @@
         }
         .home-hub {
             position: absolute;
-            bottom: 22px; /* Lower position */
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
             width: 58px;
             height: 58px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5); /* Whitish frosted glass */
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
             display: flex;
@@ -111,7 +111,7 @@
             -webkit-backdrop-filter: blur(20px);
         }
 
-        /* --- FLASHCARD SWIPE (Updated) --- */
+        /* --- FLASHCARD SWIPE --- */
         .card-container { perspective: 1000px; touch-action: none; position: relative; }
         .card-inner {
             transition: transform 0.6s;
@@ -131,7 +131,6 @@
         }
         .card-back { transform: rotateY(180deg); }
 
-        /* スワイプ中のラベル表示 */
         #swipe-label-left, #swipe-label-right {
             position: absolute; top: 20%;
             padding: 0.5rem 1.5rem; border-radius: 99px;
@@ -247,7 +246,7 @@
             <p id="analysis-summary" class="text-xs text-gray-500 dark:text-gray-400"></p>
         </div>
         <div class="glass-card flex-grow overflow-hidden flex flex-col mb-4">
-            <h4 class="text-xs font-bold mb-3 text-center border-b border-gray-300 dark:border-gray-600 pb-2">要復習リスト (間違いえた単語)</h4>
+            <h4 class="text-xs font-bold mb-3 text-center border-b border-gray-300 dark:border-gray-600 pb-2">要復習リスト (間違えた単語)</h4>
             <div id="wrong-list" class="space-y-2 overflow-y-auto pr-1"></div>
         </div>
         
@@ -354,7 +353,6 @@ const ctrl = {
             const btn = document.createElement('div');
             btn.className = "ios-btn glass-card flex items-center font-bold text-sm py-4 mb-2 border dark:border-gray-600";
             const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
-            // 選択肢のアイコンを ABCD から 1234 へ変更
             btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 flex items-center justify-center text-[10px] mr-4">${i+1}</span> <span class="flex-1 choice-label" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
@@ -367,13 +365,13 @@ const ctrl = {
             msgWord.onend = () => {
                 setTimeout(() => {
                     if (ctrl.state.isChecking) return;
-                    // 読み上げを「1番、何々。2番、何々」に変更
-                    const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
+                    // 修正点：'番'を削除し、読み上げをテンポアップ
+                    const optsText = q.choiceData.map((c, i) => `${i+1}、${c.ja}`).join('。');
                     const msgOpts = new SpeechSynthesisUtterance(optsText);
                     msgOpts.lang = 'ja-JP';
                     msgOpts.onend = () => ctrl.startVoice();
                     window.speechSynthesis.speak(msgOpts);
-                }, 1500); 
+                }, 1200); 
             };
             window.speechSynthesis.speak(msgWord);
         }
@@ -393,16 +391,43 @@ const ctrl = {
             if (originalJa === q.ja || originalEn === q.en) {
                 if (originalEn === q.en) {
                     b.classList.add('border-green-500', 'bg-green-100', 'dark:bg-green-900/40');
-                    b.innerHTML += '<i class="fas fa-wrench text-green-600 ml-2"></i>';
+                    // 修正点：レンチからチェックマークに変更
+                    b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>';
                 }
             }
         });
-        if (isCorrect) { ctrl.state.score++; ctrl.triggerEffect('correct-effect'); }
-        else { btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/40'); ctrl.triggerEffect('wrong-effect'); if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); }
+        if (isCorrect) { 
+            ctrl.state.score++; 
+            ctrl.triggerEffect('correct-effect'); 
+            ctrl.playCorrectSound(); // 修正点：クイズ風のピンポーン音
+        } else { 
+            btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/40'); 
+            ctrl.triggerEffect('wrong-effect'); 
+            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
+        }
         document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
         document.getElementById('ex-en').innerText = q.sEn; document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
         if (ctrl.state.mode === 6) setTimeout(() => { if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); }, 4000);
+    },
+
+    playCorrectSound: () => {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            // クイズ番組風の「ピンポーン」音程
+            const now = ctx.currentTime;
+            osc.frequency.setValueAtTime(1046.50, now); // C6
+            osc.frequency.setValueAtTime(1318.51, now + 0.12); // E6
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        } catch(e) {}
     },
 
     triggerEffect: (id) => {
@@ -429,7 +454,6 @@ const ctrl = {
             const baseTransform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
             inner.style.transform = `${baseTransform} translateX(${currentX}px) rotate(${rotation}deg)`;
             
-            // ラベルの透明度調整
             if (currentX > 50) labelR.style.opacity = Math.min(currentX / 150, 1);
             else if (currentX < -50) labelL.style.opacity = Math.min(Math.abs(currentX) / 150, 1);
             else { labelL.style.opacity = 0; labelR.style.opacity = 0; }
@@ -440,9 +464,9 @@ const ctrl = {
             const duration = Date.now() - startTime;
             labelL.style.opacity = 0; labelR.style.opacity = 0;
             
-            // タップ判定（移動が少なく、短時間の場合）
-            if (Math.abs(currentX) < 10 && duration < 200) {
-                inner.style.transition = 'transform 0.6s';
+            // 修正：タップ（反転）とスワイプ（移動）の判定を明確化
+            if (Math.abs(currentX) < 15 && duration < 250) {
+                inner.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 inner.classList.toggle('flipped');
                 currentX = 0; return;
             }
@@ -510,7 +534,6 @@ const ctrl = {
             ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
             ctrl.state.recog.onresult = (e) => {
                 const res = e.results[e.results.length - 1][0].transcript;
-                // 日本語の数字認識を強化
                 if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
                 else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
                 else if (/(3|３|さん|サン)/.test(res)) ctrl.triggerVoiceAnswer(2);
