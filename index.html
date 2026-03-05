@@ -87,9 +87,30 @@
             padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
             box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
             z-index: 50;
+            position: relative;
         }
 
-        .card-container { perspective: 1000px; }
+        .home-hub {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            color: var(--ios-blue);
+            font-size: 1.2rem;
+            backdrop-filter: blur(15px);
+        }
+
+        .card-container { perspective: 1000px; touch-action: none; }
         .card-inner {
             transition: transform 0.6s;
             transform-style: preserve-3d;
@@ -113,10 +134,11 @@
             opacity: 0;
             transition: transform 0.5s ease-in, opacity 0.5s ease-in !important;
         }
-        .no-transition {
-            transition: none !important;
-        }
+        /* スワイプアニメーション用 */
+        .swipe-right { transform: translateX(150%) rotate(20deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
+        .swipe-left { transform: translateX(-150%) rotate(-20deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
 
+        .no-transition { transition: none !important; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -149,6 +171,15 @@
     <div id="scr-mode" class="flex-grow hidden p-6 flex flex-col scroll-v">
         <button onclick="ctrl.showLevel()" class="text-blue-600 dark:text-blue-400 text-xs font-bold mb-6 flex items-center gap-1"><i class="fas fa-chevron-left"></i> 戻る</button>
         <h2 class="text-xl font-bold mb-6 text-center">トレーニング選択</h2>
+        
+        <div class="glass-card mb-6 py-2 px-4 flex justify-between items-center">
+            <span class="text-[10px] font-bold text-gray-500 uppercase">Shuffle Mode</span>
+            <select id="shuffle-select" class="bg-transparent text-xs font-bold outline-none text-blue-600">
+                <option value="random">ランダム</option>
+                <option value="mistake">最近のミス優先</option>
+            </select>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
             <div onclick="ctrl.start(1)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-blue);"><i class="fas fa-font text-xl mb-2"></i><p class="font-bold text-xs">英 → 日</p></div>
             <div onclick="ctrl.start(2)" class="ios-btn p-5 rounded-2xl text-white shadow-lg text-center" style="background: var(--ios-green);"><i class="fas fa-language text-xl mb-2"></i><p class="font-bold text-xs">日 → 英</p></div>
@@ -165,7 +196,7 @@
         </div>
         <div class="px-6 py-2"><div class="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full bg-blue-500 w-0 transition-all duration-300"></div></div></div>
         
-        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-xs py-1"><i class="fas fa-microphone"></i> 回答（A, B, C, D）を聞き取り中...</div>
+        <div id="mic-status" class="hidden text-center text-red-500 font-bold animate-pulse text-[10px] py-1"><i class="fas fa-microphone"></i> 聞き取り中...</div>
 
         <div class="flex-grow scroll-v px-6 pt-2 pb-10">
             <div class="glass-card mb-4">
@@ -189,8 +220,8 @@
 
     <div id="scr-flashcard" class="hidden flex-grow flex flex-col items-center justify-center p-6 w-full relative">
         <button onclick="ctrl.showMode()" class="absolute top-4 left-6 text-blue-600 dark:text-blue-400 text-xs font-bold"><i class="fas fa-times"></i> 終了</button>
-        <div class="card-container w-full max-w-sm aspect-video mb-8" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
-            <div class="card-inner cursor-pointer">
+        <div id="fc-container" class="card-container w-full max-w-sm aspect-[4/3] mb-8">
+            <div class="card-inner cursor-pointer h-full" onclick="this.classList.toggle('flipped')">
                 <div class="card-front glass-card border-2 border-blue-400 dark:border-blue-600 shadow-xl">
                     <span id="fc-en" class="text-3xl font-black text-gray-900 dark:text-white">Word</span>
                 </div>
@@ -200,8 +231,11 @@
                 </div>
             </div>
         </div>
-        <p class="text-[10px] text-gray-400 mb-4">カードをタップして裏返す</p>
-        <button onclick="ctrl.nextFlash()" class="ios-btn w-3/4 py-4 bg-blue-600 text-white rounded-full font-black text-sm shadow-lg">次のカードへ</button>
+        <p class="text-[9px] text-gray-400 mb-2">タップで裏返し / 左右スワイプで振り分け</p>
+        <div class="flex gap-4 w-full justify-center">
+            <div class="w-10 h-10 rounded-full border border-red-300 flex items-center justify-center text-red-500 text-xs opacity-50"><i class="fas fa-times"></i></div>
+            <div class="w-10 h-10 rounded-full border border-blue-300 flex items-center justify-center text-blue-500 text-xs opacity-50"><i class="fas fa-check"></i></div>
+        </div>
     </div>
 
     <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
@@ -209,17 +243,30 @@
             <h2 class="text-4xl font-black mb-1"><span id="res-score">0</span>/10</h2>
             <p id="analysis-summary" class="text-xs text-gray-500 dark:text-gray-400"></p>
         </div>
-        <div class="glass-card mb-10">
+        <div class="glass-card flex-grow overflow-hidden flex flex-col mb-4">
             <h4 class="text-xs font-bold mb-3 text-center border-b border-gray-300 dark:border-gray-600 pb-2">要復習リスト (間違えた単語)</h4>
-            <div id="wrong-list" class="space-y-2 max-height-60"></div>
+            <div id="wrong-list" class="space-y-2 overflow-y-auto pr-1"></div>
         </div>
-        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm">メニューへ戻る</button>
+        
+        <div class="px-2 mb-6 space-y-1">
+            <div id="rank-counts" class="flex justify-between text-[8px] text-gray-400 font-bold uppercase tracking-widest">
+                </div>
+            <p id="app-version" class="text-[8px] text-gray-400 text-center opacity-60">
+                LAST UPDATED: 2026-03-05 (VIA GITHUB)
+            </p>
+        </div>
+
+        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shrink-0">メニューへ戻る</button>
     </div>
 
     <div class="bottom-nav glass-card rounded-none rounded-t-[30px] flex justify-around items-center pt-3 pb-8 w-full shrink-0">
         <div onclick="ctrl.showMode()" class="text-blue-600 dark:text-blue-400 flex flex-col items-center ios-btn"><i class="fas fa-pencil-alt text-lg"></i><span class="text-[9px] font-bold mt-1">学習</span></div>
         <div onclick="ctrl.start(5)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-clone text-lg"></i><span class="text-[9px] font-bold mt-1">カード</span></div>
-        <div onclick="ctrl.start(6)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-walking text-lg"></i><span class="text-[9px] font-bold mt-1">Aruki</span></div>
+        
+        <div onclick="ctrl.showLevel()" class="home-hub ios-btn">
+            <i class="fas fa-home"></i>
+        </div>
+        <div style="width: 40px;"></div> <div onclick="ctrl.start(6)" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-walking text-lg"></i><span class="text-[9px] font-bold mt-1">Aruki</span></div>
         <div onclick="ctrl.showAnalysis()" class="text-gray-400 dark:text-gray-300 flex flex-col items-center ios-btn"><i class="fas fa-chart-pie text-lg"></i><span class="text-[9px] font-bold mt-1">分析</span></div>
     </div>
 </div>
@@ -231,8 +278,10 @@ const ctrl = {
     state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false },
 
     init: async () => {
-        const h = new Date().getHours();
-        if (h >= 18 || h < 7) document.documentElement.classList.add('dark');
+        // システム設定に基づいたダークモードの初期化
+        ctrl.applyTheme();
+        // デバイスの設定変更を監視
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
 
         try {
             const response = await fetch('words.json');
@@ -240,11 +289,25 @@ const ctrl = {
             DB = await response.json();
             
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
-            const btns = document.getElementById('level-btns');
-            btns.classList.remove('pointer-events-none', 'opacity-50');
+            document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
+            
+            // スワイプイベントの登録
+            ctrl.initSwipeGestures();
         } catch (error) {
             console.error('単語データの取得に失敗:', error);
             document.getElementById('loading-msg').innerText = "データの読み込みに失敗しました。";
+        }
+    },
+
+    applyTheme: () => {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            // 時間帯も一応チェック（18時〜7時）
+            const h = new Date().getHours();
+            if (h >= 18 || h < 7) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         }
     },
 
@@ -265,13 +328,28 @@ const ctrl = {
         ctrl.state.idx = 0;
         ctrl.state.score = 0;
         ctrl.state.isChecking = false;
-        const data = DB[ctrl.state.level] || DB[400];
         
+        const data = DB[ctrl.state.level] || DB[400];
+        const shuffleType = document.getElementById('shuffle-select').value;
+
         if (mode === 4) {
             if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！"); return; }
             ctrl.state.questions = [...ctrl.state.wrongPool].sort(() => Math.random() - 0.5);
         } else {
-            ctrl.state.questions = ctrl.buildQs(mode, data.words);
+            // シャッフルロジックの適用
+            let sourceWords = [...data.words];
+            if (shuffleType === 'mistake' && ctrl.state.wrongPool.length > 0) {
+                // 苦手な単語を優先的にリストの先頭に持ってくる
+                const wrongIds = new Set(ctrl.state.wrongPool.map(w => w.en));
+                sourceWords.sort((a, b) => {
+                    const aIsWrong = wrongIds.has(a.en) ? 1 : 0;
+                    const bIsWrong = wrongIds.has(b.en) ? 1 : 0;
+                    return bIsWrong - aIsWrong || Math.random() - 0.5;
+                });
+            } else {
+                sourceWords.sort(() => Math.random() - 0.5);
+            }
+            ctrl.state.questions = ctrl.buildQs(mode, sourceWords);
         }
 
         if (mode === 5) { 
@@ -289,73 +367,8 @@ const ctrl = {
             let q = (mode === 1 || mode === 6) ? w.en : w.ja;
             let others = words.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
             let choices = [w, ...others].sort(() => Math.random() - 0.5);
-            
-            // 選択肢オブジェクトをそのまま持つ（英単語を隠すため）
-            return { 
-                ...w, 
-                q, 
-                a: (mode === 1 || mode === 6) ? w.ja : w.en, 
-                choiceData: choices // 各選択肢の元の単語データを保持
-            };
-        }).sort(() => Math.random() - 0.5).slice(0, 10);
-    },
-
-    playCorrectSound: () => {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(1046.50, ctx.currentTime);
-            osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.15); 
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.5);
-        } catch(e) {}
-    },
-
-    playWrongSound: () => {
-        const msg = new SpeechSynthesisUtterance("Ohhhh....");
-        msg.lang = 'en-US';
-        msg.pitch = 0.6;
-        msg.rate = 0.8;
-        window.speechSynthesis.speak(msg);
-    },
-
-    startVoice: () => {
-        if (!('webkitSpeechRecognition' in window)) return;
-        document.getElementById('mic-status').classList.remove('hidden');
-        if (!ctrl.state.recog) {
-            ctrl.state.recog = new webkitSpeechRecognition();
-            ctrl.state.recog.continuous = true;
-            ctrl.state.recog.interimResults = false; // 確定した結果のみ採用
-            ctrl.state.recog.lang = 'ja-JP';
-            ctrl.state.recog.onresult = (e) => {
-                if (ctrl.state.isChecking) return;
-                // 最新の確定結果を取得
-                const res = e.results[e.results.length - 1][0].transcript.toUpperCase();
-                console.log("Recognized:", res);
-                if (/(A|エー|エイ|えー|ア)/.test(res)) ctrl.triggerVoiceAnswer(0);
-                else if (/(B|ビー|びー)/.test(res)) ctrl.triggerVoiceAnswer(1);
-                else if (/(C|シー|しー)/.test(res)) ctrl.triggerVoiceAnswer(2);
-                else if (/(D|ディー|でぃー)/.test(res)) ctrl.triggerVoiceAnswer(3);
-            };
-        }
-        try { ctrl.state.recog.start(); } catch(err){}
-    },
-
-    stopVoice: () => {
-        document.getElementById('mic-status').classList.add('hidden');
-        if (ctrl.state.recog) {
-            try { ctrl.state.recog.stop(); } catch(e) {}
-        }
-    },
-
-    triggerVoiceAnswer: (index) => {
-        const btns = document.querySelectorAll('#q-choices div');
-        if (btns[index]) btns[index].click();
+            return { ...w, q, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
+        }).slice(0, 10);
     },
 
     render: () => {
@@ -371,12 +384,9 @@ const ctrl = {
         choiceArea.innerHTML = "";
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
-            btn.className = "ios-btn glass-card flex items-center font-bold text-sm py-4 mb-3 border dark:border-gray-600";
-            
-            // 解答前は日本語のみ表示
+            btn.className = "ios-btn glass-card flex items-center font-bold text-sm py-4 mb-2 border dark:border-gray-600";
             const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
-            btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 flex items-center justify-center text-xs mr-4">${String.fromCharCode(65+i)}</span> <span class="flex-1 choice-label" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
-            
+            btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 flex items-center justify-center text-[10px] mr-4">${String.fromCharCode(65+i)}</span> <span class="flex-1 choice-label" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
         });
@@ -388,16 +398,14 @@ const ctrl = {
             msgWord.lang = 'en-US';
             msgWord.rate = 0.85;
             msgWord.onend = () => {
-                // 問題読み上げ完了後、3秒待ってから選択肢読み上げ
                 setTimeout(() => {
                     if (ctrl.state.isChecking) return;
                     const optsText = q.choiceData.map((c, i) => `${String.fromCharCode(65+i)}、${c.ja}`).join('。');
                     const msgOpts = new SpeechSynthesisUtterance(optsText);
                     msgOpts.lang = 'ja-JP';
-                    msgOpts.rate = 1.0;
                     msgOpts.onend = () => ctrl.startVoice();
                     window.speechSynthesis.speak(msgOpts);
-                }, 3000); 
+                }, 2000); 
             };
             window.speechSynthesis.speak(msgWord);
         }
@@ -406,39 +414,31 @@ const ctrl = {
     check: (btn, val) => {
         if (ctrl.state.isChecking) return;
         ctrl.state.isChecking = true;
-        
         const q = ctrl.state.questions[ctrl.state.idx];
         const isCorrect = (val === q.a);
         
         ctrl.stopVoice();
-        window.speechSynthesis.cancel();
-
-        // 全ボタンを走査して正解をハイライトし、英単語を追記
         const allBtns = document.querySelectorAll('#q-choices div');
         allBtns.forEach(b => {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
-            
-            // 解答後に (英単語) を表示する
-            if (ctrl.state.mode === 1 || ctrl.state.mode === 6) {
-                labelEl.innerText = `${originalJa} (${originalEn})`;
-            }
+            if (ctrl.state.mode === 1 || ctrl.state.mode === 6) labelEl.innerText = `${originalJa} (${originalEn})`;
 
-            if (originalJa === q.ja) {
-                b.classList.add('border-green-500', 'bg-green-100', 'dark:bg-green-900/40');
-                b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>'; 
+            if (originalJa === q.ja || originalEn === q.en) {
+                if (originalEn === q.en) {
+                    b.classList.add('border-green-500', 'bg-green-100', 'dark:bg-green-900/40');
+                    b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>';
+                }
             }
         });
 
         if (isCorrect) {
             ctrl.state.score++;
             ctrl.triggerEffect('correct-effect');
-            if (ctrl.state.mode === 6) ctrl.playCorrectSound();
         } else {
             btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/40');
             ctrl.triggerEffect('wrong-effect');
-            if (ctrl.state.mode === 6) ctrl.playWrongSound();
             if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
         }
 
@@ -447,12 +447,7 @@ const ctrl = {
         document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
         
-        if (ctrl.state.mode === 6) {
-            // Arukiモード時、5秒後に次へ
-            setTimeout(() => {
-                if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next();
-            }, 5000); 
-        }
+        if (ctrl.state.mode === 6) setTimeout(() => { if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); }, 4000);
     },
 
     triggerEffect: (id) => {
@@ -461,9 +456,48 @@ const ctrl = {
         setTimeout(() => { el.style.display = 'none'; }, 600);
     },
 
+    // --- 単語カード & スワイプ ---
+    initSwipeGestures: () => {
+        const container = document.getElementById('fc-container');
+        let startX = 0;
+        let currentX = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            container.querySelector('.card-inner').style.transition = 'none';
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX - startX;
+            const rotation = currentX / 20;
+            container.querySelector('.card-inner').style.transform = `translateX(${currentX}px) rotate(${rotation}deg)`;
+        });
+
+        container.addEventListener('touchend', (e) => {
+            const cardInner = container.querySelector('.card-inner');
+            cardInner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (currentX > 100) {
+                // 右スワイプ: 覚えた
+                cardInner.classList.add('swipe-right');
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else if (currentX < -100) {
+                // 左スワイプ: まだ
+                const q = ctrl.state.questions[ctrl.state.idx];
+                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
+                cardInner.classList.add('swipe-left');
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else {
+                // 戻る
+                cardInner.style.transform = cardInner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+            }
+            currentX = 0;
+        });
+    },
+
     nextFlash: () => {
-        const cardInner = document.querySelector('.card-inner');
-        const cardContainer = document.querySelector('.card-container');
+        const container = document.getElementById('fc-container');
+        const cardInner = container.querySelector('.card-inner');
 
         if (!ctrl.state.flashcardInit) {
             ctrl.state.flashcardInit = true;
@@ -471,18 +505,17 @@ const ctrl = {
             return;
         }
 
-        cardInner.classList.remove('flipped');
-
+        // 次のカードへ
         setTimeout(() => {
-            cardContainer.classList.add('fly-up');
-            setTimeout(() => {
-                ctrl.state.idx++;
-                if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
-                cardContainer.classList.add('no-transition');
-                cardContainer.classList.remove('fly-up');
-                ctrl.updateFlashcardContent();
-                setTimeout(() => { cardContainer.classList.remove('no-transition'); }, 50);
-            }, 500);
+            cardInner.classList.add('no-transition');
+            cardInner.classList.remove('flipped', 'swipe-right', 'swipe-left');
+            cardInner.style.transform = '';
+            
+            ctrl.state.idx++;
+            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
+            
+            ctrl.updateFlashcardContent();
+            setTimeout(() => cardInner.classList.remove('no-transition'), 50);
         }, 100);
     },
 
@@ -493,7 +526,7 @@ const ctrl = {
         document.getElementById('fc-ex').innerHTML = `
             <div class="text-left bg-blue-50 dark:bg-blue-900/30 p-2 rounded">
                 <span class="italic text-blue-700 dark:text-blue-300 block mb-1">${q.sEn}</span>
-                <span class="text-gray-600 dark:text-gray-400">${q.sJa}</span>
+                <span class="text-gray-600 dark:text-gray-400 text-[10px]">${q.sJa}</span>
             </div>
         `;
     },
@@ -503,15 +536,23 @@ const ctrl = {
         const rate = stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0;
         document.getElementById('analysis-summary').innerText = `通算正解率: ${rate}% (${stats.total}問中)`;
         
+        // ランク別登録数の表示
+        const rankContainer = document.getElementById('rank-counts');
+        rankContainer.innerHTML = "";
+        [400, 600, 800, 900].forEach(lv => {
+            const count = DB[lv] ? DB[lv].words.length : 0;
+            rankContainer.innerHTML += `<span>${lv}: ${count} words</span>`;
+        });
+
         const listEl = document.getElementById('wrong-list');
         listEl.innerHTML = "";
         ctrl.state.wrongPool.forEach(w => {
             const item = document.createElement('div');
-            item.className = "flex justify-between p-3 border-b border-gray-200 dark:border-gray-700 text-xs";
-            item.innerHTML = `<span class="font-bold text-blue-700 dark:text-blue-400">${w.en}</span><span class="text-gray-600 dark:text-gray-400">${w.ja}</span>`;
+            item.className = "flex justify-between p-3 glass-card dark:border-gray-700 text-[10px] mb-1";
+            item.innerHTML = `<span class="font-bold text-blue-700 dark:text-blue-400">${w.en}</span><span class="text-gray-500">${w.ja}</span>`;
             listEl.appendChild(item);
         });
-        if(ctrl.state.wrongPool.length === 0) listEl.innerHTML = "<p class='text-center text-gray-400 p-4'>まだ苦手な単語はありません！</p>";
+        if(ctrl.state.wrongPool.length === 0) listEl.innerHTML = "<p class='text-center text-gray-400 p-4 text-xs'>Excellent! 苦手な単語はありません。</p>";
     },
 
     next: () => {
@@ -532,6 +573,33 @@ const ctrl = {
         msg.lang = 'en-US';
         msg.rate = 0.85;
         window.speechSynthesis.speak(msg);
+    },
+
+    stopVoice: () => {
+        document.getElementById('mic-status').classList.add('hidden');
+        if (ctrl.state.recog) { try { ctrl.state.recog.stop(); } catch(e) {} }
+    },
+
+    startVoice: () => {
+        if (!('webkitSpeechRecognition' in window)) return;
+        document.getElementById('mic-status').classList.remove('hidden');
+        if (!ctrl.state.recog) {
+            ctrl.state.recog = new webkitSpeechRecognition();
+            ctrl.state.recog.lang = 'ja-JP';
+            ctrl.state.recog.onresult = (e) => {
+                const res = e.results[e.results.length - 1][0].transcript.toUpperCase();
+                if (/(A|エー|ア)/.test(res)) ctrl.triggerVoiceAnswer(0);
+                else if (/(B|ビー)/.test(res)) ctrl.triggerVoiceAnswer(1);
+                else if (/(C|シー)/.test(res)) ctrl.triggerVoiceAnswer(2);
+                else if (/(D|ディー)/.test(res)) ctrl.triggerVoiceAnswer(3);
+            };
+        }
+        try { ctrl.state.recog.start(); } catch(err){}
+    },
+
+    triggerVoiceAnswer: (index) => {
+        const btns = document.querySelectorAll('#q-choices div');
+        if (btns[index]) btns[index].click();
     }
 };
 
