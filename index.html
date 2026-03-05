@@ -209,13 +209,19 @@
                     <button onclick="ctrl.speak()" class="ios-btn w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fas fa-volume-up"></i></button>
                 </div>
             </div>
-            <div id="q-choices" class="space-y-2 mb-6"></div>
+            
+            <div id="q-choices" class="space-y-2 mb-4"></div>
+            
+            <button id="btn-repeat-aruki" onclick="ctrl.readAruki()" class="hidden ios-btn w-full mb-6 py-3 bg-green-500 text-white rounded-xl font-bold text-sm shadow-md">
+                <i class="fas fa-redo mr-2"></i>もう一度読み上げる
+            </button>
+
             <div id="expl-panel" class="hidden glass-card border-l-4 border-blue-500 mb-10">
                 <h4 class="font-black text-blue-600 text-[9px] uppercase mb-1">Explanation</h4>
-                <p id="expl-text" class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed mb-3"></p>
-                <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg text-[11px] space-y-2">
-                    <p id="ex-en" class="text-blue-700 dark:text-blue-400 italic"></p>
-                    <p id="ex-ja" class="text-gray-500 dark:text-gray-400"></p>
+                <p id="expl-text" class="text-sm font-bold text-gray-800 dark:text-gray-200 leading-relaxed mb-3"></p>
+                <div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg text-sm space-y-2">
+                    <p id="ex-en" class="text-blue-700 dark:text-blue-400 italic font-medium"></p>
+                    <p id="ex-ja" class="text-gray-600 dark:text-gray-400"></p>
                 </div>
                 <button onclick="ctrl.next()" class="ios-btn w-full mt-4 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold text-sm">次へ</button>
             </div>
@@ -272,9 +278,10 @@
 
 <script>
 let DB = {};
+let audioCtx = null; // 正解音用
 
 const ctrl = {
-    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false },
+    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false, arukiNextTimer: null, arukiReadTimer: null },
 
     init: async () => {
         ctrl.applyTheme();
@@ -291,6 +298,23 @@ const ctrl = {
         }
     },
 
+    // ユーザー操作時にAudioをアンロックする（音が鳴らない問題の解決）
+    initAudio: () => {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(0);
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+    },
+
     applyTheme: () => {
         const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (isDark) document.documentElement.classList.add('dark');
@@ -303,16 +327,19 @@ const ctrl = {
 
     switchScr: (id) => {
         ctrl.stopVoice(); window.speechSynthesis.cancel();
+        if (ctrl.state.arukiNextTimer) clearTimeout(ctrl.state.arukiNextTimer);
+        if (ctrl.state.arukiReadTimer) clearTimeout(ctrl.state.arukiReadTimer);
         ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     },
 
-    showLevel: () => ctrl.switchScr('scr-level'),
-    showMode: () => ctrl.switchScr('scr-mode'),
+    showLevel: () => { ctrl.initAudio(); ctrl.switchScr('scr-level'); },
+    showMode: () => { ctrl.switchScr('scr-mode'); },
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
-    setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
+    setLevel: (l) => { ctrl.initAudio(); ctrl.state.level = l; ctrl.showMode(); },
 
     start: (mode) => {
+        ctrl.initAudio();
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         const data = DB[ctrl.state.level] || DB[400];
         const shuffleType = document.getElementById('shuffle-select').value;
@@ -340,6 +367,8 @@ const ctrl = {
 
     render: () => {
         ctrl.state.isChecking = false;
+        if (ctrl.state.arukiNextTimer) clearTimeout(ctrl.state.arukiNextTimer);
+        
         const q = ctrl.state.questions[ctrl.state.idx];
         document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / 10`;
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / 10) * 100}%`;
@@ -359,30 +388,46 @@ const ctrl = {
         });
 
         if (ctrl.state.mode === 6) {
-            ctrl.stopVoice(); window.speechSynthesis.cancel();
-            const msgWord = new SpeechSynthesisUtterance(q.en);
-            msgWord.lang = 'en-US'; msgWord.rate = 0.85;
-            msgWord.onend = () => {
-                setTimeout(() => {
-                    if (ctrl.state.isChecking) return;
-                    // 修正点：'番'を削除し、読み上げをテンポアップ
-                    const optsText = q.choiceData.map((c, i) => `${i+1}、${c.ja}`).join('。');
-                    const msgOpts = new SpeechSynthesisUtterance(optsText);
-                    msgOpts.lang = 'ja-JP';
-                    msgOpts.onend = () => ctrl.startVoice();
-                    window.speechSynthesis.speak(msgOpts);
-                }, 1200); 
-            };
-            window.speechSynthesis.speak(msgWord);
+            document.getElementById('btn-repeat-aruki').classList.remove('hidden');
+            ctrl.readAruki();
+        } else {
+            document.getElementById('btn-repeat-aruki').classList.add('hidden');
         }
+    },
+
+    readAruki: () => {
+        ctrl.stopVoice(); window.speechSynthesis.cancel();
+        if (ctrl.state.arukiReadTimer) clearTimeout(ctrl.state.arukiReadTimer);
+        
+        const q = ctrl.state.questions[ctrl.state.idx];
+        const msgWord = new SpeechSynthesisUtterance(q.en);
+        msgWord.lang = 'en-US'; msgWord.rate = 0.85;
+        msgWord.onend = () => {
+            ctrl.state.arukiReadTimer = setTimeout(() => {
+                if (ctrl.state.isChecking) return;
+                // 「1番、〇〇」に戻しました
+                const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
+                const msgOpts = new SpeechSynthesisUtterance(optsText);
+                msgOpts.lang = 'ja-JP';
+                msgOpts.onend = () => ctrl.startVoice();
+                window.speechSynthesis.speak(msgOpts);
+            }, 1200); 
+        };
+        window.speechSynthesis.speak(msgWord);
     },
 
     check: (btn, val) => {
         if (ctrl.state.isChecking) return;
         ctrl.state.isChecking = true;
+        
+        // スキップ防止用タイマーリセット
+        if (ctrl.state.arukiReadTimer) clearTimeout(ctrl.state.arukiReadTimer);
+        if (ctrl.state.arukiNextTimer) clearTimeout(ctrl.state.arukiNextTimer);
+
         const q = ctrl.state.questions[ctrl.state.idx];
         const isCorrect = (val === q.a);
         ctrl.stopVoice();
+        
         document.querySelectorAll('#q-choices div').forEach(b => {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
@@ -391,35 +436,43 @@ const ctrl = {
             if (originalJa === q.ja || originalEn === q.en) {
                 if (originalEn === q.en) {
                     b.classList.add('border-green-500', 'bg-green-100', 'dark:bg-green-900/40');
-                    // 修正点：レンチからチェックマークに変更
                     b.innerHTML += '<i class="fas fa-check text-green-600 ml-2"></i>';
                 }
             }
         });
+        
         if (isCorrect) { 
             ctrl.state.score++; 
             ctrl.triggerEffect('correct-effect'); 
-            ctrl.playCorrectSound(); // 修正点：クイズ風のピンポーン音
+            ctrl.playCorrectSound(); 
         } else { 
             btn.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/40'); 
             ctrl.triggerEffect('wrong-effect'); 
             if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
         }
+        
         document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
         document.getElementById('ex-en').innerText = q.sEn; document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
-        if (ctrl.state.mode === 6) setTimeout(() => { if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); }, 4000);
+        
+        // Arukiモード時の自動遷移
+        if (ctrl.state.mode === 6) {
+            ctrl.state.arukiNextTimer = setTimeout(() => { 
+                if (!document.getElementById('scr-quiz').classList.contains('hidden') && ctrl.state.isChecking) {
+                    ctrl.next(); 
+                }
+            }, 4500);
+        }
     },
 
     playCorrectSound: () => {
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
+            if (!audioCtx) ctrl.initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine';
-            // クイズ番組風の「ピンポーン」音程
-            const now = ctx.currentTime;
+            const now = audioCtx.currentTime;
             osc.frequency.setValueAtTime(1046.50, now); // C6
             osc.frequency.setValueAtTime(1318.51, now + 0.12); // E6
             gain.gain.setValueAtTime(0, now);
@@ -427,7 +480,7 @@ const ctrl = {
             gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
             osc.start(now);
             osc.stop(now + 0.6);
-        } catch(e) {}
+        } catch(e) { console.error(e); }
     },
 
     triggerEffect: (id) => {
@@ -464,7 +517,6 @@ const ctrl = {
             const duration = Date.now() - startTime;
             labelL.style.opacity = 0; labelR.style.opacity = 0;
             
-            // 修正：タップ（反転）とスワイプ（移動）の判定を明確化
             if (Math.abs(currentX) < 15 && duration < 250) {
                 inner.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 inner.classList.toggle('flipped');
@@ -522,7 +574,13 @@ const ctrl = {
         });
     },
 
-    next: () => { ctrl.state.idx++; if (ctrl.state.idx < 10) ctrl.render(); else ctrl.finish(); },
+    next: () => { 
+        if (ctrl.state.arukiNextTimer) { clearTimeout(ctrl.state.arukiNextTimer); ctrl.state.arukiNextTimer = null; }
+        ctrl.state.idx++; 
+        if (ctrl.state.idx < 10) ctrl.render(); 
+        else ctrl.finish(); 
+    },
+    
     finish: () => { ctrl.stopVoice(); document.getElementById('res-score').innerText = ctrl.state.score; ctrl.showAnalysis(); },
     speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
     stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
@@ -533,6 +591,7 @@ const ctrl = {
         if (!ctrl.state.recog) {
             ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
             ctrl.state.recog.onresult = (e) => {
+                if (ctrl.state.isChecking) return; // 二重発火防止
                 const res = e.results[e.results.length - 1][0].transcript;
                 if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
                 else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
