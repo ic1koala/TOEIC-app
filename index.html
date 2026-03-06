@@ -286,7 +286,14 @@
     <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
         <div class="text-center mt-10 mb-8">
             <h2 class="text-6xl font-extrabold mb-2" style="color: var(--c-slate);"><span id="res-score">0</span><span class="text-2xl text-gray-400">/10</span></h2>
-            <p id="analysis-summary" class="text-sm font-medium text-gray-500"></p>
+            <p id="analysis-summary" class="text-sm font-medium text-gray-500 mb-6"></p>
+            
+            <div class="flex justify-center gap-4 text-xs font-bold text-gray-500">
+                <div class="flex flex-col items-center"><span style="color: var(--c-slate);">400</span><span id="cnt-400">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-sage);">600</span><span id="cnt-600">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-mauve);">800</span><span id="cnt-800">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-dusty);">900</span><span id="cnt-900">0 w</span></div>
+            </div>
         </div>
         
         <div class="glass-card flex-grow flex flex-col mb-6 p-5">
@@ -320,10 +327,6 @@ const ctrl = {
         ctrl.applyTheme();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
         try {
-            /* 【重要修正】キャッシュ対策（Cache-Busting）
-               ファイル名の後ろに現在時刻を付け、ブラウザが「新しいファイル」と
-               認識して毎回最新のwords.jsonを読み込むように強制します。
-            */
             const timestamp = new Date().getTime();
             const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
             
@@ -576,6 +579,13 @@ const ctrl = {
     updateAnalysisUI: () => {
         const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
         document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
+        
+        // 各ランクの単語数を取得して表示
+        [400, 600, 800, 900].forEach(lv => {
+            const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
+            document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
+        });
+
         const listEl = document.getElementById('wrong-list'); listEl.innerHTML = "";
         ctrl.state.wrongPool.forEach(w => {
             const item = document.createElement('div');
