@@ -236,30 +236,31 @@
         </div>
         <div class="px-6 py-2"><div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full w-0 transition-all duration-500 ease-out rounded-full" style="background: var(--c-slate);"></div></div></div>
         
-        <div id="mic-status" class="hidden text-center font-bold animate-pulse text-xs py-2" style="color: var(--c-terra);"><i class="fas fa-microphone"></i> 音声聞き取り中...</div>
+        <div id="mic-status" class="hidden text-center font-bold animate-pulse text-xs py-1" style="color: var(--c-terra);"><i class="fas fa-microphone"></i> 音声聞き取り中...</div>
 
-        <div class="flex-grow scroll-v px-6 pt-4 pb-10">
-            <div class="mb-8 text-center mt-4">
-                <h3 id="q-main-text" class="text-3xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight"></h3>
-                <button onclick="ctrl.speak()" class="ios-btn mt-4 w-12 h-12 rounded-full mx-auto flex items-center justify-center shadow-sm" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-lg"></i></button>
+        <div class="flex-grow scroll-v px-6 pt-2 pb-6">
+            
+            <div class="mb-4 text-center mt-2 flex justify-center items-center gap-3">
+                <h3 id="q-main-text" class="text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight"></h3>
+                <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-base"></i></button>
             </div>
             
-            <div id="q-choices" class="space-y-3 mb-6"></div>
+            <div id="q-choices" class="space-y-2 mb-4"></div>
             
-            <div id="aruki-replay-btn" onclick="ctrl.replayAruki()" class="hidden ios-btn w-full mt-2 mb-6 py-4 rounded-2xl font-bold text-sm text-center text-white shadow-sm" style="background: var(--c-sage);">
+            <div id="aruki-replay-btn" onclick="ctrl.replayAruki()" class="hidden ios-btn w-full mt-1 mb-3 py-3 rounded-xl font-bold text-sm text-center text-white shadow-sm" style="background: var(--c-sage);">
                 <i class="fas fa-sync-alt mr-2"></i>もう一度読み上げる
             </div>
 
-            <div id="expl-panel" class="hidden glass-card mb-10 overflow-hidden relative">
+            <div id="expl-panel" class="hidden glass-card mb-4 overflow-hidden relative">
                 <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background: var(--c-slate);"></div>
-                <h4 class="font-extrabold text-xs uppercase mb-2 tracking-widest pl-2" style="color: var(--c-slate);">Explanation</h4>
+                <h4 class="font-extrabold text-[10px] uppercase mb-1 tracking-widest pl-2" style="color: var(--c-slate);">Explanation</h4>
                 
-                <p id="expl-text" class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed mb-4 pl-2"></p>
-                <div class="bg-white/60 dark:bg-black/20 p-4 rounded-xl text-sm space-y-2">
+                <p id="expl-text" class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed mb-3 pl-2"></p>
+                <div class="bg-white/60 dark:bg-black/20 p-3 rounded-xl text-xs space-y-1">
                     <p id="ex-en" class="font-medium" style="color: var(--c-slate);"></p>
                     <p id="ex-ja" class="text-gray-600 dark:text-gray-400"></p>
                 </div>
-                <button onclick="ctrl.next()" class="ios-btn w-full mt-5 py-4 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-2xl font-bold text-sm shadow-md">次へ進む</button>
+                <button onclick="ctrl.next()" class="ios-btn w-full mt-3 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold text-sm shadow-md">次へ進む</button>
             </div>
         </div>
     </div>
@@ -293,7 +294,7 @@
             <div id="wrong-list" class="space-y-2 overflow-y-auto pr-2"></div>
         </div>
         
-        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 rounded-2xl font-bold text-base text-white shadow-sm mb-4" style="background: var(--text-main);">メニューへ戻る</button>
+        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-2xl font-bold text-base shadow-md mb-4">メニューへ戻る</button>
     </div>
 
     <div class="bottom-nav rounded-t-[32px] flex justify-around items-center pt-4 pb-8 w-full shrink-0">
@@ -304,7 +305,7 @@
         <div style="width: 50px;"></div> 
 
         <div onclick="ctrl.start(6)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-aruki"><i class="fas fa-headphones-alt text-xl mb-1"></i><span class="text-[10px] font-bold">Aruki</span></div>
-        <div onclick="ctrl.showAnalysis()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-stats"><i class="fas fa-chart-bar text-xl mb-1"></i><span class="text-[10px] font-bold">Stats</span></div>
+        <div onclick="ctrl.showAnalysis()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-stats"><i class="fas fa-chart-bar text-xl mb-1"></i><span class="text-[10px] font-bold">Status</span></div>
     </div>
 </div>
 
@@ -387,9 +388,10 @@ const ctrl = {
         choiceArea.innerHTML = "";
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
-            btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-2xl flex items-center font-bold text-sm p-4 border border-gray-100 dark:border-gray-700 shadow-sm";
+            // 選択肢の高さを少し抑えるために py-3 px-4 に変更
+            btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
             const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
-            btn.innerHTML = `<span class="w-8 h-8 rounded-full flex items-center justify-center text-xs mr-4" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
+            btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
         });
@@ -411,7 +413,6 @@ const ctrl = {
         msgWord.onend = () => {
             setTimeout(() => {
                 if (ctrl.state.isChecking) return;
-                // 使い勝手向上のため、1番からの読み上げに戻しました
                 const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
                 const msgOpts = new SpeechSynthesisUtterance(optsText);
                 msgOpts.lang = 'ja-JP';
@@ -425,7 +426,7 @@ const ctrl = {
     check: (btn, val) => {
         if (ctrl.state.isChecking) return;
         ctrl.state.isChecking = true;
-        clearTimeout(ctrl.state.arukiTimer); // 意図しないスキップを防止
+        clearTimeout(ctrl.state.arukiTimer);
 
         const q = ctrl.state.questions[ctrl.state.idx];
         const isCorrect = (val === q.a);
@@ -461,7 +462,7 @@ const ctrl = {
         document.getElementById('ex-en').innerText = q.sEn; 
         document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
-        document.getElementById('aruki-replay-btn').classList.add('hidden'); // 解説時は非表示
+        document.getElementById('aruki-replay-btn').classList.add('hidden');
         
         if (ctrl.state.mode === 6) {
             ctrl.state.arukiTimer = setTimeout(() => { 
@@ -473,7 +474,7 @@ const ctrl = {
     playCorrectSound: () => {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume(); // 再生されない問題を修正
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
