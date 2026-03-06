@@ -320,10 +320,7 @@ const ctrl = {
         ctrl.applyTheme();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
         try {
-            // キャッシュを無効化して、常に最新の words.json を読み込むように修正
-            const timestamp = new Date().getTime();
-            const response = await fetch(`words.json?t=${timestamp}`, { cache: 'no-store' });
-            
+            const response = await fetch('words.json');
             if (!response.ok) throw new Error();
             DB = await response.json();
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
@@ -391,6 +388,7 @@ const ctrl = {
         choiceArea.innerHTML = "";
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
+            // 選択肢の高さを少し抑えるために py-3 px-4 に変更
             btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
             const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
             btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
