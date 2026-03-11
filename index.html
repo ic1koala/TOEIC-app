@@ -183,7 +183,7 @@
     <div id="scr-level" class="flex-grow flex flex-col p-6 scroll-v">
         <h1 class="text-3xl font-extrabold mt-10 mb-2 text-center w-full tracking-tight" style="color: var(--c-slate);">Word Focus</h1>
         <p class="text-sm text-gray-500 mb-10 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
-        <div class="space-y-4 pointer-events-none opacity-50 transition-opacity duration-300" id="level-btns">
+        <div class="space-y-4 pointer-events-none opacity-50 transition-opacity duration-300 pb-10" id="level-btns">
             <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
                 <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
@@ -196,9 +196,17 @@
                 <span class="font-bold text-base text-gray-700 dark:text-gray-200">800点級 高得点圏</span>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-mauve); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
             </div>
-            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center">
+            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center mb-6">
                 <span class="font-bold text-base text-gray-700 dark:text-gray-200">900点級 満点挑戦</span>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-dusty); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            </div>
+            
+            <div onclick="ctrl.startNYT()" class="ios-btn p-5 rounded-[24px] text-white shadow-md flex items-center justify-center gap-4 gradient-btn mt-6">
+                <i class="far fa-newspaper text-2xl opacity-90"></i>
+                <div class="text-left">
+                    <p class="font-bold text-base tracking-wide leading-tight">本日のNYTニュース単語</p>
+                    <p class="text-xs opacity-80 mt-1">AIが抽出した最新ニュース語彙をテスト</p>
+                </div>
             </div>
         </div>
     </div>
@@ -230,14 +238,6 @@
             </div>
             <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-dusty);">
                 <i class="fas fa-redo text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習モード</p>
-            </div>
-            
-            <div onclick="ctrl.startNYT()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-md flex items-center justify-center gap-4 gradient-btn">
-                <i class="far fa-newspaper text-2xl opacity-90"></i>
-                <div class="text-left">
-                    <p class="font-bold text-base tracking-wide leading-tight">本日のNYTニュース単語</p>
-                    <p class="text-xs opacity-80 mt-1">AIが抽出した最新ニュース語彙をテスト</p>
-                </div>
             </div>
         </div>
     </div>
@@ -311,7 +311,7 @@
         
         <div class="glass-card flex-grow flex flex-col mb-6 p-5">
             <h4 class="text-xs font-bold mb-4 text-center pb-3 uppercase tracking-widest text-gray-400 border-b border-gray-200 dark:border-gray-700">Needs Review</h4>
-            <div id="wrong-list" class="space-y-2 overflow-y-auto pr-2"></div>
+            <div id="wrong-list" class="space-y-2 overflow-y-auto pr-2 max-h-60"></div>
         </div>
         
         <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-2xl font-bold text-base shadow-md mb-4">メニューへ戻る</button>
@@ -348,9 +348,18 @@ const ctrl = {
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
             document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
             ctrl.initSwipeGestures();
+            
+            // ローカルストレージから間違えた単語の履歴を復元
+            const savedWrongPool = JSON.parse(localStorage.getItem('toeic_wrong_pool'));
+            if(savedWrongPool) ctrl.state.wrongPool = savedWrongPool;
+
         } catch (error) {
             document.getElementById('loading-msg').innerText = "単語データが見つかりません。";
         }
+    },
+
+    saveWrongPool: () => {
+        localStorage.setItem('toeic_wrong_pool', JSON.stringify(ctrl.state.wrongPool));
     },
 
     applyTheme: () => {
@@ -370,38 +379,39 @@ const ctrl = {
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
-    // --- 【追加】NYTニュース単語用の起動処理 ---
     startNYT: async () => {
-        ctrl.state.mode = 7; // 新しいモード番号を割り当て
+        ctrl.state.mode = 7; 
         ctrl.state.idx = 0;
         ctrl.state.score = 0;
         ctrl.state.isChecking = false;
         
         try {
-            // キャッシュを防ぐためにタイムスタンプを付与して取得
             const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
             if (!res.ok) throw new Error("JSONが見つかりません。NAS側で生成されているか確認してください。");
             const nytData = await res.json();
             
             if (!nytData.words || nytData.words.length === 0) {
-                alert("ニュース単語がまだ生成されていません。しばらく待ってから再度お試しください。");
+                alert("ニュース単語がまだ生成されていません。");
                 return;
             }
 
-            // NYTのデータをアプリの形式に変換
-            const nytWords = nytData.words.map(item => ({
-                en: item.word,
-                ja: item.ja,
-                ex: "最新ニュースからの抽出語彙",
-                sEn: item.example || "",
-                sJa: ""
-            }));
+            const nytWords = nytData.words.map(item => {
+                // "ja"に英語が混ざっている場合（例："意味 (word)"）、意味だけを抽出
+                let pureJa = item.ja;
+                if(item.ja.includes('(')) pureJa = item.ja.split('(')[0].trim();
+                
+                return {
+                    en: item.word,
+                    ja: pureJa, // きれいな日本語だけにする
+                    ex: "最新ニュースからの抽出語彙",
+                    sEn: item.example || "",
+                    sJa: ""
+                };
+            });
 
-            // ダミーの選択肢を作るために、ベースのDB（800レベルなど）を利用
             const dummySource = (DB[800] && DB[800].words) ? DB[800].words : nytWords;
 
             ctrl.state.questions = nytWords.map(w => {
-                // 正解以外の選択肢を3つランダムに選ぶ
                 let others = dummySource.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
                 let choices = [w, ...others].sort(() => Math.random() - 0.5);
                 return { ...w, q: w.en, a: w.ja, choiceData: choices };
@@ -418,7 +428,7 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         const data = DB[ctrl.state.level] || DB[400];
-        const shuffleType = document.getElementById('shuffle-select').value;
+        const shuffleType = document.getElementById('shuffle-select') ? document.getElementById('shuffle-select').value : 'random';
         
         let sourceWords = [...data.words];
         if (mode === 4) {
@@ -432,7 +442,14 @@ const ctrl = {
         }
 
         ctrl.state.questions = sourceWords.map(w => {
-            let others = data.words.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
+            // mode 4 (復習モード) であっても、ダミー選択肢はその単語の本来のレベルから持ってくる
+            let ds = data.words; 
+            if(mode === 4 && (!ds || ds.length < 4)) {
+                // もしDBが見つからない特殊な単語(NYTなど)の復習なら、wrongPool全体からダミーを取る
+                ds = ctrl.state.wrongPool.length >= 4 ? ctrl.state.wrongPool : (DB[800]?DB[800].words:[]);
+            }
+            
+            let others = ds.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
             let choices = [w, ...others].sort(() => Math.random() - 0.5);
             return { ...w, q: (mode === 1 || mode === 6) ? w.en : w.ja, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
         }).slice(0, 10);
@@ -447,17 +464,16 @@ const ctrl = {
         const q = ctrl.state.questions[ctrl.state.idx];
         const totalQ = ctrl.state.questions.length;
         
-        // --- 修正：問題数に応じて動的に表示を変える ---
         document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
         
         document.getElementById('q-main-text').innerText = q.q;
         document.getElementById('expl-panel').classList.add('hidden');
         
-        // --- 修正：NYTモード用のタイトル表示 ---
         let modeLabel = "Quiz";
         if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
         if (ctrl.state.mode === 7) modeLabel = "NYT News";
+        if (ctrl.state.mode === 4) modeLabel = "Review";
         document.getElementById('quiz-mode-label').innerText = modeLabel;
 
         const choiceArea = document.getElementById('q-choices');
@@ -511,7 +527,6 @@ const ctrl = {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
-            // モード1,6,7（英→日）の場合は、解説時に英語を併記する
             if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
             
             if (originalJa === q.ja || originalEn === q.en) {
@@ -527,11 +542,28 @@ const ctrl = {
             ctrl.state.score++; 
             ctrl.triggerEffect('correct-effect'); 
             ctrl.playCorrectSound(); 
+            
+            // 正解したら、復習リスト(wrongPool)から削除する
+            ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
+            ctrl.saveWrongPool();
+
         } else { 
             btn.style.borderColor = 'var(--c-dusty)';
             btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
             ctrl.triggerEffect('wrong-effect'); 
-            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
+            
+            // 不正解なら、復習リスト(wrongPool)に追加する（重複防止）
+            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
+                // NYTの単語もここに入る
+                ctrl.state.wrongPool.push({
+                    en: q.en,
+                    ja: q.ja,
+                    ex: q.ex,
+                    sEn: q.sEn,
+                    sJa: q.sJa
+                });
+                ctrl.saveWrongPool();
+            }
         }
         
         document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
@@ -610,10 +642,19 @@ const ctrl = {
             inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             if (currentX > 100) {
                 inner.classList.add('swipe-right');
+                
+                // 単語カードで右スワイプ（覚えた）した場合も復習リストから消す
+                const q = ctrl.state.questions[ctrl.state.idx];
+                ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
+                ctrl.saveWrongPool();
+
                 setTimeout(() => ctrl.nextFlash(), 300);
             } else if (currentX < -100) {
                 const q = ctrl.state.questions[ctrl.state.idx];
-                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
+                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
+                    ctrl.state.wrongPool.push(q);
+                    ctrl.saveWrongPool();
+                }
                 inner.classList.add('swipe-left');
                 setTimeout(() => ctrl.nextFlash(), 300);
             } else {
@@ -631,6 +672,14 @@ const ctrl = {
             inner.classList.remove('flipped', 'swipe-right', 'swipe-left');
             inner.style.transform = '';
             ctrl.state.idx++;
+            
+            // 復習モードで全て覚えた（リストが空になった）場合の処理
+            if(ctrl.state.mode === 4 && ctrl.state.wrongPool.length === 0) {
+                alert("素晴らしい！すべての弱点を克服しました！");
+                ctrl.showMode();
+                return;
+            }
+
             if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
             ctrl.updateFlashcardContent();
             setTimeout(() => inner.classList.remove('no-transition'), 50);
@@ -645,24 +694,27 @@ const ctrl = {
     },
 
     updateAnalysisUI: () => {
-        const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
-        document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
-        
+        // 各ランクの単語数を取得して表示
         [400, 600, 800, 900].forEach(lv => {
             const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
             document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
         });
 
-        const listEl = document.getElementById('wrong-list'); listEl.innerHTML = "";
-        ctrl.state.wrongPool.forEach(w => {
-            const item = document.createElement('div');
-            item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
-            item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
-            listEl.appendChild(item);
-        });
+        const listEl = document.getElementById('wrong-list');
+        listEl.innerHTML = "";
+        
+        if (ctrl.state.wrongPool.length === 0) {
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-4 text-xs font-bold"><i class="fas fa-check-circle text-2xl mb-2 text-[var(--c-sage)] opacity-50 block"></i>完璧です！復習リストは空です。</div>`;
+        } else {
+            ctrl.state.wrongPool.forEach(w => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
+                item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
+                listEl.appendChild(item);
+            });
+        }
     },
 
-    // --- 修正：問題数を動的に判定するように変更 ---
     next: () => { 
         ctrl.state.idx++; 
         if (ctrl.state.idx < ctrl.state.questions.length) {
@@ -675,7 +727,7 @@ const ctrl = {
     finish: () => { 
         ctrl.stopVoice(); 
         document.getElementById('res-score').innerText = ctrl.state.score; 
-        document.getElementById('res-total').innerText = '/' + ctrl.state.questions.length; // 分母も動的に変更
+        document.getElementById('res-total').innerText = '/' + ctrl.state.questions.length;
         ctrl.showAnalysis(); 
     },
     
