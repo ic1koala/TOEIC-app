@@ -62,7 +62,6 @@
             position: relative;
         }
 
-        /* 柔らかいグラスモーフィズム */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
@@ -101,7 +100,6 @@
             100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
         }
 
-        /* --- HOME BUTTON --- */
         .bottom-nav {
             padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
             box-shadow: 0 -10px 40px rgba(0,0,0,0.03);
@@ -131,7 +129,6 @@
             font-size: 1.5rem;
         }
 
-        /* --- FLASHCARD SWIPE --- */
         .card-container { perspective: 1000px; touch-action: none; position: relative; }
         .card-inner {
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -166,6 +163,14 @@
         .swipe-left { transform: translateX(-150%) rotate(-15deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
         .no-transition { transition: none !important; }
         .hidden { display: none !important; }
+
+        /* NYT専用のグラデーションボタン */
+        .gradient-btn {
+            background: linear-gradient(135deg, var(--c-slate), var(--c-sage));
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+        }
+        @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
     </style>
 </head>
 <body class="antialiased">
@@ -210,7 +215,7 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4 pb-10">
             <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
                 <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
             </div>
@@ -225,6 +230,14 @@
             </div>
             <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-dusty);">
                 <i class="fas fa-redo text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習モード</p>
+            </div>
+            
+            <div onclick="ctrl.startNYT()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-md flex items-center justify-center gap-4 gradient-btn">
+                <i class="far fa-newspaper text-2xl opacity-90"></i>
+                <div class="text-left">
+                    <p class="font-bold text-base tracking-wide leading-tight">本日のNYTニュース単語</p>
+                    <p class="text-xs opacity-80 mt-1">AIが抽出した最新ニュース語彙をテスト</p>
+                </div>
             </div>
         </div>
     </div>
@@ -285,7 +298,7 @@
 
     <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
         <div class="text-center mt-10 mb-8">
-            <h2 class="text-6xl font-extrabold mb-2" style="color: var(--c-slate);"><span id="res-score">0</span><span class="text-2xl text-gray-400">/10</span></h2>
+            <h2 class="text-6xl font-extrabold mb-2" style="color: var(--c-slate);"><span id="res-score">0</span><span id="res-total" class="text-2xl text-gray-400">/10</span></h2>
             <p id="analysis-summary" class="text-sm font-medium text-gray-500 mb-6"></p>
             
             <div class="flex justify-center gap-4 text-xs font-bold text-gray-500">
@@ -357,6 +370,51 @@ const ctrl = {
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
+    // --- 【追加】NYTニュース単語用の起動処理 ---
+    startNYT: async () => {
+        ctrl.state.mode = 7; // 新しいモード番号を割り当て
+        ctrl.state.idx = 0;
+        ctrl.state.score = 0;
+        ctrl.state.isChecking = false;
+        
+        try {
+            // キャッシュを防ぐためにタイムスタンプを付与して取得
+            const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
+            if (!res.ok) throw new Error("JSONが見つかりません。NAS側で生成されているか確認してください。");
+            const nytData = await res.json();
+            
+            if (!nytData.words || nytData.words.length === 0) {
+                alert("ニュース単語がまだ生成されていません。しばらく待ってから再度お試しください。");
+                return;
+            }
+
+            // NYTのデータをアプリの形式に変換
+            const nytWords = nytData.words.map(item => ({
+                en: item.word,
+                ja: item.ja,
+                ex: "最新ニュースからの抽出語彙",
+                sEn: item.example || "",
+                sJa: ""
+            }));
+
+            // ダミーの選択肢を作るために、ベースのDB（800レベルなど）を利用
+            const dummySource = (DB[800] && DB[800].words) ? DB[800].words : nytWords;
+
+            ctrl.state.questions = nytWords.map(w => {
+                // 正解以外の選択肢を3つランダムに選ぶ
+                let others = dummySource.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
+                let choices = [w, ...others].sort(() => Math.random() - 0.5);
+                return { ...w, q: w.en, a: w.ja, choiceData: choices };
+            });
+
+            ctrl.switchScr('scr-quiz');
+            ctrl.render();
+
+        } catch (err) {
+            alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
+        }
+    },
+
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         const data = DB[ctrl.state.level] || DB[400];
@@ -387,18 +445,27 @@ const ctrl = {
         ctrl.state.isChecking = false;
         clearTimeout(ctrl.state.arukiTimer);
         const q = ctrl.state.questions[ctrl.state.idx];
-        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / 10`;
-        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / 10) * 100}%`;
+        const totalQ = ctrl.state.questions.length;
+        
+        // --- 修正：問題数に応じて動的に表示を変える ---
+        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
+        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
+        
         document.getElementById('q-main-text').innerText = q.q;
         document.getElementById('expl-panel').classList.add('hidden');
-        document.getElementById('quiz-mode-label').innerText = ctrl.state.mode === 6 ? "Aruki Mode" : "Quiz";
+        
+        // --- 修正：NYTモード用のタイトル表示 ---
+        let modeLabel = "Quiz";
+        if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
+        if (ctrl.state.mode === 7) modeLabel = "NYT News";
+        document.getElementById('quiz-mode-label').innerText = modeLabel;
 
         const choiceArea = document.getElementById('q-choices');
         choiceArea.innerHTML = "";
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
             btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
-            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
+            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) ? c.ja : c.en;
             btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
@@ -444,7 +511,8 @@ const ctrl = {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
-            if (ctrl.state.mode === 1 || ctrl.state.mode === 6) labelEl.innerText = `${originalJa} (${originalEn})`;
+            // モード1,6,7（英→日）の場合は、解説時に英語を併記する
+            if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
             
             if (originalJa === q.ja || originalEn === q.en) {
                 if (originalEn === q.en) {
@@ -463,163 +531,4 @@ const ctrl = {
             btn.style.borderColor = 'var(--c-dusty)';
             btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
             ctrl.triggerEffect('wrong-effect'); 
-            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
-        }
-        
-        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
-        document.getElementById('ex-en').innerText = q.sEn; 
-        document.getElementById('ex-ja').innerText = q.sJa;
-        document.getElementById('expl-panel').classList.remove('hidden');
-        document.getElementById('aruki-replay-btn').classList.add('hidden');
-        
-        if (ctrl.state.mode === 6) {
-            ctrl.state.arukiTimer = setTimeout(() => { 
-                if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); 
-            }, 4500);
-        }
-    },
-
-    playCorrectSound: () => {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            const now = audioCtx.currentTime;
-            osc.frequency.setValueAtTime(1046.50, now); 
-            osc.frequency.setValueAtTime(1318.51, now + 0.12); 
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-            osc.start(now);
-            osc.stop(now + 0.6);
-        } catch(e) {}
-    },
-
-    triggerEffect: (id) => {
-        const el = document.getElementById(id); el.style.display = 'block';
-        setTimeout(() => { el.style.display = 'none'; }, 600);
-    },
-
-    initSwipeGestures: () => {
-        const container = document.getElementById('fc-container');
-        const labelL = document.getElementById('swipe-label-left');
-        const labelR = document.getElementById('swipe-label-right');
-        let startX = 0, currentX = 0, startTime = 0;
-
-        container.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startTime = Date.now();
-            container.querySelector('.card-inner').style.transition = 'none';
-        });
-
-        container.addEventListener('touchmove', (e) => {
-            currentX = e.touches[0].clientX - startX;
-            const rotation = currentX / 25;
-            const inner = container.querySelector('.card-inner');
-            const baseTransform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
-            inner.style.transform = `${baseTransform} translateX(${currentX}px) rotate(${rotation}deg)`;
-            
-            if (currentX > 50) labelR.style.opacity = Math.min(currentX / 150, 1);
-            else if (currentX < -50) labelL.style.opacity = Math.min(Math.abs(currentX) / 150, 1);
-            else { labelL.style.opacity = 0; labelR.style.opacity = 0; }
-        });
-
-        container.addEventListener('touchend', (e) => {
-            const inner = container.querySelector('.card-inner');
-            const duration = Date.now() - startTime;
-            labelL.style.opacity = 0; labelR.style.opacity = 0;
-            
-            if (Math.abs(currentX) < 15 && duration < 250) {
-                inner.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                inner.classList.toggle('flipped');
-                currentX = 0; return;
-            }
-
-            inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            if (currentX > 100) {
-                inner.classList.add('swipe-right');
-                setTimeout(() => ctrl.nextFlash(), 300);
-            } else if (currentX < -100) {
-                const q = ctrl.state.questions[ctrl.state.idx];
-                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
-                inner.classList.add('swipe-left');
-                setTimeout(() => ctrl.nextFlash(), 300);
-            } else {
-                inner.style.transform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
-            }
-            currentX = 0;
-        });
-    },
-
-    nextFlash: () => {
-        const inner = document.querySelector('.card-inner');
-        if (!ctrl.state.flashcardInit) { ctrl.state.flashcardInit = true; ctrl.updateFlashcardContent(); return; }
-        setTimeout(() => {
-            inner.classList.add('no-transition');
-            inner.classList.remove('flipped', 'swipe-right', 'swipe-left');
-            inner.style.transform = '';
-            ctrl.state.idx++;
-            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
-            ctrl.updateFlashcardContent();
-            setTimeout(() => inner.classList.remove('no-transition'), 50);
-        }, 150);
-    },
-
-    updateFlashcardContent: () => {
-        const q = ctrl.state.questions[ctrl.state.idx];
-        document.getElementById('fc-en').innerText = q.en;
-        document.getElementById('fc-ja').innerText = `${q.ja} (${q.en})`;
-        document.getElementById('fc-ex').innerHTML = `<div class="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl mt-2"><span class="font-medium text-[var(--c-slate)] block mb-1 text-sm">${q.sEn}</span><span class="text-gray-500 text-xs">${q.sJa}</span></div>`;
-    },
-
-    updateAnalysisUI: () => {
-        const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
-        document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
-        
-        // 各ランクの単語数を取得して表示
-        [400, 600, 800, 900].forEach(lv => {
-            const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
-            document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
-        });
-
-        const listEl = document.getElementById('wrong-list'); listEl.innerHTML = "";
-        ctrl.state.wrongPool.forEach(w => {
-            const item = document.createElement('div');
-            item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
-            item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
-            listEl.appendChild(item);
-        });
-    },
-
-    next: () => { ctrl.state.idx++; if (ctrl.state.idx < 10) ctrl.render(); else ctrl.finish(); },
-    finish: () => { ctrl.stopVoice(); document.getElementById('res-score').innerText = ctrl.state.score; ctrl.showAnalysis(); },
-    speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
-    stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
-
-    startVoice: () => {
-        if (!('webkitSpeechRecognition' in window)) return;
-        document.getElementById('mic-status').classList.remove('hidden');
-        if (!ctrl.state.recog) {
-            ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
-            ctrl.state.recog.onresult = (e) => {
-                const res = e.results[e.results.length - 1][0].transcript;
-                if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
-                else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
-                else if (/(3|３|さん|サン)/.test(res)) ctrl.triggerVoiceAnswer(2);
-                else if (/(4|４|よん|ヨン|し|シ)/.test(res)) ctrl.triggerVoiceAnswer(3);
-            };
-        }
-        try { ctrl.state.recog.start(); } catch(err){}
-    },
-
-    triggerVoiceAnswer: (i) => { const bs = document.querySelectorAll('#q-choices div'); if (bs[i]) bs[i].click(); }
-};
-
-ctrl.init();
-</script>
-</body>
-</html>
+            if(!ctrl
