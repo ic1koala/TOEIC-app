@@ -531,4 +531,177 @@ const ctrl = {
             btn.style.borderColor = 'var(--c-dusty)';
             btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
             ctrl.triggerEffect('wrong-effect'); 
-            if(!ctrl
+            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
+        }
+        
+        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
+        document.getElementById('ex-en').innerText = q.sEn; 
+        document.getElementById('ex-ja').innerText = q.sJa;
+        document.getElementById('expl-panel').classList.remove('hidden');
+        document.getElementById('aruki-replay-btn').classList.add('hidden');
+        
+        if (ctrl.state.mode === 6) {
+            ctrl.state.arukiTimer = setTimeout(() => { 
+                if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); 
+            }, 4500);
+        }
+    },
+
+    playCorrectSound: () => {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            const now = audioCtx.currentTime;
+            osc.frequency.setValueAtTime(1046.50, now); 
+            osc.frequency.setValueAtTime(1318.51, now + 0.12); 
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        } catch(e) {}
+    },
+
+    triggerEffect: (id) => {
+        const el = document.getElementById(id); el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 600);
+    },
+
+    initSwipeGestures: () => {
+        const container = document.getElementById('fc-container');
+        const labelL = document.getElementById('swipe-label-left');
+        const labelR = document.getElementById('swipe-label-right');
+        let startX = 0, currentX = 0, startTime = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startTime = Date.now();
+            container.querySelector('.card-inner').style.transition = 'none';
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX - startX;
+            const rotation = currentX / 25;
+            const inner = container.querySelector('.card-inner');
+            const baseTransform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+            inner.style.transform = `${baseTransform} translateX(${currentX}px) rotate(${rotation}deg)`;
+            
+            if (currentX > 50) labelR.style.opacity = Math.min(currentX / 150, 1);
+            else if (currentX < -50) labelL.style.opacity = Math.min(Math.abs(currentX) / 150, 1);
+            else { labelL.style.opacity = 0; labelR.style.opacity = 0; }
+        });
+
+        container.addEventListener('touchend', (e) => {
+            const inner = container.querySelector('.card-inner');
+            const duration = Date.now() - startTime;
+            labelL.style.opacity = 0; labelR.style.opacity = 0;
+            
+            if (Math.abs(currentX) < 15 && duration < 250) {
+                inner.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                inner.classList.toggle('flipped');
+                currentX = 0; return;
+            }
+
+            inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            if (currentX > 100) {
+                inner.classList.add('swipe-right');
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else if (currentX < -100) {
+                const q = ctrl.state.questions[ctrl.state.idx];
+                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
+                inner.classList.add('swipe-left');
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else {
+                inner.style.transform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+            }
+            currentX = 0;
+        });
+    },
+
+    nextFlash: () => {
+        const inner = document.querySelector('.card-inner');
+        if (!ctrl.state.flashcardInit) { ctrl.state.flashcardInit = true; ctrl.updateFlashcardContent(); return; }
+        setTimeout(() => {
+            inner.classList.add('no-transition');
+            inner.classList.remove('flipped', 'swipe-right', 'swipe-left');
+            inner.style.transform = '';
+            ctrl.state.idx++;
+            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
+            ctrl.updateFlashcardContent();
+            setTimeout(() => inner.classList.remove('no-transition'), 50);
+        }, 150);
+    },
+
+    updateFlashcardContent: () => {
+        const q = ctrl.state.questions[ctrl.state.idx];
+        document.getElementById('fc-en').innerText = q.en;
+        document.getElementById('fc-ja').innerText = `${q.ja} (${q.en})`;
+        document.getElementById('fc-ex').innerHTML = `<div class="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl mt-2"><span class="font-medium text-[var(--c-slate)] block mb-1 text-sm">${q.sEn}</span><span class="text-gray-500 text-xs">${q.sJa}</span></div>`;
+    },
+
+    updateAnalysisUI: () => {
+        const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
+        document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
+        
+        [400, 600, 800, 900].forEach(lv => {
+            const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
+            document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
+        });
+
+        const listEl = document.getElementById('wrong-list'); listEl.innerHTML = "";
+        ctrl.state.wrongPool.forEach(w => {
+            const item = document.createElement('div');
+            item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
+            item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
+            listEl.appendChild(item);
+        });
+    },
+
+    // --- 修正：問題数を動的に判定するように変更 ---
+    next: () => { 
+        ctrl.state.idx++; 
+        if (ctrl.state.idx < ctrl.state.questions.length) {
+            ctrl.render(); 
+        } else {
+            ctrl.finish(); 
+        }
+    },
+    
+    finish: () => { 
+        ctrl.stopVoice(); 
+        document.getElementById('res-score').innerText = ctrl.state.score; 
+        document.getElementById('res-total').innerText = '/' + ctrl.state.questions.length; // 分母も動的に変更
+        ctrl.showAnalysis(); 
+    },
+    
+    speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
+    stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
+
+    startVoice: () => {
+        if (!('webkitSpeechRecognition' in window)) return;
+        document.getElementById('mic-status').classList.remove('hidden');
+        if (!ctrl.state.recog) {
+            ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
+            ctrl.state.recog.onresult = (e) => {
+                const res = e.results[e.results.length - 1][0].transcript;
+                if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
+                else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
+                else if (/(3|３|さん|サン)/.test(res)) ctrl.triggerVoiceAnswer(2);
+                else if (/(4|４|よん|ヨン|し|シ)/.test(res)) ctrl.triggerVoiceAnswer(3);
+            };
+        }
+        try { ctrl.state.recog.start(); } catch(err){}
+    },
+
+    triggerVoiceAnswer: (i) => { const bs = document.querySelectorAll('#q-choices div'); if (bs[i]) bs[i].click(); }
+};
+
+ctrl.init();
+</script>
+</body>
+</html>
