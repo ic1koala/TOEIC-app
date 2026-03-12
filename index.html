@@ -348,7 +348,7 @@ const ctrl = {
             const timestamp = new Date().getTime();
             const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
             
-            if (!response.ok) throw new Error();
+            if (!response.ok) throw new Error("JSON load error");
             DB = await response.json();
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
             document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
@@ -356,4 +356,408 @@ const ctrl = {
 
             // ★間違えた問題リストをLocalStorageから復元★
             const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
-            if(
+            if(savedWrongPool) {
+                try { ctrl.state.wrongPool = JSON.parse(savedWrongPool); } catch(e){}
+            }
+
+        } catch (error) {
+            document.getElementById('loading-msg').innerText = "単語データが見つかりません。通信環境を確認してください。";
+            console.error(error);
+        }
+    },
+
+    saveWrongPool: () => {
+        localStorage.setItem('toeic_wrong_pool', JSON.stringify(ctrl.state.wrongPool));
+    },
+
+    applyTheme: () => {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+    },
+
+    switchScr: (id) => {
+        ctrl.stopVoice(); window.speechSynthesis.cancel(); clearTimeout(ctrl.state.arukiTimer);
+        ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    },
+
+    showLevel: () => ctrl.switchScr('scr-level'),
+    showMode: () => ctrl.switchScr('scr-mode'),
+    showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
+    setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
+
+    // ★NYTクイズ開始機能★
+    startNYT: async () => {
+        ctrl.state.mode = 7; 
+        ctrl.state.idx = 0;
+        ctrl.state.score = 0;
+        ctrl.state.isChecking = false;
+        
+        try {
+            const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
+            if (!res.ok) throw new Error("JSONが見つかりません。");
+            const nytData = await res.json();
+            
+            if (!nytData.words || nytData.words.length === 0) {
+                alert("ニュース単語がまだ生成されていません。");
+                return;
+            }
+
+            const nytWords = nytData.words.map(item => {
+                let pureJa = item.ja;
+                if(item.ja.includes('(')) pureJa = item.ja.split('(')[0].trim();
+                return {
+                    en: item.word,
+                    ja: pureJa,
+                    ex: "最新ニュース抽出語彙",
+                    sEn: item.example || "",
+                    sJa: ""
+                };
+            });
+
+            // ダミー選択肢は800点級のリストから拝借する（無ければNYT自体から）
+            const dummySource = (DB[800] && DB[800].words) ? DB[800].words : nytWords;
+
+            ctrl.state.questions = nytWords.map(w => {
+                let others = dummySource.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
+                let choices = [w, ...others].sort(() => Math.random() - 0.5);
+                return { ...w, q: w.en, a: w.ja, choiceData: choices };
+            });
+
+            ctrl.switchScr('scr-quiz');
+            ctrl.render();
+
+        } catch (err) {
+            alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
+        }
+    },
+
+    start: (mode) => {
+        ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
+        const data = DB[ctrl.state.level] || DB[400];
+        const shuffleType = document.getElementById('shuffle-select').value;
+        
+        let sourceWords = [...data.words];
+        
+        // 弱点復習モード(4)の場合
+        if (mode === 4) {
+            if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！完璧です！"); return; }
+            sourceWords = [...ctrl.state.wrongPool];
+        } else if (shuffleType === 'mistake' && ctrl.state.wrongPool.length > 0) {
+            const wrongIds = new Set(ctrl.state.wrongPool.map(w => w.en));
+            sourceWords.sort((a, b) => (wrongIds.has(b.en)?1:0) - (wrongIds.has(a.en)?1:0) || Math.random()-0.5);
+        } else {
+            sourceWords.sort(() => Math.random() - 0.5);
+        }
+
+        ctrl.state.questions = sourceWords.map(w => {
+            // 復習モードの場合、ダミー選択肢を引っ張ってくる処理を調整
+            let ds = data.words;
+            if(mode === 4 && (!ds || ds.length < 4)) {
+                ds = (DB[800] && DB[800].words) ? DB[800].words : ctrl.state.wrongPool;
+            }
+            let others = ds.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
+            let choices = [w, ...others].sort(() => Math.random() - 0.5);
+            return { ...w, q: (mode === 1 || mode === 6) ? w.en : w.ja, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
+        }).slice(0, 10);
+
+        if (mode === 5) { ctrl.state.flashcardInit = false; ctrl.switchScr('scr-flashcard'); ctrl.nextFlash(); }
+        else { ctrl.switchScr('scr-quiz'); ctrl.render(); }
+    },
+
+    render: () => {
+        ctrl.state.isChecking = false;
+        clearTimeout(ctrl.state.arukiTimer);
+        const q = ctrl.state.questions[ctrl.state.idx];
+        const totalQ = ctrl.state.questions.length; // 問題数を動的に
+
+        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
+        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
+        document.getElementById('q-main-text').innerText = q.q;
+        document.getElementById('expl-panel').classList.add('hidden');
+        
+        let modeLabel = "Quiz";
+        if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
+        if (ctrl.state.mode === 7) modeLabel = "NYT News";
+        if (ctrl.state.mode === 4) modeLabel = "Review Mode";
+        document.getElementById('quiz-mode-label').innerText = modeLabel;
+
+        const choiceArea = document.getElementById('q-choices');
+        choiceArea.innerHTML = "";
+        q.choiceData.forEach((c, i) => {
+            const btn = document.createElement('div');
+            btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
+            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) ? c.ja : c.en;
+            btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
+            btn.onclick = () => ctrl.check(btn, displayText);
+            choiceArea.appendChild(btn);
+        });
+
+        const arukiBtn = document.getElementById('aruki-replay-btn');
+        if (ctrl.state.mode === 6) {
+            arukiBtn.classList.remove('hidden');
+            ctrl.replayAruki();
+        } else {
+            arukiBtn.classList.add('hidden');
+        }
+    },
+
+    replayAruki: () => {
+        const q = ctrl.state.questions[ctrl.state.idx];
+        ctrl.stopVoice(); window.speechSynthesis.cancel();
+        const msgWord = new SpeechSynthesisUtterance(q.en);
+        msgWord.lang = 'en-US'; msgWord.rate = 0.85;
+        msgWord.onend = () => {
+            setTimeout(() => {
+                if (ctrl.state.isChecking) return;
+                const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
+                const msgOpts = new SpeechSynthesisUtterance(optsText);
+                msgOpts.lang = 'ja-JP';
+                msgOpts.onend = () => ctrl.startVoice();
+                window.speechSynthesis.speak(msgOpts);
+            }, 1000); 
+        };
+        window.speechSynthesis.speak(msgWord);
+    },
+
+    check: (btn, val) => {
+        if (ctrl.state.isChecking) return;
+        ctrl.state.isChecking = true;
+        clearTimeout(ctrl.state.arukiTimer);
+
+        const q = ctrl.state.questions[ctrl.state.idx];
+        const isCorrect = (val === q.a);
+        ctrl.stopVoice();
+        
+        document.querySelectorAll('#q-choices div').forEach(b => {
+            const labelEl = b.querySelector('.choice-label');
+            const originalJa = labelEl.getAttribute('data-ja');
+            const originalEn = labelEl.getAttribute('data-en');
+            if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
+            
+            if (originalJa === q.ja || originalEn === q.en) {
+                if (originalEn === q.en) {
+                    b.style.borderColor = 'var(--c-sage)';
+                    b.style.backgroundColor = 'rgba(163, 177, 138, 0.1)';
+                    b.innerHTML += '<i class="fas fa-check ml-2" style="color: var(--c-sage);"></i>';
+                }
+            }
+        });
+
+        if (isCorrect) { 
+            ctrl.state.score++; 
+            ctrl.triggerEffect('correct-effect'); 
+            ctrl.playCorrectSound(); 
+            
+            // ★弱点復習モード(4)で正解したら、間違えたリストから削除する★
+            if (ctrl.state.mode === 4) {
+                ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
+                ctrl.saveWrongPool();
+            }
+
+        } else { 
+            btn.style.borderColor = 'var(--c-dusty)';
+            btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
+            ctrl.triggerEffect('wrong-effect'); 
+            
+            // ★不正解なら、リストに無ければ追加する（NYT単語もここに入る）★
+            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
+                ctrl.state.wrongPool.push({ en: q.en, ja: q.ja, ex: q.ex, sEn: q.sEn, sJa: q.sJa }); 
+                ctrl.saveWrongPool();
+            }
+        }
+        
+        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
+        document.getElementById('ex-en').innerText = q.sEn; 
+        document.getElementById('ex-ja').innerText = q.sJa;
+        document.getElementById('expl-panel').classList.remove('hidden');
+        document.getElementById('aruki-replay-btn').classList.add('hidden');
+        
+        if (ctrl.state.mode === 6) {
+            ctrl.state.arukiTimer = setTimeout(() => { 
+                if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); 
+            }, 4500);
+        }
+    },
+
+    playCorrectSound: () => {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            const now = audioCtx.currentTime;
+            osc.frequency.setValueAtTime(1046.50, now); 
+            osc.frequency.setValueAtTime(1318.51, now + 0.12); 
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        } catch(e) {}
+    },
+
+    triggerEffect: (id) => {
+        const el = document.getElementById(id); el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 600);
+    },
+
+    initSwipeGestures: () => {
+        const container = document.getElementById('fc-container');
+        const labelL = document.getElementById('swipe-label-left');
+        const labelR = document.getElementById('swipe-label-right');
+        let startX = 0, currentX = 0, startTime = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startTime = Date.now();
+            container.querySelector('.card-inner').style.transition = 'none';
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX - startX;
+            const rotation = currentX / 25;
+            const inner = container.querySelector('.card-inner');
+            const baseTransform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+            inner.style.transform = `${baseTransform} translateX(${currentX}px) rotate(${rotation}deg)`;
+            
+            if (currentX > 50) labelR.style.opacity = Math.min(currentX / 150, 1);
+            else if (currentX < -50) labelL.style.opacity = Math.min(Math.abs(currentX) / 150, 1);
+            else { labelL.style.opacity = 0; labelR.style.opacity = 0; }
+        });
+
+        container.addEventListener('touchend', (e) => {
+            const inner = container.querySelector('.card-inner');
+            const duration = Date.now() - startTime;
+            labelL.style.opacity = 0; labelR.style.opacity = 0;
+            
+            if (Math.abs(currentX) < 15 && duration < 250) {
+                inner.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                inner.classList.toggle('flipped');
+                currentX = 0; return;
+            }
+
+            inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            if (currentX > 100) {
+                inner.classList.add('swipe-right');
+                
+                // ★単語カードで「覚えた（右スワイプ）」にしても、リストから消す★
+                const q = ctrl.state.questions[ctrl.state.idx];
+                ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
+                ctrl.saveWrongPool();
+
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else if (currentX < -100) {
+                const q = ctrl.state.questions[ctrl.state.idx];
+                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
+                    ctrl.state.wrongPool.push({ en: q.en, ja: q.ja, ex: q.ex, sEn: q.sEn, sJa: q.sJa });
+                    ctrl.saveWrongPool();
+                }
+                inner.classList.add('swipe-left');
+                setTimeout(() => ctrl.nextFlash(), 300);
+            } else {
+                inner.style.transform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+            }
+            currentX = 0;
+        });
+    },
+
+    nextFlash: () => {
+        const inner = document.querySelector('.card-inner');
+        if (!ctrl.state.flashcardInit) { ctrl.state.flashcardInit = true; ctrl.updateFlashcardContent(); return; }
+        setTimeout(() => {
+            inner.classList.add('no-transition');
+            inner.classList.remove('flipped', 'swipe-right', 'swipe-left');
+            inner.style.transform = '';
+            ctrl.state.idx++;
+            
+            // 復習モードで全て覚えたら終了
+            if(ctrl.state.mode === 4 && ctrl.state.wrongPool.length === 0) {
+                alert("🎉 素晴らしい！すべての弱点を克服しました！");
+                ctrl.showMode();
+                return;
+            }
+
+            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
+            ctrl.updateFlashcardContent();
+            setTimeout(() => inner.classList.remove('no-transition'), 50);
+        }, 150);
+    },
+
+    updateFlashcardContent: () => {
+        const q = ctrl.state.questions[ctrl.state.idx];
+        document.getElementById('fc-en').innerText = q.en;
+        document.getElementById('fc-ja').innerText = `${q.ja} (${q.en})`;
+        document.getElementById('fc-ex').innerHTML = `<div class="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl mt-2"><span class="font-medium text-[var(--c-slate)] block mb-1 text-sm">${q.sEn}</span><span class="text-gray-500 text-xs">${q.sJa}</span></div>`;
+    },
+
+    updateAnalysisUI: () => {
+        const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
+        document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
+        
+        [400, 600, 800, 900].forEach(lv => {
+            const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
+            document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
+        });
+
+        const listEl = document.getElementById('wrong-list');
+        listEl.innerHTML = "";
+        
+        if (ctrl.state.wrongPool.length === 0) {
+            listEl.innerHTML = `<div class="text-center text-gray-400 py-6 text-xs font-bold"><i class="fas fa-check-circle text-2xl mb-2 text-[var(--c-sage)] opacity-50 block"></i>完璧です！復習リストは空です。</div>`;
+        } else {
+            ctrl.state.wrongPool.forEach(w => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
+                item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
+                listEl.appendChild(item);
+            });
+        }
+    },
+
+    next: () => { 
+        ctrl.state.idx++; 
+        if (ctrl.state.idx < ctrl.state.questions.length) {
+            ctrl.render(); 
+        } else {
+            ctrl.finish(); 
+        }
+    },
+    
+    finish: () => { 
+        ctrl.stopVoice(); 
+        document.getElementById('res-score').innerText = ctrl.state.score; 
+        document.getElementById('res-total').innerText = '/' + ctrl.state.questions.length;
+        ctrl.showAnalysis(); 
+    },
+    
+    speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
+    stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
+
+    startVoice: () => {
+        if (!('webkitSpeechRecognition' in window)) return;
+        document.getElementById('mic-status').classList.remove('hidden');
+        if (!ctrl.state.recog) {
+            ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
+            ctrl.state.recog.onresult = (e) => {
+                const res = e.results[e.results.length - 1][0].transcript;
+                if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
+                else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
+                else if (/(3|３|さん|サン)/.test(res)) ctrl.triggerVoiceAnswer(2);
+                else if (/(4|４|よん|ヨン|し|シ)/.test(res)) ctrl.triggerVoiceAnswer(3);
+            };
+        }
+        try { ctrl.state.recog.start(); } catch(err){}
+    },
+
+    triggerVoiceAnswer: (i) => { const bs = document.querySelectorAll('#q-choices div'); if (bs[i]) bs[i].click(); }
+};
+
+ctrl.init();
+</script>
+</body>
+</html>
