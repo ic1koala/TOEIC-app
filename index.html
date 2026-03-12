@@ -1,707 +1,242 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TOEIC Nuance Words</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Outfit', 'Noto Sans JP', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オリジナルTOEIC対策テスト</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', sans-serif;
+      background-color: #f3f4f6;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .app-container {
+      background-color: #ffffff;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 20px;
+      color: #1f2937;
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
     
-    <style>
-        :root {
-            /* トレンドのくすみカラー（Nuance Colors） */
-            --c-slate: #7C93C3;    /* 落ち着いたブルーグレー */
-            --c-sage: #A3B18A;     /* ピスタチオ・セージグリーン */
-            --c-mauve: #B5A6C9;    /* モーヴ・ラベンダー */
-            --c-dusty: #E5989B;    /* ダスティピンク */
-            --c-terra: #E29578;    /* テラコッタ */
-            
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --bg-base: #F7F6F2;    /* 温かみのあるグレージュ */
-            --text-main: #4A4A4A;
-        }
-        
-        html.dark {
-            --glass-bg: rgba(40, 40, 45, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --bg-base: #1C1C1E;
-            --text-main: #E5E5E5;
-        }
+    .question-area { margin-bottom: 24px; }
+    .question-number { font-size: 14px; color: #6b7280; font-weight: bold; margin-bottom: 8px; }
+    .question-text { font-size: 18px; line-height: 1.5; font-weight: bold; margin-bottom: 20px; }
+    
+    .choices-container { display: flex; flex-direction: column; gap: 12px; }
+    .choice-btn {
+      background-color: #ffffff;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+    }
+    .choice-btn:disabled { cursor: not-allowed; }
+    .choice-btn.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+    .choice-btn.wrong { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
 
-        body {
-            margin: 0;
-            background: var(--bg-base);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            transition: background 0.5s ease;
-        }
-        
-        .app-shell {
-            width: 100%;
-            max-width: 430px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+    .feedback { font-size: 18px; font-weight: bold; text-align: center; margin-top: 20px; min-height: 27px; }
+    .feedback.text-green { color: #22c55e; }
+    .feedback.text-red { color: #ef4444; }
 
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 1.25rem !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-        }
+    .next-btn, .action-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background-color: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .next-btn:hover, .action-btn:hover { background-color: #1d4ed8; }
+    .next-btn .arrow-icon { transition: transform 0.3s ease; }
+    .next-btn:hover .arrow-icon { transform: translateX(5px); }
+    .action-btn { display: flex; }
 
-        .ios-btn {
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .ios-btn:active { transform: scale(0.96); opacity: 0.85; }
-        
-        .scroll-v { overflow-y: auto; scrollbar-width: none; height: 100%; }
-        .scroll-v::-webkit-scrollbar { display: none; }
-        
-        .effect-mark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            pointer-events: none;
-            display: none;
-            font-size: 120px;
-            font-weight: 800;
-            opacity: 0.8;
-            font-family: 'Outfit', sans-serif;
-        }
-        @keyframes pop {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            40% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-            100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
-        }
+    .review-item {
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .review-answer { color: #ef4444; font-weight: bold; margin-top: 8px; }
 
-        .bottom-nav {
-            padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.03);
-            z-index: 50;
-            position: relative;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-        }
-        .home-hub {
-            position: absolute;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: var(--c-slate);
-            border: 4px solid var(--bg-base);
-            box-shadow: 0 8px 20px rgba(124, 147, 195, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 60;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .card-container { perspective: 1000px; touch-action: none; position: relative; }
-        .card-inner {
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-style: preserve-3d;
-            position: relative;
-            width: 100%; height: 100%;
-        }
-        .card-inner.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back {
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 32px;
-            -webkit-transform: translate3d(0,0,0);
-        }
-        .card-back { transform: rotateY(180deg); }
-
-        #swipe-label-left, #swipe-label-right {
-            position: absolute; top: 20%;
-            padding: 0.5rem 1.5rem; border-radius: 99px;
-            font-weight: 800; font-size: 1.2rem; opacity: 0; z-index: 100;
-            pointer-events: none;
-            background: var(--glass-bg);
-            backdrop-filter: blur(4px);
-        }
-        #swipe-label-left { left: 5%; color: var(--c-dusty); border: 2px solid var(--c-dusty); transform: rotate(-15deg); }
-        #swipe-label-right { right: 5%; color: var(--c-slate); border: 2px solid var(--c-slate); transform: rotate(15deg); }
-
-        .swipe-right { transform: translateX(150%) rotate(20deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
-        .swipe-left { transform: translateX(-150%) rotate(-15deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
-        .no-transition { transition: none !important; }
-        .hidden { display: none !important; }
-
-        /* NYT専用のグラデーションボタン */
-        .gradient-btn {
-            background: linear-gradient(135deg, var(--c-slate), var(--c-sage));
-            background-size: 200% 200%;
-            animation: gradientShift 5s ease infinite;
-        }
-        @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-    </style>
+    .hidden { display: none !important; }
+  </style>
 </head>
-<body class="antialiased">
+<body>
 
-<div id="correct-effect" class="effect-mark text-[var(--c-sage)]" style="animation: pop 0.6s ease-out;">○</div>
-<div id="wrong-effect" class="effect-mark text-[var(--c-dusty)]" style="animation: pop 0.6s ease-out;">×</div>
+  <div class="app-container">
+    <h1>📝 オリジナルTOEICテスト</h1>
 
-<div class="app-shell">
-    
-    <div id="scr-level" class="flex-grow flex flex-col p-6 scroll-v">
-        <h1 class="text-3xl font-extrabold mt-10 mb-2 text-center w-full tracking-tight" style="color: var(--c-slate);">Word Focus</h1>
-        <p class="text-sm text-gray-500 mb-10 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
-        <div class="space-y-4 pointer-events-none opacity-50 transition-opacity duration-300" id="level-btns">
-            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
-            </div>
-            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">600点級 中堅突破</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-sage); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
-            </div>
-            <div onclick="ctrl.setLevel(800)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">800点級 高得点圏</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-mauve); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
-            </div>
-            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">900点級 満点挑戦</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-dusty); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
-            </div>
-        </div>
+    <div id="quiz-screen">
+      <div class="question-area">
+        <div id="q-number" class="question-number">Question 1 / 3</div>
+        <div id="q-text" class="question-text">読み込み中...</div>
+      </div>
+      <div id="choices" class="choices-container">
+      </div>
+      <div id="feedback" class="feedback"></div>
+      
+      <button id="next-btn" class="next-btn" onclick="nextQuestion()">
+        次の問題へ
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </button>
     </div>
 
-    <div id="scr-mode" class="flex-grow hidden p-6 flex flex-col scroll-v">
-        <button onclick="ctrl.showLevel()" class="text-gray-500 font-bold mb-6 flex items-center gap-2 self-start hover:opacity-70"><i class="fas fa-arrow-left"></i> Back</button>
-        <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 tracking-tight">How to study?</h2>
-        
-        <div class="glass-card mb-8 py-3 px-5 flex justify-between items-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Shuffle</span>
-            <select id="shuffle-select" class="bg-transparent text-sm font-bold outline-none cursor-pointer" style="color: var(--c-slate);">
-                <option value="random">ランダム出題</option>
-                <option value="mistake">最近のミス優先</option>
-            </select>
-        </div>
+    <div id="result-screen" class="hidden">
+      <h2 style="text-align: center;">テスト終了！</h2>
+      <p id="score-text" style="text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0;"></p>
+      
+      <div id="review-area" class="hidden">
+        <h3 style="font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">復習リスト（間違えた問題）</h3>
+        <div id="review-list"></div>
+      </div>
 
-        <div class="grid grid-cols-2 gap-4 pb-10">
-            <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
-                <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
-            </div>
-            <div onclick="ctrl.start(2)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-sage);">
-                <i class="fas fa-language text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">日 → 英</p>
-            </div>
-            <div onclick="ctrl.start(5)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-mauve);">
-                <i class="fas fa-clone text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カード</p>
-            </div>
-            <div onclick="ctrl.start(6)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-terra);">
-                <i class="fas fa-headphones-alt text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">Aruki</p>
-            </div>
-            <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-dusty);">
-                <i class="fas fa-redo text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習モード</p>
-            </div>
-            
-            <div onclick="ctrl.startNYT()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-md flex items-center justify-center gap-4 gradient-btn">
-                <i class="far fa-newspaper text-2xl opacity-90"></i>
-                <div class="text-left">
-                    <p class="font-bold text-base tracking-wide leading-tight">本日のNYTニュース単語</p>
-                    <p class="text-xs opacity-80 mt-1">AIが抽出した最新ニュース語彙をテスト</p>
-                </div>
-            </div>
-        </div>
+      <button class="action-btn" onclick="location.reload()" style="margin-top: 30px;">
+        最初からやり直す
+      </button>
     </div>
+  </div>
 
-    <div id="scr-quiz" class="flex-grow hidden flex flex-col h-full overflow-hidden">
-        <div class="px-6 pt-6 flex justify-between items-center mb-2">
-            <span id="quiz-mode-label" class="text-xs font-bold uppercase tracking-widest text-gray-400">Quiz</span>
-            <span id="quiz-count" class="text-sm font-bold text-gray-500 bg-gray-200/50 dark:bg-gray-800/50 px-3 py-1 rounded-full">1 / 10</span>
-        </div>
-        <div class="px-6 py-2"><div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full w-0 transition-all duration-500 ease-out rounded-full" style="background: var(--c-slate);"></div></div></div>
-        
-        <div id="mic-status" class="hidden text-center font-bold animate-pulse text-xs py-1" style="color: var(--c-terra);"><i class="fas fa-microphone"></i> 音声聞き取り中...</div>
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        question: "The new software is designed to _______ the accounting process.",
+        choices: ["streamline", "streamlines", "streamlined", "streamlining"],
+        answerIndex: 0
+      },
+      {
+        id: 2,
+        question: "Please ensure that all doors are locked _______ leaving the building.",
+        choices: ["before", "after", "during", "while"],
+        answerIndex: 0
+      },
+      {
+        id: 3,
+        question: "Mr. Lee _______ the marketing department since last year.",
+        choices: ["manages", "managed", "has managed", "will manage"],
+        answerIndex: 2
+      }
+    ];
 
-        <div class="flex-grow scroll-v px-6 pt-2 pb-6">
-            
-            <div class="mb-4 text-center mt-2 flex justify-center items-center gap-3">
-                <h3 id="q-main-text" class="text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight"></h3>
-                <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-base"></i></button>
-            </div>
-            
-            <div id="q-choices" class="space-y-2 mb-4"></div>
-            
-            <div id="aruki-replay-btn" onclick="ctrl.replayAruki()" class="hidden ios-btn w-full mt-1 mb-3 py-3 rounded-xl font-bold text-sm text-center text-white shadow-sm" style="background: var(--c-sage);">
-                <i class="fas fa-sync-alt mr-2"></i>もう一度読み上げる
-            </div>
+    let currentIndex = 0;
+    let score = 0;
+    let mistakes = [];
 
-            <div id="expl-panel" class="hidden glass-card mb-4 overflow-hidden relative">
-                <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background: var(--c-slate);"></div>
-                <h4 class="font-extrabold text-[10px] uppercase mb-1 tracking-widest pl-2" style="color: var(--c-slate);">Explanation</h4>
-                
-                <p id="expl-text" class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed mb-3 pl-2"></p>
-                <div class="bg-white/60 dark:bg-black/20 p-3 rounded-xl text-xs space-y-1">
-                    <p id="ex-en" class="font-medium" style="color: var(--c-slate);"></p>
-                    <p id="ex-ja" class="text-gray-600 dark:text-gray-400"></p>
-                </div>
-                <button onclick="ctrl.next()" class="ios-btn w-full mt-3 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold text-sm shadow-md">次へ進む</button>
-            </div>
-        </div>
-    </div>
+    const qNumberEl = document.getElementById('q-number');
+    const qTextEl = document.getElementById('q-text');
+    const choicesEl = document.getElementById('choices');
+    const feedbackEl = document.getElementById('feedback');
+    const nextBtnEl = document.getElementById('next-btn');
 
-    <div id="scr-flashcard" class="hidden flex-grow flex flex-col items-center justify-center p-6 w-full relative">
-        <button onclick="ctrl.showMode()" class="absolute top-6 left-6 text-gray-500 font-bold hover:opacity-70"><i class="fas fa-times text-lg"></i></button>
-        <div id="fc-container" class="card-container w-full max-w-sm aspect-[4/5] mb-8">
-            <div id="swipe-label-left">Review</div>
-            <div id="swipe-label-right">Got it!</div>
-            <div class="card-inner cursor-pointer h-full">
-                <div class="card-front glass-card border-2 shadow-sm" style="border-color: var(--glass-border);">
-                    <span id="fc-en" class="text-4xl font-extrabold text-gray-800 dark:text-white tracking-tight">Word</span>
-                </div>
-                <div class="card-back glass-card border-2 px-6 text-center overflow-hidden shadow-sm flex flex-col justify-center" style="border-color: var(--glass-border);">
-                    <span id="fc-ja" class="text-2xl font-bold mb-4 block" style="color: var(--c-slate);">意味</span>
-                    <div id="fc-ex" class="w-full"></div>
-                </div>
-            </div>
-        </div>
-        <p class="text-xs font-bold text-gray-400 tracking-wide uppercase">Tap to flip / Swipe to sort</p>
-    </div>
+    function loadQuestion() {
+      const currentQ = quizData[currentIndex];
+      qNumberEl.textContent = `Question ${currentIndex + 1} / ${quizData.length}`;
+      qTextEl.textContent = currentQ.question;
+      
+      choicesEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      nextBtnEl.style.display = 'none';
 
-    <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
-        <div class="text-center mt-10 mb-8">
-            <h2 class="text-6xl font-extrabold mb-2" style="color: var(--c-slate);"><span id="res-score">0</span><span id="res-total" class="text-2xl text-gray-400">/10</span></h2>
-            <p id="analysis-summary" class="text-sm font-medium text-gray-500 mb-6"></p>
-            
-            <div class="flex justify-center gap-4 text-xs font-bold text-gray-500">
-                <div class="flex flex-col items-center"><span style="color: var(--c-slate);">400</span><span id="cnt-400">0 w</span></div>
-                <div class="flex flex-col items-center"><span style="color: var(--c-sage);">600</span><span id="cnt-600">0 w</span></div>
-                <div class="flex flex-col items-center"><span style="color: var(--c-mauve);">800</span><span id="cnt-800">0 w</span></div>
-                <div class="flex flex-col items-center"><span style="color: var(--c-dusty);">900</span><span id="cnt-900">0 w</span></div>
-            </div>
-        </div>
-        
-        <div class="glass-card flex-grow flex flex-col mb-6 p-5">
-            <h4 class="text-xs font-bold mb-4 text-center pb-3 uppercase tracking-widest text-gray-400 border-b border-gray-200 dark:border-gray-700">Needs Review</h4>
-            <div id="wrong-list" class="space-y-2 overflow-y-auto pr-2"></div>
-        </div>
-        
-        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-2xl font-bold text-base shadow-md mb-4">メニューへ戻る</button>
-    </div>
+      currentQ.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = choice;
+        btn.className = 'choice-btn';
+        btn.onclick = () => checkAnswer(index, btn);
+        choicesEl.appendChild(btn);
+      });
+    }
 
-    <div class="bottom-nav rounded-t-[32px] flex justify-around items-center pt-4 pb-8 w-full shrink-0">
-        <div onclick="ctrl.showMode()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-study"><i class="fas fa-book-open text-xl mb-1"></i><span class="text-[10px] font-bold">Study</span></div>
-        <div onclick="ctrl.start(5)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-cards"><i class="fas fa-layer-group text-xl mb-1"></i><span class="text-[10px] font-bold">Cards</span></div>
-        
-        <div onclick="ctrl.showLevel()" class="home-hub ios-btn"><i class="fas fa-home"></i></div>
-        <div style="width: 50px;"></div> 
+    function checkAnswer(selectedIndex, selectedBtn) {
+      const currentQ = quizData[currentIndex];
+      const buttons = choicesEl.querySelectorAll('.choice-btn');
+      
+      buttons.forEach(btn => btn.disabled = true);
 
-        <div onclick="ctrl.start(6)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-aruki"><i class="fas fa-headphones-alt text-xl mb-1"></i><span class="text-[10px] font-bold">Aruki</span></div>
-        <div onclick="ctrl.showAnalysis()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-stats"><i class="fas fa-chart-bar text-xl mb-1"></i><span class="text-[10px] font-bold">Status</span></div>
-    </div>
-</div>
+      if (selectedIndex === currentQ.answerIndex) {
+        selectedBtn.classList.add('correct');
+        feedbackEl.textContent = '⭕️ Correct!';
+        feedbackEl.className = 'feedback text-green';
+        score++;
+      } else {
+        selectedBtn.classList.add('wrong');
+        buttons[currentQ.answerIndex].classList.add('correct');
+        feedbackEl.textContent = '❌ Incorrect';
+        feedbackEl.className = 'feedback text-red';
+        mistakes.push(currentQ);
+      }
 
-<script>
-let DB = {};
-let audioCtx = null;
+      nextBtnEl.style.display = 'flex';
+    }
 
-const ctrl = {
-    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false, arukiTimer: null },
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < quizData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
 
-    init: async () => {
-        ctrl.applyTheme();
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
-        try {
-            const timestamp = new Date().getTime();
-            const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
-            
-            if (!response.ok) throw new Error();
-            DB = await response.json();
-            document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
-            document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
-            ctrl.initSwipeGestures();
-        } catch (error) {
-            document.getElementById('loading-msg').innerText = "単語データが見つかりません。";
-        }
-    },
+    function showResults() {
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      
+      document.getElementById('score-text').textContent = `${quizData.length}問中 ${score}問 正解！`;
 
-    applyTheme: () => {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (isDark) document.documentElement.classList.add('dark');
-        else document.documentElement.classList.remove('dark');
-    },
-
-    switchScr: (id) => {
-        ctrl.stopVoice(); window.speechSynthesis.cancel(); clearTimeout(ctrl.state.arukiTimer);
-        ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    },
-
-    showLevel: () => ctrl.switchScr('scr-level'),
-    showMode: () => ctrl.switchScr('scr-mode'),
-    showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
-    setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
-
-    // --- 【追加】NYTニュース単語用の起動処理 ---
-    startNYT: async () => {
-        ctrl.state.mode = 7; // 新しいモード番号を割り当て
-        ctrl.state.idx = 0;
-        ctrl.state.score = 0;
-        ctrl.state.isChecking = false;
-        
-        try {
-            // キャッシュを防ぐためにタイムスタンプを付与して取得
-            const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
-            if (!res.ok) throw new Error("JSONが見つかりません。NAS側で生成されているか確認してください。");
-            const nytData = await res.json();
-            
-            if (!nytData.words || nytData.words.length === 0) {
-                alert("ニュース単語がまだ生成されていません。しばらく待ってから再度お試しください。");
-                return;
-            }
-
-            // NYTのデータをアプリの形式に変換
-            const nytWords = nytData.words.map(item => ({
-                en: item.word,
-                ja: item.ja,
-                ex: "最新ニュースからの抽出語彙",
-                sEn: item.example || "",
-                sJa: ""
-            }));
-
-            // ダミーの選択肢を作るために、ベースのDB（800レベルなど）を利用
-            const dummySource = (DB[800] && DB[800].words) ? DB[800].words : nytWords;
-
-            ctrl.state.questions = nytWords.map(w => {
-                // 正解以外の選択肢を3つランダムに選ぶ
-                let others = dummySource.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
-                let choices = [w, ...others].sort(() => Math.random() - 0.5);
-                return { ...w, q: w.en, a: w.ja, choiceData: choices };
-            });
-
-            ctrl.switchScr('scr-quiz');
-            ctrl.render();
-
-        } catch (err) {
-            alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
-        }
-    },
-
-    start: (mode) => {
-        ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
-        const data = DB[ctrl.state.level] || DB[400];
-        const shuffleType = document.getElementById('shuffle-select').value;
-        
-        let sourceWords = [...data.words];
-        if (mode === 4) {
-            if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！"); return; }
-            sourceWords = [...ctrl.state.wrongPool];
-        } else if (shuffleType === 'mistake' && ctrl.state.wrongPool.length > 0) {
-            const wrongIds = new Set(ctrl.state.wrongPool.map(w => w.en));
-            sourceWords.sort((a, b) => (wrongIds.has(b.en)?1:0) - (wrongIds.has(a.en)?1:0) || Math.random()-0.5);
-        } else {
-            sourceWords.sort(() => Math.random() - 0.5);
-        }
-
-        ctrl.state.questions = sourceWords.map(w => {
-            let others = data.words.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
-            let choices = [w, ...others].sort(() => Math.random() - 0.5);
-            return { ...w, q: (mode === 1 || mode === 6) ? w.en : w.ja, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
-        }).slice(0, 10);
-
-        if (mode === 5) { ctrl.state.flashcardInit = false; ctrl.switchScr('scr-flashcard'); ctrl.nextFlash(); }
-        else { ctrl.switchScr('scr-quiz'); ctrl.render(); }
-    },
-
-    render: () => {
-        ctrl.state.isChecking = false;
-        clearTimeout(ctrl.state.arukiTimer);
-        const q = ctrl.state.questions[ctrl.state.idx];
-        const totalQ = ctrl.state.questions.length;
-        
-        // --- 修正：問題数に応じて動的に表示を変える ---
-        document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
-        document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
-        
-        document.getElementById('q-main-text').innerText = q.q;
-        document.getElementById('expl-panel').classList.add('hidden');
-        
-        // --- 修正：NYTモード用のタイトル表示 ---
-        let modeLabel = "Quiz";
-        if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
-        if (ctrl.state.mode === 7) modeLabel = "NYT News";
-        document.getElementById('quiz-mode-label').innerText = modeLabel;
-
-        const choiceArea = document.getElementById('q-choices');
-        choiceArea.innerHTML = "";
-        q.choiceData.forEach((c, i) => {
-            const btn = document.createElement('div');
-            btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
-            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) ? c.ja : c.en;
-            btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
-            btn.onclick = () => ctrl.check(btn, displayText);
-            choiceArea.appendChild(btn);
+      if (mistakes.length > 0) {
+        document.getElementById('review-area').classList.remove('hidden');
+        const reviewListEl = document.getElementById('review-list');
+        mistakes.forEach(q => {
+          const item = document.createElement('div');
+          item.className = 'review-item';
+          const correctAnswerText = q.choices[q.answerIndex];
+          item.innerHTML = `
+            <div>${q.question}</div>
+            <div class="review-answer">正解: ${correctAnswerText}</div>
+          `;
+          reviewListEl.appendChild(item);
         });
+      }
+    }
 
-        const arukiBtn = document.getElementById('aruki-replay-btn');
-        if (ctrl.state.mode === 6) {
-            arukiBtn.classList.remove('hidden');
-            ctrl.replayAruki();
-        } else {
-            arukiBtn.classList.add('hidden');
-        }
-    },
-
-    replayAruki: () => {
-        const q = ctrl.state.questions[ctrl.state.idx];
-        ctrl.stopVoice(); window.speechSynthesis.cancel();
-        const msgWord = new SpeechSynthesisUtterance(q.en);
-        msgWord.lang = 'en-US'; msgWord.rate = 0.85;
-        msgWord.onend = () => {
-            setTimeout(() => {
-                if (ctrl.state.isChecking) return;
-                const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
-                const msgOpts = new SpeechSynthesisUtterance(optsText);
-                msgOpts.lang = 'ja-JP';
-                msgOpts.onend = () => ctrl.startVoice();
-                window.speechSynthesis.speak(msgOpts);
-            }, 1000); 
-        };
-        window.speechSynthesis.speak(msgWord);
-    },
-
-    check: (btn, val) => {
-        if (ctrl.state.isChecking) return;
-        ctrl.state.isChecking = true;
-        clearTimeout(ctrl.state.arukiTimer);
-
-        const q = ctrl.state.questions[ctrl.state.idx];
-        const isCorrect = (val === q.a);
-        ctrl.stopVoice();
-        
-        document.querySelectorAll('#q-choices div').forEach(b => {
-            const labelEl = b.querySelector('.choice-label');
-            const originalJa = labelEl.getAttribute('data-ja');
-            const originalEn = labelEl.getAttribute('data-en');
-            // モード1,6,7（英→日）の場合は、解説時に英語を併記する
-            if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
-            
-            if (originalJa === q.ja || originalEn === q.en) {
-                if (originalEn === q.en) {
-                    b.style.borderColor = 'var(--c-sage)';
-                    b.style.backgroundColor = 'rgba(163, 177, 138, 0.1)';
-                    b.innerHTML += '<i class="fas fa-check ml-2" style="color: var(--c-sage);"></i>';
-                }
-            }
-        });
-
-        if (isCorrect) { 
-            ctrl.state.score++; 
-            ctrl.triggerEffect('correct-effect'); 
-            ctrl.playCorrectSound(); 
-        } else { 
-            btn.style.borderColor = 'var(--c-dusty)';
-            btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
-            ctrl.triggerEffect('wrong-effect'); 
-            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
-        }
-        
-        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
-        document.getElementById('ex-en').innerText = q.sEn; 
-        document.getElementById('ex-ja').innerText = q.sJa;
-        document.getElementById('expl-panel').classList.remove('hidden');
-        document.getElementById('aruki-replay-btn').classList.add('hidden');
-        
-        if (ctrl.state.mode === 6) {
-            ctrl.state.arukiTimer = setTimeout(() => { 
-                if (!document.getElementById('scr-quiz').classList.contains('hidden')) ctrl.next(); 
-            }, 4500);
-        }
-    },
-
-    playCorrectSound: () => {
-        try {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            const now = audioCtx.currentTime;
-            osc.frequency.setValueAtTime(1046.50, now); 
-            osc.frequency.setValueAtTime(1318.51, now + 0.12); 
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-            osc.start(now);
-            osc.stop(now + 0.6);
-        } catch(e) {}
-    },
-
-    triggerEffect: (id) => {
-        const el = document.getElementById(id); el.style.display = 'block';
-        setTimeout(() => { el.style.display = 'none'; }, 600);
-    },
-
-    initSwipeGestures: () => {
-        const container = document.getElementById('fc-container');
-        const labelL = document.getElementById('swipe-label-left');
-        const labelR = document.getElementById('swipe-label-right');
-        let startX = 0, currentX = 0, startTime = 0;
-
-        container.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startTime = Date.now();
-            container.querySelector('.card-inner').style.transition = 'none';
-        });
-
-        container.addEventListener('touchmove', (e) => {
-            currentX = e.touches[0].clientX - startX;
-            const rotation = currentX / 25;
-            const inner = container.querySelector('.card-inner');
-            const baseTransform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
-            inner.style.transform = `${baseTransform} translateX(${currentX}px) rotate(${rotation}deg)`;
-            
-            if (currentX > 50) labelR.style.opacity = Math.min(currentX / 150, 1);
-            else if (currentX < -50) labelL.style.opacity = Math.min(Math.abs(currentX) / 150, 1);
-            else { labelL.style.opacity = 0; labelR.style.opacity = 0; }
-        });
-
-        container.addEventListener('touchend', (e) => {
-            const inner = container.querySelector('.card-inner');
-            const duration = Date.now() - startTime;
-            labelL.style.opacity = 0; labelR.style.opacity = 0;
-            
-            if (Math.abs(currentX) < 15 && duration < 250) {
-                inner.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                inner.classList.toggle('flipped');
-                currentX = 0; return;
-            }
-
-            inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            if (currentX > 100) {
-                inner.classList.add('swipe-right');
-                setTimeout(() => ctrl.nextFlash(), 300);
-            } else if (currentX < -100) {
-                const q = ctrl.state.questions[ctrl.state.idx];
-                if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q);
-                inner.classList.add('swipe-left');
-                setTimeout(() => ctrl.nextFlash(), 300);
-            } else {
-                inner.style.transform = inner.classList.contains('flipped') ? 'rotateY(180deg)' : '';
-            }
-            currentX = 0;
-        });
-    },
-
-    nextFlash: () => {
-        const inner = document.querySelector('.card-inner');
-        if (!ctrl.state.flashcardInit) { ctrl.state.flashcardInit = true; ctrl.updateFlashcardContent(); return; }
-        setTimeout(() => {
-            inner.classList.add('no-transition');
-            inner.classList.remove('flipped', 'swipe-right', 'swipe-left');
-            inner.style.transform = '';
-            ctrl.state.idx++;
-            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
-            ctrl.updateFlashcardContent();
-            setTimeout(() => inner.classList.remove('no-transition'), 50);
-        }, 150);
-    },
-
-    updateFlashcardContent: () => {
-        const q = ctrl.state.questions[ctrl.state.idx];
-        document.getElementById('fc-en').innerText = q.en;
-        document.getElementById('fc-ja').innerText = `${q.ja} (${q.en})`;
-        document.getElementById('fc-ex').innerHTML = `<div class="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl mt-2"><span class="font-medium text-[var(--c-slate)] block mb-1 text-sm">${q.sEn}</span><span class="text-gray-500 text-xs">${q.sJa}</span></div>`;
-    },
-
-    updateAnalysisUI: () => {
-        const stats = JSON.parse(localStorage.getItem('toeic_v2')) || { total: 0, correct: 0 };
-        document.getElementById('analysis-summary').innerText = `通算正解率: ${stats.total > 0 ? ((stats.correct/stats.total)*100).toFixed(1) : 0}% (${stats.total}問中)`;
-        
-        [400, 600, 800, 900].forEach(lv => {
-            const count = DB[lv] && DB[lv].words ? DB[lv].words.length : 0;
-            document.getElementById(`cnt-${lv}`).innerText = `${count} w`;
-        });
-
-        const listEl = document.getElementById('wrong-list'); listEl.innerHTML = "";
-        ctrl.state.wrongPool.forEach(w => {
-            const item = document.createElement('div');
-            item.className = "flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl mb-2 shadow-sm border border-gray-100 dark:border-gray-700 text-sm";
-            item.innerHTML = `<span class="font-bold" style="color: var(--c-slate);">${w.en}</span><span class="text-gray-500 font-medium">${w.ja}</span>`;
-            listEl.appendChild(item);
-        });
-    },
-
-    // --- 修正：問題数を動的に判定するように変更 ---
-    next: () => { 
-        ctrl.state.idx++; 
-        if (ctrl.state.idx < ctrl.state.questions.length) {
-            ctrl.render(); 
-        } else {
-            ctrl.finish(); 
-        }
-    },
-    
-    finish: () => { 
-        ctrl.stopVoice(); 
-        document.getElementById('res-score').innerText = ctrl.state.score; 
-        document.getElementById('res-total').innerText = '/' + ctrl.state.questions.length; // 分母も動的に変更
-        ctrl.showAnalysis(); 
-    },
-    
-    speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
-    stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
-
-    startVoice: () => {
-        if (!('webkitSpeechRecognition' in window)) return;
-        document.getElementById('mic-status').classList.remove('hidden');
-        if (!ctrl.state.recog) {
-            ctrl.state.recog = new webkitSpeechRecognition(); ctrl.state.recog.lang = 'ja-JP';
-            ctrl.state.recog.onresult = (e) => {
-                const res = e.results[e.results.length - 1][0].transcript;
-                if (/(1|１|いち|イチ)/.test(res)) ctrl.triggerVoiceAnswer(0);
-                else if (/(2|２|に|ニ)/.test(res)) ctrl.triggerVoiceAnswer(1);
-                else if (/(3|３|さん|サン)/.test(res)) ctrl.triggerVoiceAnswer(2);
-                else if (/(4|４|よん|ヨン|し|シ)/.test(res)) ctrl.triggerVoiceAnswer(3);
-            };
-        }
-        try { ctrl.state.recog.start(); } catch(err){}
-    },
-
-    triggerVoiceAnswer: (i) => { const bs = document.querySelectorAll('#q-choices div'); if (bs[i]) bs[i].click(); }
-};
-
-ctrl.init();
-</script>
+    loadQuestion();
+  </script>
 </body>
 </html>
