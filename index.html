@@ -1,440 +1,359 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>オリジナルTOEIC対策テスト</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', sans-serif;
-      background-color: #f3f4f6;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .app-container {
-      background-color: #ffffff;
-      width: 100%;
-      max-width: 500px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      padding: 30px;
-      box-sizing: border-box;
-      position: relative;
-    }
-    h1 {
-      font-size: 20px;
-      color: #1f2937;
-      text-align: center;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 10px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOEIC Nuance Words</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Noto Sans JP', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     
-    /* レベル選択画面 */
-    .level-btn {
-      background-color: #1f2937;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      width: 100%;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      margin-bottom: 12px;
-      transition: opacity 0.2s;
-    }
-    .level-btn:hover { opacity: 0.8; }
-    .level-btn .arrow { background-color: rgba(255,255,255,0.2); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-    
-    /* NYT専用ボタン */
-    .nyt-btn {
-      background: linear-gradient(135deg, #7C93C3, #A3B18A);
-      background-size: 200% 200%;
-      animation: gradientShift 5s ease infinite;
-      margin-top: 20px;
-    }
-    @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    <style>
+        :root {
+            /* トレンドのくすみカラー（Nuance Colors） */
+            --c-slate: #7C93C3;    /* 落ち着いたブルーグレー */
+            --c-sage: #A3B18A;     /* ピスタチオ・セージグリーン */
+            --c-mauve: #B5A6C9;    /* モーヴ・ラベンダー */
+            --c-dusty: #E5989B;    /* ダスティピンク */
+            --c-terra: #E29578;    /* テラコッタ */
+            
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --bg-base: #F7F6F2;    /* 温かみのあるグレージュ */
+            --text-main: #4A4A4A;
+        }
+        
+        html.dark {
+            --glass-bg: rgba(40, 40, 45, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --bg-base: #1C1C1E;
+            --text-main: #E5E5E5;
+        }
 
-    /* クイズ画面 */
-    .question-area { margin-bottom: 24px; }
-    .question-number { font-size: 14px; color: #6b7280; font-weight: bold; margin-bottom: 8px; }
-    .question-text { font-size: 18px; line-height: 1.5; font-weight: bold; margin-bottom: 20px; }
-    
-    .choices-container { display: flex; flex-direction: column; gap: 12px; }
-    .choice-btn {
-      background-color: #ffffff;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 16px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .choice-btn:hover:not(:disabled) {
-      border-color: #3b82f6;
-      background-color: #eff6ff;
-    }
-    .choice-btn:disabled { cursor: not-allowed; }
-    .choice-btn.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
-    .choice-btn.wrong { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        body {
+            margin: 0;
+            background: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            transition: background 0.5s ease;
+        }
+        
+        .app-shell {
+            width: 100%;
+            max-width: 430px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-    .feedback { font-size: 18px; font-weight: bold; text-align: center; margin-top: 20px; min-height: 27px; }
-    .feedback.text-green { color: #22c55e; }
-    .feedback.text-red { color: #ef4444; }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.25rem !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
 
-    .next-btn, .action-btn {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px;
-      background-color: #2563eb;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .next-btn:hover, .action-btn:hover { background-color: #1d4ed8; }
-    .next-btn .arrow-icon { transition: transform 0.3s ease; }
-    .next-btn:hover .arrow-icon { transform: translateX(5px); }
-    .action-btn { display: flex; }
+        .ios-btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ios-btn:active { transform: scale(0.96); opacity: 0.85; }
+        
+        .scroll-v { overflow-y: auto; scrollbar-width: none; height: 100%; }
+        .scroll-v::-webkit-scrollbar { display: none; }
+        
+        .effect-mark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+            font-size: 120px;
+            font-weight: 800;
+            opacity: 0.8;
+            font-family: 'Outfit', sans-serif;
+        }
+        @keyframes pop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            40% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+        }
 
-    /* 復習リスト */
-    .review-item {
-      background-color: #fffbeb;
-      border-left: 4px solid #f59e0b;
-      padding: 16px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      position: relative;
-    }
-    .review-answer { color: #ef4444; font-weight: bold; margin-top: 8px; }
-    
-    /* 個別再挑戦ボタン */
-    .retry-btn {
-      margin-top: 10px;
-      padding: 6px 12px;
-      background-color: #f59e0b;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .retry-btn:hover { background-color: #d97706; }
+        .bottom-nav {
+            padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.03);
+            z-index: 50;
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+        }
+        .home-hub {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--c-slate);
+            border: 4px solid var(--bg-base);
+            box-shadow: 0 8px 20px rgba(124, 147, 195, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            color: white;
+            font-size: 1.5rem;
+        }
 
-    .hidden { display: none !important; }
-    .nav-back { color: #6b7280; text-decoration: none; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-bottom: 15px;}
-  </style>
+        .card-container { perspective: 1000px; touch-action: none; position: relative; }
+        .card-inner {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%; height: 100%;
+        }
+        .card-inner.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 32px;
+            -webkit-transform: translate3d(0,0,0);
+        }
+        .card-back { transform: rotateY(180deg); }
+
+        #swipe-label-left, #swipe-label-right {
+            position: absolute; top: 20%;
+            padding: 0.5rem 1.5rem; border-radius: 99px;
+            font-weight: 800; font-size: 1.2rem; opacity: 0; z-index: 100;
+            pointer-events: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(4px);
+        }
+        #swipe-label-left { left: 5%; color: var(--c-dusty); border: 2px solid var(--c-dusty); transform: rotate(-15deg); }
+        #swipe-label-right { right: 5%; color: var(--c-slate); border: 2px solid var(--c-slate); transform: rotate(15deg); }
+
+        .swipe-right { transform: translateX(150%) rotate(20deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
+        .swipe-left { transform: translateX(-150%) rotate(-15deg) !important; opacity: 0; transition: all 0.4s ease-in !important; }
+        .no-transition { transition: none !important; }
+        .hidden { display: none !important; }
+
+        /* NYT専用アニメーション背景 */
+        .nyt-gradient {
+            background: linear-gradient(135deg, var(--c-slate), var(--c-sage));
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+        }
+    </style>
 </head>
-<body>
+<body class="antialiased">
 
-  <div class="app-container">
+<div id="correct-effect" class="effect-mark text-[var(--c-sage)]" style="animation: pop 0.6s ease-out;">○</div>
+<div id="wrong-effect" class="effect-mark text-[var(--c-dusty)]" style="animation: pop 0.6s ease-out;">×</div>
+
+<div class="app-shell">
     
-    <div id="home-screen">
-      <h1>Word Focus</h1>
-      <p style="text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 20px;">目標レベルを選択してください</p>
-      
-      <button class="level-btn" onclick="startStandardQuiz(400)">
-        <span>400点級 基礎固め</span><span class="arrow"><i class="fas fa-arrow-right"></i></span>
-      </button>
-      <button class="level-btn" onclick="startStandardQuiz(600)">
-        <span>600点級 中堅突破</span><span class="arrow"><i class="fas fa-arrow-right"></i></span>
-      </button>
-      <button class="level-btn" onclick="startStandardQuiz(800)">
-        <span>800点級 高得点圏</span><span class="arrow"><i class="fas fa-arrow-right"></i></span>
-      </button>
-      <button class="level-btn" onclick="startStandardQuiz(900)">
-        <span>900点級 満点挑戦</span><span class="arrow"><i class="fas fa-arrow-right"></i></span>
-      </button>
-      
-      <button class="level-btn nyt-btn" onclick="startNYTQuiz()">
-        <div>
-          <span style="display:block;"><i class="far fa-newspaper"></i> 本日のNYTニュース単語</span>
-          <span style="font-size: 11px; font-weight: normal; opacity: 0.8;">AIが抽出した最新ニュース語彙をテスト</span>
+    <div id="scr-level" class="flex-grow flex flex-col p-6 scroll-v">
+        <h1 class="text-3xl font-extrabold mt-10 mb-2 text-center w-full tracking-tight" style="color: var(--c-slate);">Word Focus</h1>
+        <p class="text-sm text-gray-500 mb-8 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
+        
+        <div class="space-y-4 pointer-events-none opacity-50 transition-opacity duration-300 pb-8" id="level-btns">
+            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            </div>
+            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-base text-gray-700 dark:text-gray-200">600点級 中堅突破</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-sage); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            </div>
+            <div onclick="ctrl.setLevel(800)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-base text-gray-700 dark:text-gray-200">800点級 高得点圏</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-mauve); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            </div>
+            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center">
+                <span class="font-bold text-base text-gray-700 dark:text-gray-200">900点級 満点挑戦</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-dusty); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            </div>
+
+            <div onclick="ctrl.startNYT()" class="ios-btn rounded-3xl p-[2px] mt-4 nyt-gradient shadow-md">
+                <div class="bg-white/90 dark:bg-gray-900/90 rounded-[22px] p-4 flex justify-between items-center backdrop-blur-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="far fa-newspaper text-2xl" style="color: var(--c-slate);"></i>
+                        <div class="flex flex-col text-left">
+                            <span class="font-bold text-base text-gray-800 dark:text-gray-100 tracking-wide">NYT News Words</span>
+                            <span class="text-[10px] text-gray-500 font-medium">最新ニュース抽出語彙テスト</span>
+                        </div>
+                    </div>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-play text-xs pl-0.5"></i></div>
+                </div>
+            </div>
         </div>
-        <span class="arrow" style="background: rgba(0,0,0,0.2);"><i class="fas fa-arrow-right"></i></span>
-      </button>
     </div>
 
-    <div id="quiz-screen" class="hidden">
-      <div class="nav-back" onclick="goHome()"><i class="fas fa-chevron-left"></i> ホームへ戻る</div>
-      <div class="question-area">
-        <div id="q-number" class="question-number">Question 1 / 10</div>
-        <div id="q-text" class="question-text">読み込み中...</div>
-      </div>
-      <div id="choices" class="choices-container"></div>
-      <div id="feedback" class="feedback"></div>
-      
-      <button id="next-btn" class="next-btn" onclick="nextQuestion()">
-        次の問題へ
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </button>
-    </div>
-
-    <div id="result-screen" class="hidden">
-      <h2 style="text-align: center;">テスト終了！</h2>
-      <p id="score-text" style="text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0;"></p>
-      
-      <div id="review-area" class="hidden">
-        <h3 style="font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">復習リスト（間違えた問題）</h3>
-        <p style="font-size: 12px; color: #6b7280; margin-bottom: 10px;">「再挑戦」で正解するとリストから消えます。</p>
-        <div id="review-list"></div>
-      </div>
-
-      <button class="action-btn" onclick="goHome()" style="margin-top: 30px; background-color: #1f2937;">
-        メニューへ戻る
-      </button>
-    </div>
-
-  </div>
-
-  <script>
-    // --- データの準備 ---
-    // ここは本来はCSVや別ファイルから取得するイメージですが、今回は直書きでサンプルを用意しています。
-    const standardData = [
-      { id: 1, question: "The new software is designed to _______ the accounting process.", choices: ["streamline", "streamlines", "streamlined", "streamlining"], answerIndex: 0 },
-      { id: 2, question: "Please ensure that all doors are locked _______ leaving the building.", choices: ["before", "after", "during", "while"], answerIndex: 0 },
-      { id: 3, question: "Mr. Lee _______ the marketing department since last year.", choices: ["manages", "managed", "has managed", "will manage"], answerIndex: 2 }
-    ];
-
-    let currentQuizData = []; // 今からやるクイズの配列
-    let currentIndex = 0;
-    let score = 0;
-    let mistakes = []; // 間違えた問題のストック（全体）
-
-    // --- 画面切り替え関数 ---
-    function goHome() {
-      document.getElementById('home-screen').classList.remove('hidden');
-      document.getElementById('quiz-screen').classList.add('hidden');
-      document.getElementById('result-screen').classList.add('hidden');
-    }
-
-    // --- 通常クイズ開始 ---
-    function startStandardQuiz(level) {
-      // 実際にはレベルに応じたデータをセットします
-      currentQuizData = [...standardData];
-      startQuizSession();
-    }
-
-    // --- NYTクイズ開始 ---
-    async function startNYTQuiz() {
-      document.getElementById('home-screen').classList.add('hidden');
-      document.getElementById('quiz-screen').classList.remove('hidden');
-      document.getElementById('q-text').textContent = "NYTデータ取得中...";
-      document.getElementById('choices').innerHTML = "";
-      document.getElementById('q-number').textContent = "Loading...";
-      document.getElementById('next-btn').style.display = 'none';
-      document.getElementById('feedback').textContent = '';
-
-      try {
-        // キャッシュを防いで最新のJSONを取得
-        const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
-        if (!res.ok) throw new Error("JSONが見つかりません。");
-        const nytData = await res.json();
+    <div id="scr-mode" class="flex-grow hidden p-6 flex flex-col scroll-v">
+        <button onclick="ctrl.showLevel()" class="text-gray-500 font-bold mb-6 flex items-center gap-2 self-start hover:opacity-70"><i class="fas fa-arrow-left"></i> Back</button>
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 tracking-tight">How to study?</h2>
         
-        if (!nytData.words || nytData.words.length === 0) {
-          alert("ニュース単語がまだ生成されていません。");
-          goHome();
-          return;
-        }
+        <div class="glass-card mb-8 py-3 px-5 flex justify-between items-center">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Shuffle</span>
+            <select id="shuffle-select" class="bg-transparent text-sm font-bold outline-none cursor-pointer" style="color: var(--c-slate);">
+                <option value="random">ランダム出題</option>
+                <option value="mistake">最近のミス優先</option>
+            </select>
+        </div>
 
-        // JSONデータをこのアプリの形式(question, choices, answerIndex)に変換する
-        currentQuizData = nytData.words.map((item, index) => {
-          // 英語の単語を問題とし、日本語の意味を答えとする
-          const questionText = `次の英単語の意味として最も適切なものは？\n\n「 ${item.word} 」`;
-          const correctAnswer = item.ja.split('(')[0].trim(); // 英語混じりの部分をカット
-          
-          // 他の単語の意味をダミー選択肢として使う（簡易的）
-          let allJa = nytData.words.map(w => w.ja.split('(')[0].trim());
-          let others = allJa.filter(ja => ja !== correctAnswer).sort(() => Math.random() - 0.5).slice(0, 3);
-          
-          // 正解とダミーを混ぜる
-          let choices = [correctAnswer, ...others].sort(() => Math.random() - 0.5);
-          let answerIndex = choices.indexOf(correctAnswer);
+        <div class="grid grid-cols-2 gap-4">
+            <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
+                <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
+            </div>
+            <div onclick="ctrl.start(2)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-sage);">
+                <i class="fas fa-language text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">日 → 英</p>
+            </div>
+            <div onclick="ctrl.start(5)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-mauve);">
+                <i class="fas fa-clone text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カード</p>
+            </div>
+            <div onclick="ctrl.start(6)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-terra);">
+                <i class="fas fa-headphones-alt text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">Aruki</p>
+            </div>
+            <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-dusty);">
+                <i class="fas fa-redo text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習モード</p>
+            </div>
+        </div>
+    </div>
 
-          return {
-            id: 'nyt_' + index,
-            question: questionText,
-            choices: choices,
-            answerIndex: answerIndex,
-            originalWord: item.word
-          };
-        });
-
-        startQuizSession();
-
-      } catch (err) {
-        alert("ニュース単語の読み込みに失敗しました。\nNAS側の設定を確認してください。");
-        goHome();
-      }
-    }
-
-    // --- クイズの進行 ---
-    function startQuizSession() {
-      document.getElementById('home-screen').classList.add('hidden');
-      document.getElementById('result-screen').classList.add('hidden');
-      document.getElementById('quiz-screen').classList.remove('hidden');
-      currentIndex = 0;
-      score = 0;
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      const currentQ = currentQuizData[currentIndex];
-      document.getElementById('q-number').textContent = `Question ${currentIndex + 1} / ${currentQuizData.length}`;
-      document.getElementById('q-text').textContent = currentQ.question;
-      
-      const choicesEl = document.getElementById('choices');
-      choicesEl.innerHTML = '';
-      document.getElementById('feedback').textContent = '';
-      document.getElementById('next-btn').style.display = 'none';
-
-      currentQ.choices.forEach((choice, index) => {
-        const btn = document.createElement('button');
-        btn.textContent = choice;
-        btn.className = 'choice-btn';
-        btn.onclick = () => checkAnswer(index, btn);
-        choicesEl.appendChild(btn);
-      });
-    }
-
-    function checkAnswer(selectedIndex, selectedBtn) {
-      const currentQ = currentQuizData[currentIndex];
-      const choicesEl = document.getElementById('choices');
-      const buttons = choicesEl.querySelectorAll('.choice-btn');
-      const feedbackEl = document.getElementById('feedback');
-      
-      buttons.forEach(btn => btn.disabled = true);
-
-      if (selectedIndex === currentQ.answerIndex) {
-        selectedBtn.classList.add('correct');
-        feedbackEl.textContent = '⭕️ Correct!';
-        feedbackEl.className = 'feedback text-green';
-        score++;
-      } else {
-        selectedBtn.classList.add('wrong');
-        buttons[currentQ.answerIndex].classList.add('correct');
-        feedbackEl.textContent = '❌ Incorrect';
-        feedbackEl.className = 'feedback text-red';
+    <div id="scr-quiz" class="flex-grow hidden flex flex-col h-full overflow-hidden">
+        <div class="px-6 pt-6 flex justify-between items-center mb-2">
+            <span id="quiz-mode-label" class="text-xs font-bold uppercase tracking-widest text-gray-400">Quiz</span>
+            <span id="quiz-count" class="text-sm font-bold text-gray-500 bg-gray-200/50 dark:bg-gray-800/50 px-3 py-1 rounded-full">1 / 10</span>
+        </div>
+        <div class="px-6 py-2"><div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"><div id="progress-fill" class="h-full w-0 transition-all duration-500 ease-out rounded-full" style="background: var(--c-slate);"></div></div></div>
         
-        // 重複しないようにmistakesに追加
-        if (!mistakes.some(m => m.id === currentQ.id)) {
-          mistakes.push(currentQ);
-        }
-      }
+        <div id="mic-status" class="hidden text-center font-bold animate-pulse text-xs py-1" style="color: var(--c-terra);"><i class="fas fa-microphone"></i> 音声聞き取り中...</div>
 
-      document.getElementById('next-btn').style.display = 'flex';
-    }
+        <div class="flex-grow scroll-v px-6 pt-2 pb-6">
+            <div class="mb-4 text-center mt-2 flex justify-center items-center gap-3">
+                <h3 id="q-main-text" class="text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight"></h3>
+                <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-base"></i></button>
+            </div>
+            
+            <div id="q-choices" class="space-y-2 mb-4"></div>
+            
+            <div id="aruki-replay-btn" onclick="ctrl.replayAruki()" class="hidden ios-btn w-full mt-1 mb-3 py-3 rounded-xl font-bold text-sm text-center text-white shadow-sm" style="background: var(--c-sage);">
+                <i class="fas fa-sync-alt mr-2"></i>もう一度読み上げる
+            </div>
 
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex < currentQuizData.length) {
-        loadQuestion();
-      } else {
-        showResults();
-      }
-    }
+            <div id="expl-panel" class="hidden glass-card mb-4 overflow-hidden relative">
+                <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background: var(--c-slate);"></div>
+                <h4 class="font-extrabold text-[10px] uppercase mb-1 tracking-widest pl-2" style="color: var(--c-slate);">Explanation</h4>
+                
+                <p id="expl-text" class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed mb-3 pl-2"></p>
+                <div class="bg-white/60 dark:bg-black/20 p-3 rounded-xl text-xs space-y-1">
+                    <p id="ex-en" class="font-medium" style="color: var(--c-slate);"></p>
+                    <p id="ex-ja" class="text-gray-600 dark:text-gray-400"></p>
+                </div>
+                <button onclick="ctrl.next()" class="ios-btn w-full mt-3 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl font-bold text-sm shadow-md">次へ進む</button>
+            </div>
+        </div>
+    </div>
 
-    // --- 結果と復習リスト表示 ---
-    function showResults() {
-      document.getElementById('quiz-screen').classList.add('hidden');
-      document.getElementById('result-screen').classList.remove('hidden');
-      
-      document.getElementById('score-text').textContent = `${currentQuizData.length}問中 ${score}問 正解！`;
+    <div id="scr-flashcard" class="hidden flex-grow flex flex-col items-center justify-center p-6 w-full relative">
+        <button onclick="ctrl.showMode()" class="absolute top-6 left-6 text-gray-500 font-bold hover:opacity-70"><i class="fas fa-times text-lg"></i></button>
+        <div id="fc-container" class="card-container w-full max-w-sm aspect-[4/5] mb-8">
+            <div id="swipe-label-left">Review</div>
+            <div id="swipe-label-right">Got it!</div>
+            <div class="card-inner cursor-pointer h-full">
+                <div class="card-front glass-card border-2 shadow-sm" style="border-color: var(--glass-border);">
+                    <span id="fc-en" class="text-4xl font-extrabold text-gray-800 dark:text-white tracking-tight">Word</span>
+                </div>
+                <div class="card-back glass-card border-2 px-6 text-center overflow-hidden shadow-sm flex flex-col justify-center" style="border-color: var(--glass-border);">
+                    <span id="fc-ja" class="text-2xl font-bold mb-4 block" style="color: var(--c-slate);">意味</span>
+                    <div id="fc-ex" class="w-full"></div>
+                </div>
+            </div>
+        </div>
+        <p class="text-xs font-bold text-gray-400 tracking-wide uppercase">Tap to flip / Swipe to sort</p>
+    </div>
 
-      renderReviewList();
-    }
+    <div id="scr-result" class="flex-grow hidden flex flex-col p-6 scroll-v">
+        <div class="text-center mt-10 mb-8">
+            <h2 class="text-6xl font-extrabold mb-2" style="color: var(--c-slate);"><span id="res-score">0</span><span id="res-total" class="text-2xl text-gray-400">/10</span></h2>
+            <p id="analysis-summary" class="text-sm font-medium text-gray-500 mb-6"></p>
+            
+            <div class="flex justify-center gap-4 text-xs font-bold text-gray-500">
+                <div class="flex flex-col items-center"><span style="color: var(--c-slate);">400</span><span id="cnt-400">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-sage);">600</span><span id="cnt-600">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-mauve);">800</span><span id="cnt-800">0 w</span></div>
+                <div class="flex flex-col items-center"><span style="color: var(--c-dusty);">900</span><span id="cnt-900">0 w</span></div>
+            </div>
+        </div>
+        
+        <div class="glass-card flex-grow flex flex-col mb-6 p-5">
+            <h4 class="text-xs font-bold mb-4 text-center pb-3 uppercase tracking-widest text-gray-400 border-b border-gray-200 dark:border-gray-700">Needs Review (弱点リスト)</h4>
+            <div id="wrong-list" class="space-y-2 overflow-y-auto pr-2 max-h-60"></div>
+        </div>
+        
+        <button onclick="ctrl.showMode()" class="ios-btn w-full py-4 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-2xl font-bold text-base shadow-md mb-4">メニューへ戻る</button>
+    </div>
 
-    function renderReviewList() {
-      const reviewArea = document.getElementById('review-area');
-      const reviewListEl = document.getElementById('review-list');
-      reviewListEl.innerHTML = '';
+    <div class="bottom-nav rounded-t-[32px] flex justify-around items-center pt-4 pb-8 w-full shrink-0">
+        <div onclick="ctrl.showMode()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-study"><i class="fas fa-book-open text-xl mb-1"></i><span class="text-[10px] font-bold">Study</span></div>
+        <div onclick="ctrl.start(5)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-cards"><i class="fas fa-layer-group text-xl mb-1"></i><span class="text-[10px] font-bold">Cards</span></div>
+        
+        <div onclick="ctrl.showLevel()" class="home-hub ios-btn"><i class="fas fa-home"></i></div>
+        <div style="width: 50px;"></div> 
 
-      if (mistakes.length > 0) {
-        reviewArea.classList.remove('hidden');
-        mistakes.forEach((q, index) => {
-          const item = document.createElement('div');
-          item.className = 'review-item';
-          item.id = `review-item-${q.id}`;
-          
-          const correctAnswerText = q.choices[q.answerIndex];
-          
-          item.innerHTML = `
-            <div style="font-weight:bold; margin-bottom:5px;">${q.question}</div>
-            <div class="review-answer">正解: ${correctAnswerText}</div>
-            <button class="retry-btn" onclick="retryQuestion('${q.id}')">この問題に再挑戦する</button>
-            <div id="retry-area-${q.id}" style="margin-top:10px; display:none;"></div>
-          `;
-          reviewListEl.appendChild(item);
-        });
-      } else {
-        reviewArea.classList.add('hidden');
-      }
-    }
+        <div onclick="ctrl.start(6)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-aruki"><i class="fas fa-headphones-alt text-xl mb-1"></i><span class="text-[10px] font-bold">Aruki</span></div>
+        <div onclick="ctrl.showAnalysis()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-stats"><i class="fas fa-chart-bar text-xl mb-1"></i><span class="text-[10px] font-bold">Status</span></div>
+    </div>
+</div>
 
-    // --- 個別の再挑戦ロジック ---
-    function retryQuestion(targetId) {
-      const q = mistakes.find(m => m.id == targetId);
-      if(!q) return;
+<script>
+let DB = {};
+let audioCtx = null;
 
-      const retryArea = document.getElementById(`retry-area-${targetId}`);
-      retryArea.style.display = 'block';
-      retryArea.innerHTML = '';
+const ctrl = {
+    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false, arukiTimer: null },
 
-      // 選択肢を再度描画
-      q.choices.forEach((choice, index) => {
-        const btn = document.createElement('button');
-        btn.textContent = choice;
-        btn.className = 'choice-btn';
-        btn.style.width = '100%';
-        btn.style.marginBottom = '5px';
-        btn.onclick = () => {
-          // すべてのボタンを無効化
-          const allBtns = retryArea.querySelectorAll('.choice-btn');
-          allBtns.forEach(b => b.disabled = true);
+    init: async () => {
+        ctrl.applyTheme();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
+        try {
+            // キャッシュ対策
+            const timestamp = new Date().getTime();
+            const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
+            
+            if (!response.ok) throw new Error();
+            DB = await response.json();
+            document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
+            document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
+            ctrl.initSwipeGestures();
 
-          if(index === q.answerIndex) {
-            btn.classList.add('correct');
-            setTimeout(() => {
-              // 正解したらmistakesから削除し、リストを再描画
-              mistakes = mistakes.filter(m => m.id != targetId);
-              renderReviewList();
-              if(mistakes.length === 0) alert("すべての復習が完了しました！");
-            }, 800);
-          } else {
-            btn.classList.add('wrong');
-            allBtns[q.answerIndex].classList.add('correct');
-            setTimeout(() => {
-              retryArea.style.display = 'none'; // 間違えたら一旦閉じる
-            }, 1500);
-          }
-        };
-        retryArea.appendChild(btn);
-      });
-    }
-
-  </script>
-</body>
-</html>
+            // ★間違えた問題リストをLocalStorageから復元★
+            const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
+            if(
