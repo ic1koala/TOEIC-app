@@ -1,22 +1,37 @@
 [
   {
-    "en": "bellicose",
-    "ja": "好戦的な (bellicose)"
+    "question": "Defense Secretary Pete Hegseth’s ____ and vengeful rhetoric describing the military’s war in Iran grew out of his experience in Iraq.",
+    "answer": "bellicose",
+    "options": ["conciliatory", "bellicose", "ambiguous", "vigorous"],
+    "translation": "ピート・ヘグセス国防長官の好戦的で復讐心に燃えるレトリックは、イランでの軍事行動を描写するもので、彼のイラクでの経験から生まれたものだ。",
+    "explanation": "Bellicose (形容詞) は「好戦的な、けんか好きな」という意味で、戦争や争いを好む態度を表します。語源はラテン語の bellum（戦争）に由来します。この文脈では、ヘグセス国防長官が示した、戦争を煽るような言葉遣いを指しています。"
   },
   {
-    "en": "vengeful",
-    "ja": "復讐心に燃える (vengeful)"
+    "question": "Defense Secretary Pete Hegseth’s bellicose and vengeful ____ describing the military’s war in Iran grew out of his experience in Iraq.",
+    "answer": "rhetoric",
+    "options": ["strategy", "analysis", "rhetoric", "policy"],
+    "translation": "ピート・ヘグセス国防長官の好戦的で復讐心に燃えるレトリックは、イランでの軍事行動を描写するもので、彼のイラクでの経験から生まれたものだ。",
+    "explanation": "Rhetoric (名詞) は「修辞学、美辞麗句、説得力のある言葉」を意味します。特に政治や演説の文脈で、聞き手を説得したり、影響を与えたりするために使われる言葉遣いや表現技法を指します。ここでは、彼の発言の様式や内容を指しています。"
   },
   {
-    "en": "rhetoric",
-    "ja": "修辞、美辞麗句 (rhetoric)"
+    "question": "Conflict is forcing producers to ____ production and close ports as Iran steps up attacks on energy infrastructure.",
+    "answer": "slash",
+    "options": ["boost", "stabilize", "slash", "divert"],
+    "translation": "イランがエネルギーインフラへの攻撃を強化する中、紛争により生産者は生産量を大幅に削減し、港を閉鎖せざるを得なくなっている。",
+    "explanation": "Slash (動詞) は「～を大幅に削減する、切り下げる」という意味です。特にコスト、生産量、価格などを急激に減らす場合に用いられます。ここでは、紛争によって生産量が急激に減少させられている状況を表しています。"
   },
   {
-    "en": "disruption",
-    "ja": "混乱、中断 (disruption)"
+    "question": "Reserves or no reserves, the outlook remains ____ as long as a major oil and gas trade route remains virtually closed.",
+    "answer": "bleak",
+    "options": ["vibrant", "serene", "lucid", "bleak"],
+    "translation": "備蓄があろうとなかろうと、主要な石油・ガス貿易ルートが事実上閉鎖されたままである限り、見通しは依然として暗い。",
+    "explanation": "Bleak (形容詞) は「見込みのない、暗い、厳しい」という意味で、状況や将来が希望に満ちていないことを表します。天気や場所にも使われますが、ここでは経済的な見通しが厳しいことを示しています。"
   },
   {
-    "en": "bleak",
-    "ja": "(見通しなどが) 暗い、希望のない (bleak)"
+    "question": "Conflict is forcing producers to slash production and close ports as Iran steps up attacks on energy ____.",
+    "answer": "infrastructure",
+    "options": ["personnel", "infrastructure", "strategy", "inventory"],
+    "translation": "イランがエネルギーインフラへの攻撃を強化する中、紛争により生産者は生産量を大幅に削減し、港を閉鎖せざるを得なくなっている。",
+    "explanation": "Infrastructure (名詞) は「インフラ、社会基盤」という意味です。道路、橋、通信網、電力網、港湾など、国や地域が機能するために不可欠な基本的設備や施設を指します。ここでは、エネルギー供給を支える基盤となる施設を指しています。"
   }
 ]
