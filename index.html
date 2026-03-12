@@ -388,7 +388,7 @@ const ctrl = {
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
     // ★NYTクイズ開始機能★
-    // --- 修正1: NYTモードの読み込みとデータ変換 ---
+   // --- 修正1: NYTモードの読み込みとデータ変換（超・安全設計版） ---
     startNYT: async () => {
         ctrl.state.mode = 7; 
         ctrl.state.idx = 0;
@@ -407,24 +407,33 @@ const ctrl = {
                 return;
             }
 
-            // AIが作った穴埋めフォーマットに合わせて変換
+            // AIが作ったフォーマットに合わせて変換（データに欠損があってもエラーで落ちない安全設計）
             ctrl.state.questions = rawArray.map(item => {
-                // AIが生成した4つの選択肢（正解＋ダミー）をセット
-                let choices = (item.options || []).map(opt => ({
-                    en: opt, 
-                    ja: opt // 穴埋めなので選択肢は英語のまま表示
-                }));
-                // 選択肢の順番をランダムにシャッフル
-                choices.sort(() => Math.random() - 0.5);
+                const answerWord = item.answer || item.en || item.word || "Unknown";
+                const questionText = item.question || ""; // もしquestionが無くてもエラーにならないように空文字を入れる
+                const explanation = item.explanation || item.ex || "最新ニュースからの抽出語彙";
+                const translation = item.translation || item.ja || "";
+                
+                // 選択肢の生成
+                let choices = [];
+                if (item.options && item.options.length > 0) {
+                    choices = item.options.map(opt => ({ en: opt, ja: opt })); // 新フォーマット（穴埋め）の選択肢
+                } else {
+                    // 旧データ（optionsが無い場合）は自動でダミーを作る
+                    const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
+                    let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
+                    choices = [{en: answerWord, ja: answerWord}, ...others.map(x => ({en: (x.en || x.word), ja: (x.en || x.word)}))];
+                }
+                choices.sort(() => Math.random() - 0.5); // 選択肢をシャッフル
 
                 return { 
-                    en: item.answer,
-                    ja: "",
-                    q: item.question, // 穴埋め用の問題文
-                    a: item.answer,   // 正解の単語
-                    ex: item.explanation, // 解説文
-                    sEn: item.question.replace(/_+/g, item.answer), // 空欄に正解を埋めた完全な英文
-                    sJa: item.translation, // 和訳
+                    en: answerWord,
+                    ja: translation, // 旧モードとの互換性
+                    q: questionText ? questionText : answerWord, // 問題文（無ければ単語だけ表示）
+                    a: answerWord, // 正解
+                    ex: explanation, // 解説
+                    sEn: questionText ? questionText.replace(/_+/g, answerWord) : answerWord, // ここがエラーの原因でした！安全に対策済み
+                    sJa: translation,
                     choiceData: choices 
                 };
             });
@@ -436,7 +445,6 @@ const ctrl = {
             alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
         }
     },
-
     // --- 修正2: 画面の描画（長文を見やすく調整） ---
     render: () => {
         ctrl.state.isChecking = false;
