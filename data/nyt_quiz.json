@@ -1,62 +1,37 @@
 [
   {
-    "question": "Hegseth’s Boasts of ‘Maximum’ Engagement Authorities Face ______ After School Is Hit.",
-    "answer": "Scrutiny",
-    "options": [
-      "Scrutiny",
-      "Approval",
-      "Celebration",
-      "Relief"
-    ],
-    "translation": "学校が攻撃された後、ヘグセス氏の「最大限の交戦権限」に関する自慢は精査に直面している。",
-    "explanation": "\"Scrutiny\" (名詞) は、「綿密な調査、厳密な検査、精査」を意味します。この文脈では、彼の発言が詳細な調査や批判の対象となっていることを示しています。語源はラテン語の *scrutari* (to search, examine) に由来します。TOEICでは、ビジネスにおける監査、調査、批評などの文脈でよく出題されます。"
+    "question": "An investigation of the Federal Reserve was ____ on Friday, but a department appeal could reimpose an obstacle in Kevin Warsh’s path.",
+    "answer": "thwarted",
+    "options": ["thwarted", "facilitated", "commended", "extended"],
+    "translation": "連邦準備制度の調査は金曜日に______されたが、部門の上訴によりケビン・ワルシュの道に再び障害が課される可能性がある。",
+    "explanation": "「thwart」は「～を阻止する、妨害する」という意味の動詞で、計画や目的の達成を阻む状況で使われます。ここでは、連邦準備制度に関する調査が何らかの理由で「阻止された」ことを示しています。TOEICでは、困難や障害に直面する状況でよく登場します。語源は古ノルド語の「þvert」（横切って、横向きに）に由来し、邪魔をするイメージにつながります。"
   },
   {
-    "question": "The defense secretary has ______ restrictive rules for opening fire that are aimed at reducing the risk of mistakes and civilian casualties.",
-    "answer": "disparaged",
-    "options": [
-      "disparaged",
-      "commended",
-      "enforced",
-      "implemented"
-    ],
-    "translation": "国防長官は、誤射や民間人犠牲のリスクを減らすことを目的とした発砲制限規則を軽視している。",
-    "explanation": "\"Disparaged\" (動詞 'disparage' の過去形/過去分詞) は、「軽んじる、けなす、見くびる」という意味です。この文脈では、国防長官が発砲制限規則を価値がないものとして扱ったり、批判したりしていることを示します。TOEICでは、人や物の価値を低く評価する、または批判する状況で使われます。"
+    "question": "So far, they favor regime ____, not change.",
+    "answer": "compliance",
+    "options": ["compliance", "resistance", "confrontation", "innovation"],
+    "translation": "これまでのところ、彼らは政権の______を支持しており、変化ではない。",
+    "explanation": "「compliance」は「（規則・要求などへの）従順、順守」という意味の名詞です。ここでは、政権が現状の規則や期待に「従うこと」を指しており、変革ではなく現状維持の姿勢を示唆しています。ビジネスの文脈では「法規順守（corporate compliance）」としても頻繁に使われます。動詞形は「comply with」です。"
   },
   {
-    "question": "Trump Removes ______ on Russian Oil, and Chatbots Want Your Health Records.",
-    "answer": "Sanctions",
-    "options": [
-      "Sanctions",
-      "Tariffs",
-      "Subsidies",
-      "Permits"
-    ],
-    "translation": "トランプ大統領はロシア産原油に対する制裁を解除し、チャットボットはあなたの健康記録を求めている。",
-    "explanation": "\"Sanctions\" (名詞、通常複数形) は、「制裁、認可、承認」を意味しますが、この文脈では特に「経済制裁」を指します。特定の国や団体に対する経済的・政治的圧力として行われる措置です。TOEICでは、国際ビジネスや政治経済のニュースで頻繁に出題される重要な単語です。"
+    "question": "President Trump is the first American leader to embrace fighting a ____, joint war with Israel.",
+    "answer": "full-fledged",
+    "options": ["full-fledged", "partial", "tentative", "incipient"],
+    "translation": "トランプ大統領は、イスラエルとの______な共同戦争を戦うことを受け入れた最初のアメリカの指導者である。",
+    "explanation": "「full-fledged」は「一人前の、本格的な、完全に発達した」という意味の形容詞です。ここでは、イスラエルとの戦争が「本格的な」共同作戦であることを強調しています。未熟な状態から完全に成長した状態を示す際や、計画やプロジェクトが本格的な段階に入った際に使われます。"
   },
   {
-    "question": "Weakened by War, Iran Hits Back by ______ a Vital Waterway.",
-    "answer": "Strangling",
-    "options": [
-      "Strangling",
-      "Expanding",
-      "Navigating",
-      "Monitoring"
-    ],
-    "translation": "戦争で弱体化したイランは、重要な水路を締め付けることで反撃している。",
-    "explanation": "\"Strangling\" (動詞 'strangle' の動名詞) は、「首を絞める、締め付ける」という意味ですが、この文脈では比喩的に「交通や経済活動などを妨害し、機能不全に陥らせる」ことを意味します。ここでは、重要な水路の通過を制限することで、他国に経済的な圧力をかける行為を表しています。TOEICでは、物理的な意味だけでなく、ビジネスや政治の文脈で比喩的に使われることもあります。"
+    "question": "Geography and regional ____ have prevented Gulf countries from finding a true alternative to the strait...",
+    "answer": "rivalries",
+    "options": ["rivalries", "collaborations", "agreements", "alliances"],
+    "translation": "地理と地域の______が、湾岸諸国がその海峡に代わる真の解決策を見つけることを妨げてきた...",
+    "explanation": "「rivalry」は「競争、対抗意識、ライバル関係」という意味の名詞です。ここでは、湾岸諸国間の競争や敵対関係が、共通の解決策を見つける上での障害となっていることを示しています。複数の競合する組織や個人間の関係を説明する際によく使われます。複数形は「rivalries」となります。"
   },
   {
-    "question": "The government also plans to improve ______ and airports in the north.",
-    "answer": "infrastructure",
-    "options": [
-      "infrastructure",
-      "superstructure",
-      "architecture",
-      "framework"
-    ],
-    "translation": "政府はまた、北部のインフラと空港を改善する計画である。",
-    "explanation": "\"Infrastructure\" (名詞) は、「インフラ、社会基盤、基幹施設」を意味します。道路、橋、通信網、公共施設など、社会や経済活動を支える基本的な施設や設備全体を指します。TOEICでは、都市開発、プロジェクト管理、経済ニュースなどの文脈で頻繁に登場する重要なビジネス用語です。"
+    "question": "Secretary of State Marco Rubio plans President Trump’s military ____.",
+    "answer": "interventions",
+    "options": ["interventions", "withdrawals", "negotiations", "reconciliations"],
+    "translation": "マルコ・ルビオ国務長官は、トランプ大統領の軍事______を計画している。",
+    "explanation": "「intervention」は「介入、干渉」という意味の名詞です。特に、他国の内政や紛争に軍事的に関与する行為を指すことが多いです。医療や経済の文脈でも使われますが、ここでは軍事的な意味合いが強いです。望ましくない状況を変えるために外部から行動を起こすことを含意します。"
   }
 ]
