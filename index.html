@@ -228,7 +228,7 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 pb-10">
+        <div class="grid grid-cols-2 gap-4">
             <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
                 <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
             </div>
@@ -352,12 +352,10 @@ const ctrl = {
             DB = await response.json();
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
         } catch (error) {
-            // エラー時でもアプリがクラッシュしないようにする安全措置
             document.getElementById('loading-msg').innerText = "データ取得エラー。通信環境を確認してください。";
             console.error("Data load failed:", error);
         }
 
-        // エラーの有無に関わらず、ローカルストレージの復元とスワイプ設定は行う
         const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
         if(savedWrongPool) {
             try { ctrl.state.wrongPool = JSON.parse(savedWrongPool); } catch(e){}
@@ -386,6 +384,7 @@ const ctrl = {
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
+    // ★NYTクイズ開始機能（穴埋め形式に完全対応）★
     startNYT: async () => {
         ctrl.state.mode = 7; 
         ctrl.state.idx = 0;
@@ -406,17 +405,22 @@ const ctrl = {
 
             ctrl.state.questions = rawArray.map(item => {
                 const answerWord = item.answer || item.en || item.word || "Unknown";
-                const questionText = item.question || item.q || ""; 
                 const explanation = item.explanation || item.ex || "最新ニュースからの抽出語彙";
                 const translation = item.translation || item.ja || "";
                 
                 let pureJa = translation;
                 if(pureJa && pureJa.includes('(')) pureJa = pureJa.split('(')[0].trim();
 
+                // ニュースの英文（example）を取得し、正解単語の部分を _______ に置き換えて「問題文(q)」にする
+                const originalSentence = item.example || item.sEn || item.question || answerWord;
+                // 大文字小文字を区別せずに置換する（RegExpの 'gi' フラグを使用）
+                const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
+
                 let choices = [];
                 const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
                 let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
                 
+                // 選択肢は「英単語」にする
                 choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
                     let dummyJa = x.ja || x.translation || "";
                     if(dummyJa.includes('(')) dummyJa = dummyJa.split('(')[0].trim();
@@ -425,12 +429,12 @@ const ctrl = {
                 choices.sort(() => Math.random() - 0.5);
 
                 return { 
-                    en: answerWord,
-                    ja: pureJa, 
-                    q: answerWord, // 問題は英単語
-                    a: pureJa, // 正解は日本語
+                    en: answerWord,      // 正解の英単語
+                    ja: pureJa,          // 正解の日本語
+                    q: blankSentence,    // 【修正】画面に出る問題文（穴埋めされた英文）
+                    a: answerWord,       // 【修正】正解として判定するのは「英単語」
                     ex: explanation, 
-                    sEn: item.example || questionText || answerWord, // 読み上げ用の例文
+                    sEn: originalSentence, // 読み上げ＆解説用の完全な英文
                     sJa: translation,
                     choiceData: choices 
                 };
@@ -447,7 +451,6 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         
-        // クラッシュ防止：データが存在するかチェック
         if (!DB || Object.keys(DB).length === 0) {
             alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
             return;
@@ -496,12 +499,22 @@ const ctrl = {
 
         document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
-        document.getElementById('q-main-text').innerText = q.q;
+        
+        const qTextEl = document.getElementById('q-main-text');
+        qTextEl.innerText = q.q;
+        
+        // NYTモード（穴埋め長文）の場合は、文字を少し小さくして左寄せにする
+        if (ctrl.state.mode === 7) {
+            qTextEl.className = "text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left leading-relaxed";
+        } else {
+            qTextEl.className = "text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight text-center";
+        }
+
         document.getElementById('expl-panel').classList.add('hidden');
         
         let modeLabel = "Quiz";
         if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
-        if (ctrl.state.mode === 7) modeLabel = "NYT News";
+        if (ctrl.state.mode === 7) modeLabel = "NYT Fill-in-the-blank";
         if (ctrl.state.mode === 4) modeLabel = "Review Mode";
         document.getElementById('quiz-mode-label').innerText = modeLabel;
 
@@ -510,8 +523,11 @@ const ctrl = {
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
             btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
-            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) ? c.ja : c.en;
+            
+            // NYTモード(7)のときは英語(c.en)を選択肢として表示する
+            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
             btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
+            
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
         });
@@ -529,11 +545,8 @@ const ctrl = {
         const q = ctrl.state.questions[ctrl.state.idx];
         ctrl.stopVoice(); window.speechSynthesis.cancel();
         
-        // ★Arukiモードでも例文（全体）を読むように修正★
-        let speechText = q.sEn ? q.sEn : q.en;
-        if (speechText.includes('___')) speechText = speechText.replace(/___/g, q.en);
-
-        const msgWord = new SpeechSynthesisUtterance(speechText);
+        // ★Arukiモードの時は「英単語のみ」を発音する★
+        const msgWord = new SpeechSynthesisUtterance(q.en);
         msgWord.lang = 'en-US'; msgWord.rate = 0.85;
         msgWord.onend = () => {
             setTimeout(() => {
@@ -561,7 +574,13 @@ const ctrl = {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
-            if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
+            
+            // NYTモード(7)の場合は、答え合わせ後に「英語 (日本語)」の表記にする
+            if (ctrl.state.mode === 7) {
+                labelEl.innerText = `${originalEn} (${originalJa})`;
+            } else if (ctrl.state.mode === 1 || ctrl.state.mode === 6) {
+                labelEl.innerText = `${originalJa} (${originalEn})`;
+            }
             
             if (originalJa === q.ja || originalEn === q.en) {
                 if (originalEn === q.en) {
@@ -592,9 +611,18 @@ const ctrl = {
             }
         }
         
-        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
-        document.getElementById('ex-en').innerText = q.sEn; 
-        document.getElementById('ex-ja').innerText = q.sJa;
+        // NYTモード専用の解説パネル表示
+        if (ctrl.state.mode === 7) {
+            document.getElementById('expl-text').innerText = `${q.ex}`; // AIが作った詳細な解説
+            // 英文の中で正解単語の部分に下線を引いて色付け強調
+            document.getElementById('ex-en').innerHTML = q.sEn.replace(new RegExp(`\\b${q.a}\\b`, 'gi'), `<span style="color:var(--c-slate); font-weight:bold; text-decoration:underline;">${q.a}</span>`); 
+            document.getElementById('ex-ja').innerText = q.sJa; // ニュースの和訳
+        } else {
+            document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
+            document.getElementById('ex-en').innerText = q.sEn; 
+            document.getElementById('ex-ja').innerText = q.sJa;
+        }
+        
         document.getElementById('expl-panel').classList.remove('hidden');
         document.getElementById('aruki-replay-btn').classList.add('hidden');
         
@@ -757,15 +785,15 @@ const ctrl = {
         ctrl.showAnalysis(); 
     },
     
-    // ★発音ボタンの修正（問題文全体を読む）★
+    // ★発音ボタン：通常のクイズでは例文（全体）を読む★
     speak: (text) => { 
         window.speechSynthesis.cancel(); 
         let speechText = text;
         if (!speechText) {
             const q = ctrl.state.questions[ctrl.state.idx];
-            // 例文(sEn)があればそれを読む。なければ単語(en)を読む
+            // NYTモード(7)や、例文(sEn)がある場合はそれを読む
             speechText = q.sEn ? q.sEn : q.en;
-            // 穴埋め用の ___ があれば、正解単語で埋める
+            // 穴埋め用の ___ があれば、正解単語で埋めて自然に読む
             if (speechText.includes('___')) {
                 speechText = speechText.replace(/___/g, q.en);
             }
