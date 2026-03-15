@@ -183,7 +183,7 @@
         <h1 class="text-3xl font-extrabold mt-10 mb-2 text-center w-full tracking-tight" style="color: var(--c-slate);">Word Focus</h1>
         <p class="text-sm text-gray-500 mb-8 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
         
-        <div class="space-y-4 pointer-events-none opacity-50 transition-opacity duration-300 pb-8" id="level-btns">
+        <div class="space-y-4 transition-opacity duration-300 pb-8" id="level-btns">
             <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
                 <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
@@ -228,7 +228,7 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4 pb-10">
             <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
                 <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
             </div>
@@ -259,7 +259,7 @@
         <div class="flex-grow scroll-v px-6 pt-2 pb-6">
             <div class="mb-4 text-center mt-2 flex justify-center items-center gap-3">
                 <h3 id="q-main-text" class="text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight"></h3>
-                <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full flex items-center justify-center shadow-sm" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-base"></i></button>
+                <button onclick="ctrl.speak()" class="ios-btn w-10 h-10 rounded-full flex items-center justify-center shadow-sm shrink-0" style="background: white; color: var(--c-slate);"><i class="fas fa-volume-up text-base"></i></button>
             </div>
             
             <div id="q-choices" class="space-y-2 mb-4"></div>
@@ -343,27 +343,26 @@ const ctrl = {
     init: async () => {
         ctrl.applyTheme();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
+        
         try {
-            // キャッシュ対策
             const timestamp = new Date().getTime();
             const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
             
             if (!response.ok) throw new Error("JSON load error");
             DB = await response.json();
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
-            document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
-            ctrl.initSwipeGestures();
-
-            // ★間違えた問題リストをLocalStorageから復元★
-            const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
-            if(savedWrongPool) {
-                try { ctrl.state.wrongPool = JSON.parse(savedWrongPool); } catch(e){}
-            }
-
         } catch (error) {
-            document.getElementById('loading-msg').innerText = "単語データが見つかりません。通信環境を確認してください。";
-            console.error(error);
+            // エラー時でもアプリがクラッシュしないようにする安全措置
+            document.getElementById('loading-msg').innerText = "データ取得エラー。通信環境を確認してください。";
+            console.error("Data load failed:", error);
         }
+
+        // エラーの有無に関わらず、ローカルストレージの復元とスワイプ設定は行う
+        const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
+        if(savedWrongPool) {
+            try { ctrl.state.wrongPool = JSON.parse(savedWrongPool); } catch(e){}
+        }
+        ctrl.initSwipeGestures();
     },
 
     saveWrongPool: () => {
@@ -387,8 +386,6 @@ const ctrl = {
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
-    // ★NYTクイズ開始機能★
-   // --- 修正1: NYTモードの読み込みとデータ変換（超・安全設計版） ---
     startNYT: async () => {
         ctrl.state.mode = 7; 
         ctrl.state.idx = 0;
@@ -407,32 +404,33 @@ const ctrl = {
                 return;
             }
 
-            // AIが作ったフォーマットに合わせて変換（データに欠損があってもエラーで落ちない安全設計）
             ctrl.state.questions = rawArray.map(item => {
                 const answerWord = item.answer || item.en || item.word || "Unknown";
-                const questionText = item.question || ""; // もしquestionが無くてもエラーにならないように空文字を入れる
+                const questionText = item.question || item.q || ""; 
                 const explanation = item.explanation || item.ex || "最新ニュースからの抽出語彙";
                 const translation = item.translation || item.ja || "";
                 
-                // 選択肢の生成
+                let pureJa = translation;
+                if(pureJa && pureJa.includes('(')) pureJa = pureJa.split('(')[0].trim();
+
                 let choices = [];
-                if (item.options && item.options.length > 0) {
-                    choices = item.options.map(opt => ({ en: opt, ja: opt })); // 新フォーマット（穴埋め）の選択肢
-                } else {
-                    // 旧データ（optionsが無い場合）は自動でダミーを作る
-                    const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
-                    let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
-                    choices = [{en: answerWord, ja: answerWord}, ...others.map(x => ({en: (x.en || x.word), ja: (x.en || x.word)}))];
-                }
-                choices.sort(() => Math.random() - 0.5); // 選択肢をシャッフル
+                const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
+                let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
+                
+                choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
+                    let dummyJa = x.ja || x.translation || "";
+                    if(dummyJa.includes('(')) dummyJa = dummyJa.split('(')[0].trim();
+                    return {en: (x.en || x.word), ja: dummyJa};
+                })];
+                choices.sort(() => Math.random() - 0.5);
 
                 return { 
                     en: answerWord,
-                    ja: translation, // 旧モードとの互換性
-                    q: questionText ? questionText : answerWord, // 問題文（無ければ単語だけ表示）
-                    a: answerWord, // 正解
-                    ex: explanation, // 解説
-                    sEn: questionText ? questionText.replace(/_+/g, answerWord) : answerWord, // ここがエラーの原因でした！安全に対策済み
+                    ja: pureJa, 
+                    q: answerWord, // 問題は英単語
+                    a: pureJa, // 正解は日本語
+                    ex: explanation, 
+                    sEn: item.example || questionText || answerWord, // 読み上げ用の例文
                     sJa: translation,
                     choiceData: choices 
                 };
@@ -445,31 +443,66 @@ const ctrl = {
             alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
         }
     },
-    // --- 修正2: 画面の描画（長文を見やすく調整） ---
+
+    start: (mode) => {
+        ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
+        
+        // クラッシュ防止：データが存在するかチェック
+        if (!DB || Object.keys(DB).length === 0) {
+            alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
+            return;
+        }
+
+        let data = DB[ctrl.state.level] || DB[400];
+        let sourceWords = [];
+        
+        if (mode === 4) {
+            if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！完璧です！"); return; }
+            sourceWords = [...ctrl.state.wrongPool];
+        } else {
+            if (!data || !data.words) {
+                alert("選択したレベルのデータが見つかりません。");
+                return;
+            }
+            sourceWords = [...data.words];
+            const shuffleType = document.getElementById('shuffle-select').value;
+            if (shuffleType === 'mistake' && ctrl.state.wrongPool.length > 0) {
+                const wrongIds = new Set(ctrl.state.wrongPool.map(w => w.en));
+                sourceWords.sort((a, b) => (wrongIds.has(b.en)?1:0) - (wrongIds.has(a.en)?1:0) || Math.random()-0.5);
+            } else {
+                sourceWords.sort(() => Math.random() - 0.5);
+            }
+        }
+
+        ctrl.state.questions = sourceWords.map(w => {
+            let ds = data.words;
+            if(mode === 4 && (!ds || ds.length < 4)) {
+                ds = (DB[800] && DB[800].words) ? DB[800].words : ctrl.state.wrongPool;
+            }
+            let others = ds.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
+            let choices = [w, ...others].sort(() => Math.random() - 0.5);
+            return { ...w, q: (mode === 1 || mode === 6) ? w.en : w.ja, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
+        }).slice(0, 10);
+
+        if (mode === 5) { ctrl.state.flashcardInit = false; ctrl.switchScr('scr-flashcard'); ctrl.nextFlash(); }
+        else { ctrl.switchScr('scr-quiz'); ctrl.render(); }
+    },
+
     render: () => {
         ctrl.state.isChecking = false;
         clearTimeout(ctrl.state.arukiTimer);
         const q = ctrl.state.questions[ctrl.state.idx];
         const totalQ = ctrl.state.questions.length;
-        
+
         document.getElementById('quiz-count').innerText = `${ctrl.state.idx + 1} / ${totalQ}`;
         document.getElementById('progress-fill').style.width = `${((ctrl.state.idx + 1) / totalQ) * 100}%`;
-        
-        const qTextEl = document.getElementById('q-main-text');
-        qTextEl.innerText = q.q;
-        
-        // NYTモード（穴埋め長文）の場合は、文字を少し小さくして左寄せにする
-        if (ctrl.state.mode === 7) {
-            qTextEl.className = "text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left leading-relaxed";
-        } else {
-            qTextEl.className = "text-2xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight text-center";
-        }
-
+        document.getElementById('q-main-text').innerText = q.q;
         document.getElementById('expl-panel').classList.add('hidden');
         
         let modeLabel = "Quiz";
         if (ctrl.state.mode === 6) modeLabel = "Aruki Mode";
-        if (ctrl.state.mode === 7) modeLabel = "NYT Fill-in-the-blank";
+        if (ctrl.state.mode === 7) modeLabel = "NYT News";
+        if (ctrl.state.mode === 4) modeLabel = "Review Mode";
         document.getElementById('quiz-mode-label').innerText = modeLabel;
 
         const choiceArea = document.getElementById('q-choices');
@@ -477,8 +510,7 @@ const ctrl = {
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
             btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
-            // NYTモード(7)のときは英語(c.en)を選択肢として表示
-            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
+            const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) ? c.ja : c.en;
             btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
@@ -493,7 +525,29 @@ const ctrl = {
         }
     },
 
-    // --- 修正3: 解答のチェックと解説の表示 ---
+    replayAruki: () => {
+        const q = ctrl.state.questions[ctrl.state.idx];
+        ctrl.stopVoice(); window.speechSynthesis.cancel();
+        
+        // ★Arukiモードでも例文（全体）を読むように修正★
+        let speechText = q.sEn ? q.sEn : q.en;
+        if (speechText.includes('___')) speechText = speechText.replace(/___/g, q.en);
+
+        const msgWord = new SpeechSynthesisUtterance(speechText);
+        msgWord.lang = 'en-US'; msgWord.rate = 0.85;
+        msgWord.onend = () => {
+            setTimeout(() => {
+                if (ctrl.state.isChecking) return;
+                const optsText = q.choiceData.map((c, i) => `${i+1}番、${c.ja}`).join('。');
+                const msgOpts = new SpeechSynthesisUtterance(optsText);
+                msgOpts.lang = 'ja-JP';
+                msgOpts.onend = () => ctrl.startVoice();
+                window.speechSynthesis.speak(msgOpts);
+            }, 1000); 
+        };
+        window.speechSynthesis.speak(msgWord);
+    },
+
     check: (btn, val) => {
         if (ctrl.state.isChecking) return;
         ctrl.state.isChecking = true;
@@ -507,11 +561,7 @@ const ctrl = {
             const labelEl = b.querySelector('.choice-label');
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
-            
-            // 通常の英→日モードの時だけ、答え合わせ後に「日本語 (英語)」の表記にする
-            if (ctrl.state.mode === 1 || ctrl.state.mode === 6) {
-                labelEl.innerText = `${originalJa} (${originalEn})`;
-            }
+            if (ctrl.state.mode === 1 || ctrl.state.mode === 6 || ctrl.state.mode === 7) labelEl.innerText = `${originalJa} (${originalEn})`;
             
             if (originalJa === q.ja || originalEn === q.en) {
                 if (originalEn === q.en) {
@@ -526,25 +576,25 @@ const ctrl = {
             ctrl.state.score++; 
             ctrl.triggerEffect('correct-effect'); 
             ctrl.playCorrectSound(); 
+            
+            if (ctrl.state.mode === 4) {
+                ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
+                ctrl.saveWrongPool();
+            }
         } else { 
             btn.style.borderColor = 'var(--c-dusty)';
             btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
             ctrl.triggerEffect('wrong-effect'); 
-            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) ctrl.state.wrongPool.push(q); 
+            
+            if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
+                ctrl.state.wrongPool.push({ en: q.en, ja: q.ja, ex: q.ex, sEn: q.sEn, sJa: q.sJa }); 
+                ctrl.saveWrongPool();
+            }
         }
         
-        // NYTモード専用の解説パネル表示
-        if (ctrl.state.mode === 7) {
-            document.getElementById('expl-text').innerText = `${q.ex}`; // AIが作った詳細な解説
-            // 英文の中で正解単語の部分に下線を引いて色付け強調
-            document.getElementById('ex-en').innerHTML = q.sEn.replace(new RegExp(`\\b${q.a}\\b`, 'g'), `<span style="color:var(--c-slate); font-weight:bold; text-decoration:underline;">${q.a}</span>`); 
-            document.getElementById('ex-ja').innerText = q.sJa; // ニュースの和訳
-        } else {
-            document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
-            document.getElementById('ex-en').innerText = q.sEn; 
-            document.getElementById('ex-ja').innerText = q.sJa;
-        }
-        
+        document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
+        document.getElementById('ex-en').innerText = q.sEn; 
+        document.getElementById('ex-ja').innerText = q.sJa;
         document.getElementById('expl-panel').classList.remove('hidden');
         document.getElementById('aruki-replay-btn').classList.add('hidden');
         
@@ -554,6 +604,7 @@ const ctrl = {
             }, 4500);
         }
     },
+
     playCorrectSound: () => {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -618,7 +669,6 @@ const ctrl = {
             if (currentX > 100) {
                 inner.classList.add('swipe-right');
                 
-                // ★単語カードで「覚えた（右スワイプ）」にしても、リストから消す★
                 const q = ctrl.state.questions[ctrl.state.idx];
                 ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
                 ctrl.saveWrongPool();
@@ -648,7 +698,6 @@ const ctrl = {
             inner.style.transform = '';
             ctrl.state.idx++;
             
-            // 復習モードで全て覚えたら終了
             if(ctrl.state.mode === 4 && ctrl.state.wrongPool.length === 0) {
                 alert("🎉 素晴らしい！すべての弱点を克服しました！");
                 ctrl.showMode();
@@ -708,7 +757,25 @@ const ctrl = {
         ctrl.showAnalysis(); 
     },
     
-    speak: (text) => { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(text || ctrl.state.questions[ctrl.state.idx].en); m.lang = 'en-US'; m.rate = 0.85; window.speechSynthesis.speak(m); },
+    // ★発音ボタンの修正（問題文全体を読む）★
+    speak: (text) => { 
+        window.speechSynthesis.cancel(); 
+        let speechText = text;
+        if (!speechText) {
+            const q = ctrl.state.questions[ctrl.state.idx];
+            // 例文(sEn)があればそれを読む。なければ単語(en)を読む
+            speechText = q.sEn ? q.sEn : q.en;
+            // 穴埋め用の ___ があれば、正解単語で埋める
+            if (speechText.includes('___')) {
+                speechText = speechText.replace(/___/g, q.en);
+            }
+        }
+        const m = new SpeechSynthesisUtterance(speechText); 
+        m.lang = 'en-US'; 
+        m.rate = 0.85; 
+        window.speechSynthesis.speak(m); 
+    },
+
     stopVoice: () => { document.getElementById('mic-status').classList.add('hidden'); if (ctrl.state.recog) try { ctrl.state.recog.stop(); } catch(e) {} },
 
     startVoice: () => {
