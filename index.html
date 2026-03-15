@@ -409,6 +409,7 @@ const ctrl = {
         
         try {
             const timestamp = new Date().getTime();
+            // ★確実に words.csv を読み込むように設定★
             const response = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
             if (!response.ok) throw new Error("CSV load error");
             const csvText = await response.text();
@@ -444,7 +445,6 @@ const ctrl = {
 
     // ★安全なCSV解析プログラム（BOMや不要なクオーテーションを自動除去）★
     parseCSV: (text) => {
-        // BOM(見えない文字)を削除
         text = text.replace(/^\uFEFF/, '');
         const lines = text.split(/\r?\n/);
         const result = {};
@@ -476,7 +476,7 @@ const ctrl = {
             row.push(curr.trim());
 
             if (row.length >= 6) {
-                const level = row[0]; // 400, 600など
+                const level = row[0]; 
                 if (!result[level]) result[level] = { words: [] };
                 result[level].words.push({
                     en: row[1],
@@ -560,7 +560,7 @@ const ctrl = {
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
-                // ダミー生成用
+                // NYTのダミー選択肢を作るためにもDBを参照
                 let dummySource = rawArray;
                 if (DB && Object.keys(DB).length > 0) {
                     dummySource = DB[800] ? DB[800].words : DB[Object.keys(DB)[0]].words;
@@ -591,9 +591,9 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         
-        // データが存在するかチェック
+        // DBが存在するかチェック
         if (!DB || Object.keys(DB).length === 0) {
-            alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
+            alert("単語データが読み込まれていません。通信環境を確認してページを更新してください。");
             return;
         }
 
