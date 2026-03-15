@@ -409,12 +409,9 @@ const ctrl = {
         
         try {
             const timestamp = new Date().getTime();
-            // ★CSVを読み込む処理を復活★
             const response = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
             if (!response.ok) throw new Error("CSV load error");
             const csvText = await response.text();
-            
-            // ★CSVを解析してDBにセット★
             DB = ctrl.parseCSV(csvText);
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
         } catch (error) {
@@ -445,17 +442,49 @@ const ctrl = {
         }
     },
 
-    // ★CSV解析関数を復活★
+    // ★安全なCSV解析プログラム（BOMや不要なクオーテーションを自動除去）★
     parseCSV: (text) => {
+        // BOM(見えない文字)を削除
+        text = text.replace(/^\uFEFF/, '');
         const lines = text.split(/\r?\n/);
         const result = {};
+        
         for (let i = 1; i < lines.length; i++) {
-            if (!lines[i].trim()) continue;
-            const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').replace(/""/g, '"'));
+            const line = lines[i];
+            if (!line || line.trim() === '') continue;
+            
+            const row = [];
+            let curr = '';
+            let inQuotes = false;
+            
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+                if (char === '"') {
+                    if (inQuotes && line[j+1] === '"') {
+                        curr += '"';
+                        j++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(curr.trim());
+                    curr = '';
+                } else {
+                    curr += char;
+                }
+            }
+            row.push(curr.trim());
+
             if (row.length >= 6) {
-                const level = row[0];
+                const level = row[0]; // 400, 600など
                 if (!result[level]) result[level] = { words: [] };
-                result[level].words.push({ en: row[1], ja: row[2], ex: row[3], sEn: row[4], sJa: row[5] });
+                result[level].words.push({
+                    en: row[1],
+                    ja: row[2],
+                    ex: row[3],
+                    sEn: row[4],
+                    sJa: row[5]
+                });
             }
         }
         return result;
@@ -531,8 +560,12 @@ const ctrl = {
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
-                // NYTのダミー選択肢を作るためにもDBを参照
-                const dummySource = (DB && DB[800] && DB[800].words) ? DB[800].words : rawArray;
+                // ダミー生成用
+                let dummySource = rawArray;
+                if (DB && Object.keys(DB).length > 0) {
+                    dummySource = DB[800] ? DB[800].words : DB[Object.keys(DB)[0]].words;
+                }
+                
                 let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
                 
                 choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
@@ -558,13 +591,15 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         
-        // DBが存在するかチェック
+        // データが存在するかチェック
         if (!DB || Object.keys(DB).length === 0) {
-            alert("単語データが読み込まれていません。通信環境を確認してページを更新してください。");
+            alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
             return;
         }
 
-        let data = DB[ctrl.state.level] || DB[400];
+        let data = DB[ctrl.state.level];
+        if (!data && Object.keys(DB).length > 0) data = DB[Object.keys(DB)[0]]; // 安全措置
+
         let sourceWords = [];
         
         if (mode === 4) {
