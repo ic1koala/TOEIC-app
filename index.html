@@ -267,15 +267,15 @@
                 <i class="fas fa-language text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">日 → 英</p>
             </div>
             
-            <div onclick="ctrl.prepareFlashcards()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-mauve);">
-                <i class="fas fa-clone text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カードで学習</p>
-            </div>
-            
             <div onclick="ctrl.start(6)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-terra);">
                 <i class="fas fa-headphones-alt text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">Aruki</p>
             </div>
             <div onclick="ctrl.start(4)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-dusty);">
                 <i class="fas fa-redo text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習</p>
+            </div>
+
+            <div onclick="ctrl.prepareFlashcards()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-mauve);">
+                <i class="fas fa-clone text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カードで学習</p>
             </div>
         </div>
     </div>
@@ -407,26 +407,39 @@ const ctrl = {
         ctrl.applyTheme();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
         
+        let loadedSource = "";
+
         try {
             const timestamp = new Date().getTime();
             
-            // ★ words.csv を読み込む ★
-            const response = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
-            
-            if (!response.ok) {
-                throw new Error("CSVファイルが見つかりません。ファイル名が words.csv か確認してください。");
+            try {
+                const resCsv = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
+                if (resCsv.ok) {
+                    const csvText = await resCsv.text();
+                    const parsedDB = ctrl.parseCSV(csvText);
+                    if (Object.keys(parsedDB).length > 0) {
+                        DB = parsedDB;
+                        loadedSource = "CSV";
+                    }
+                }
+            } catch(e) { console.log("CSV読み込みスキップ"); }
+
+            if (!loadedSource) {
+                const resJson = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
+                if (resJson.ok) {
+                    const jsonData = await resJson.json();
+                    if (Object.keys(jsonData).length > 0) {
+                        DB = jsonData;
+                        loadedSource = "JSON";
+                    }
+                }
             }
-            
-            const csvText = await response.text();
-            DB = ctrl.parseCSV(csvText);
-            
-            if (Object.keys(DB).length === 0) {
-                throw new Error("CSVの中身が空か、正しく解析できませんでした。");
+
+            if (!loadedSource) {
+                throw new Error("CSVもJSONも見つかりません。");
             }
             
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
-            
-            // ★重要：データ読み込み成功後にボタンのロックを解除する★
             document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
             
         } catch (error) {
@@ -440,7 +453,6 @@ const ctrl = {
         }
         ctrl.initSwipeGestures();
         
-        // 1分後にパスワード画面を表示
         appTimer = setTimeout(() => {
             if (!ctrl.state.isUnlocked) {
                 document.getElementById('lock-screen').classList.add('active');
@@ -458,13 +470,11 @@ const ctrl = {
         }
     },
 
-    // ★1つのセルに詰め込まれたCSV(Excel起因)でも自動で直す神パーサー★
     parseCSV: (text) => {
-        text = text.replace(/^\uFEFF/, ''); // BOM(見えない文字)を削除
+        text = text.replace(/^\uFEFF/, ''); 
         const lines = text.split(/\r?\n/);
         const result = {};
         
-        // 1行目（ヘッダー）を飛ばすための処理
         let startIndex = 0;
         if (lines[0] && lines[0].includes('level')) startIndex = 1;
         
@@ -472,8 +482,6 @@ const ctrl = {
             let line = lines[i];
             if (!line || line.trim() === '') continue;
             
-            // Excelなどで1つのセルに全データが押し込められた不具合を自動修復
-            // カンマ(,)が存在するのに、行全体が " で囲まれていて、その中のクオーテーションが "" になっている場合
             let unquotedCommas = 0;
             let checkQuotes = false;
             for(let c of line) {
@@ -481,7 +489,6 @@ const ctrl = {
                 else if(c === ',' && !checkQuotes) unquotedCommas++;
             }
             if (unquotedCommas === 0 && line.startsWith('"') && line.endsWith('"') && line.includes(',')) {
-                // 両端の " を消し、中の "" を " に戻すことで正常なCSV行に復元する
                 line = line.slice(1, -1).replace(/""/g, '"');
             }
             
@@ -507,16 +514,15 @@ const ctrl = {
             }
             row.push(curr.trim());
 
-            if (row.length >= 6) {
-                // セルの前後にある不要なダブルクオーテーションを削除
-                const level = row[0].replace(/^"|"$/g, '').trim() || "400"; 
+            if (row.length >= 2) {
+                let level = row[0].replace(/^"|"$/g, '').trim() || "400";
                 if (!result[level]) result[level] = { words: [] };
                 result[level].words.push({
-                    en: row[1].replace(/^"|"$/g, '').trim(),
-                    ja: row[2].replace(/^"|"$/g, '').trim(),
-                    ex: row[3].replace(/^"|"$/g, '').trim(),
-                    sEn: row[4].replace(/^"|"$/g, '').trim(),
-                    sJa: row[5].replace(/^"|"$/g, '').trim()
+                    en: (row[1] || "").replace(/^"|"$/g, '').trim(),
+                    ja: (row[2] || "").replace(/^"|"$/g, '').trim(),
+                    ex: (row[3] || "").replace(/^"|"$/g, '').trim(),
+                    sEn: (row[4] || "").replace(/^"|"$/g, '').trim(),
+                    sJa: (row[5] || "").replace(/^"|"$/g, '').trim()
                 });
             }
         }
@@ -593,7 +599,6 @@ const ctrl = {
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
-                // NYTのダミー選択肢を作るためにもDBを参照
                 let dummySource = rawArray;
                 if (DB && Object.keys(DB).length > 0) {
                     dummySource = DB[800] ? DB[800].words : DB[Object.keys(DB)[0]].words;
@@ -624,14 +629,13 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         
-        // DBが存在するかチェック
         if (!DB || Object.keys(DB).length === 0) {
             alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
             return;
         }
 
         let data = DB[ctrl.state.level];
-        if (!data && Object.keys(DB).length > 0) data = DB[Object.keys(DB)[0]]; // 安全措置
+        if (!data && Object.keys(DB).length > 0) data = DB[Object.keys(DB)[0]]; 
 
         let sourceWords = [];
         
