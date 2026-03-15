@@ -394,13 +394,13 @@
 <script>
 let DB = {};
 let audioCtx = null;
-let appTimer = null; // ロック用タイマー
+let appTimer = null; 
 
 const ctrl = {
     state: { 
         level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], 
         recog: null, flashcardInit: false, isChecking: false, arukiTimer: null,
-        isUnlocked: false // ロック状態
+        isUnlocked: false 
     },
 
     init: async () => {
@@ -409,13 +409,17 @@ const ctrl = {
         
         try {
             const timestamp = new Date().getTime();
+            // ★CSVを読み込む処理を復活★
             const response = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
             if (!response.ok) throw new Error("CSV load error");
             const csvText = await response.text();
+            
+            // ★CSVを解析してDBにセット★
             DB = ctrl.parseCSV(csvText);
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
         } catch (error) {
             document.getElementById('loading-msg').innerText = "データ取得エラー。通信環境を確認してください。";
+            console.error("Data load failed:", error);
         }
 
         const savedWrongPool = localStorage.getItem('toeic_wrong_pool');
@@ -424,7 +428,6 @@ const ctrl = {
         }
         ctrl.initSwipeGestures();
         
-        // ★起動後、1分(60000ms)経過でロック画面を表示するタイマーをセット★
         appTimer = setTimeout(() => {
             if (!ctrl.state.isUnlocked) {
                 document.getElementById('lock-screen').classList.add('active');
@@ -432,7 +435,6 @@ const ctrl = {
         }, 60000); 
     },
 
-    // ★ロック解除処理★
     unlockApp: () => {
         const input = document.getElementById('pw-input').value;
         if (input === 'continue') {
@@ -443,6 +445,7 @@ const ctrl = {
         }
     },
 
+    // ★CSV解析関数を復活★
     parseCSV: (text) => {
         const lines = text.split(/\r?\n/);
         const result = {};
@@ -459,6 +462,7 @@ const ctrl = {
     },
 
     saveWrongPool: () => { localStorage.setItem('toeic_wrong_pool', JSON.stringify(ctrl.state.wrongPool)); },
+    
     applyTheme: () => {
         const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (isDark) document.documentElement.classList.add('dark');
@@ -478,13 +482,11 @@ const ctrl = {
 
     prepareFlashcards: () => { ctrl.switchScr('scr-cards-menu'); },
     
-    // Cardsモードでの弱点復習開始
     startCardsReview: () => {
         if (ctrl.state.wrongPool.length === 0) {
             alert("復習リストは空です。完璧です！");
             return;
         }
-        // mode 8 を「Cardsの復習モード」として扱う
         ctrl.state.mode = 8;
         ctrl.state.idx = 0;
         ctrl.state.questions = [...ctrl.state.wrongPool].sort(() => Math.random() - 0.5);
@@ -493,12 +495,11 @@ const ctrl = {
         ctrl.nextFlash();
     },
 
-    // 途中でやめる時用
     exitFlashcards: () => {
         if (ctrl.state.mode === 5 || ctrl.state.mode === 8) {
-            ctrl.prepareFlashcards(); // Cardsメニューに戻る
+            ctrl.prepareFlashcards(); 
         } else {
-            ctrl.showMode(); // 通常のモード選択に戻る
+            ctrl.showMode(); 
         }
     },
 
@@ -530,7 +531,8 @@ const ctrl = {
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
-                const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
+                // NYTのダミー選択肢を作るためにもDBを参照
+                const dummySource = (DB && DB[800] && DB[800].words) ? DB[800].words : rawArray;
                 let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
                 
                 choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
@@ -556,8 +558,9 @@ const ctrl = {
     start: (mode) => {
         ctrl.state.mode = mode; ctrl.state.idx = 0; ctrl.state.score = 0; ctrl.state.isChecking = false;
         
+        // DBが存在するかチェック
         if (!DB || Object.keys(DB).length === 0) {
-            alert("単語データが読み込まれていません。通信環境を確認してページを更新するか、NYTモードをお試しください。");
+            alert("単語データが読み込まれていません。通信環境を確認してページを更新してください。");
             return;
         }
 
@@ -580,7 +583,7 @@ const ctrl = {
         }
 
         ctrl.state.questions = sourceWords.map(w => {
-            let ds = data.words;
+            let ds = data ? data.words : [];
             if(mode === 4 && (!ds || ds.length < 4)) { ds = (DB[800] && DB[800].words) ? DB[800].words : ctrl.state.wrongPool; }
             let others = ds.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
             let choices = [w, ...others].sort(() => Math.random() - 0.5);
@@ -588,7 +591,6 @@ const ctrl = {
         }).slice(0, 10);
 
         if (mode === 5) { 
-            // 通常のCardsモード(5)
             ctrl.state.flashcardInit = false; 
             ctrl.switchScr('scr-flashcard'); 
             ctrl.nextFlash(); 
@@ -695,7 +697,7 @@ const ctrl = {
             ctrl.state.score++; 
             ctrl.triggerEffect('correct-effect'); 
             ctrl.playCorrectSound(); 
-            if (ctrl.state.mode === 4) {
+            if (ctrl.state.mode === 4 || ctrl.state.mode === 8) {
                 ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
                 ctrl.saveWrongPool();
             }
@@ -791,7 +793,6 @@ const ctrl = {
 
             inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             
-            // 右スワイプ (Got it! -> リストから消す)
             if (currentX > 100) {
                 inner.classList.add('swipe-right');
                 const q = ctrl.state.questions[ctrl.state.idx];
@@ -799,7 +800,6 @@ const ctrl = {
                 ctrl.saveWrongPool();
                 setTimeout(() => ctrl.nextFlash(), 300);
             
-            // 左スワイプ (Review -> リストに入れる/残す)
             } else if (currentX < -100) {
                 const q = ctrl.state.questions[ctrl.state.idx];
                 if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
@@ -827,10 +827,10 @@ const ctrl = {
             if(ctrl.state.idx >= ctrl.state.questions.length) {
                 if (ctrl.state.mode === 8) {
                     alert("復習が一巡しました！");
-                    ctrl.prepareFlashcards(); // Cardsのメニューに戻る
+                    ctrl.prepareFlashcards(); 
                     return;
                 } else {
-                    ctrl.state.idx = 0; // 通常のCardsモードならループ
+                    ctrl.state.idx = 0; 
                 }
             }
             ctrl.updateFlashcardContent();
