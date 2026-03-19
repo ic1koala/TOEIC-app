@@ -1,37 +1,62 @@
 [
   {
-    "question": "Israeli attacks have targeted the command centers of Iran’s ______, internal security forces in hopes that Iranians will overthrow their rulers.",
-    "answer": "repressive",
-    "options": ["repressive", "progressive", "impressive", "expressive"],
-    "translation": "イスラエルの攻撃は、イラン人が支配者を打倒することを期待し、イランの抑圧的な国内治安部隊の司令部を標的にしている。",
-    "explanation": "「repressive」は「抑圧的な、弾圧的な」という意味の形容詞です。人々から自由を奪い、力ずくで制御する政府や体制を指す際に使われます。この文脈では、イランの治安部隊が国民を抑圧する役割を担っていることを示しています。"
+    "question": "Inflation and its ________ for growth are a growing concern for countries where memories of the 2022 energy crisis are fresh.",
+    "answer": "consequences",
+    "options": [
+      "consequences",
+      "advantages",
+      "solutions",
+      "factors"
+    ],
+    "translation": "インフレとその成長への影響は、2022年のエネルギー危機を記憶している国々にとってますます懸念事項となっている。",
+    "explanation": "\"consequences\" は「結果、影響」という意味で、特に何らかの行動や事象によって引き起こされる、しばしばネガティブな結果を指します。この文脈では、インフレが経済成長に及ぼす悪い影響を示しており、ビジネスや経済のニュースで頻繁に使われる重要な単語です。"
   },
   {
-    "question": "Netanyahu Hopes Strikes on Iran Will Lead to ______ and Regime Change",
-    "answer": "Uprising",
-    "options": ["Uprising", "Upbringing", "Upgrading", "Uplifting"],
-    "translation": "ネタニヤフ首相は、イランへの攻撃が蜂起と政権交代につながることを望んでいる。",
-    "explanation": "「Uprising」は「蜂起、反乱、暴動」という意味の名詞です。ここでは、国民が政府に対して立ち上がり、体制を転換させる動きを指します。TOEICでは、社会情勢や国際ニュースの文脈で登場することがあります。"
+    "question": "President Trump said Israel was responsible for the attack, but vowed to “massively” destroy the gas field if Tehran hit Qatar’s energy facilities in ________.",
+    "answer": "retaliation",
+    "options": [
+      "retaliation",
+      "negotiation",
+      "collaboration",
+      "mediation"
+    ],
+    "translation": "トランプ大統領はイスラエルが攻撃の責任を負うと述べたが、もしテヘランがカタールのエネルギー施設を報復として攻撃した場合、ガス田を「大規模に」破壊すると誓った。",
+    "explanation": "\"retaliation\" は「報復、仕返し」という意味で、何らかの攻撃や行為に対する対抗措置として行われる攻撃や行為を指します。国際関係や紛争に関するニュースで頻繁に登場する単語です。"
   },
   {
-    "question": "But she faces ______ on what she can offer.",
-    "answer": "constraints",
-    "options": ["constraints", "constructions", "conceptions", "conventions"],
-    "translation": "しかし、彼女は提供できるものに制約を抱えている。",
-    "explanation": "「constraints」は「制約、制限」という意味の名詞です。行動や決定を妨げる要因や条件を指し、ビジネスや政治の交渉、プロジェクト管理などの文脈で頻繁に使われます。「face constraints」で「制約に直面する」という形でよく用いられます。"
+    "question": "Saudi Official Warns Patience Is Limited as Iranian Attacks ________ Kingdom.",
+    "answer": "barrage",
+    "options": [
+      "barrage",
+      "support",
+      "defend",
+      "inspect"
+    ],
+    "translation": "イランによる攻撃が王国に集中しているため、サウジアラビア当局者は忍耐の限界を警告している。",
+    "explanation": "\"barrage\" は名詞で「集中砲火、弾幕」を意味しますが、動詞としては「（質問や攻撃などを）浴びせる、集中砲火を浴びせる」という意味で使われます。この文脈では、イランからの攻撃がサウジアラビアに次々と行われている状況を表しており、動的な状況を伝えるのに適した表現です。"
   },
   {
-    "question": "A U.S. attack or a move to seize control of Iran’s main oil export hub could ______ the country’s ability to profit from its natural resources.",
-    "answer": "cripple",
-    "options": ["cripple", "ripple", "grapple", "drizzle"],
-    "translation": "米国の攻撃、あるいはイランの主要な石油輸出拠点であるハルク島の支配権を掌握する動きは、同国が天然資源から利益を得る能力を著しく損なう可能性がある。",
-    "explanation": "「cripple」は動詞で「（～に）深刻な損害を与える、機能を麻痺させる、不自由にする」という意味です。ここでは、国の経済的な能力に甚大な悪影響を及ぼすことを示唆しています。比喩的に経済やシステムなどに対して使われることが多いです。"
+    "question": "The Abuse ________ Against a Civil Rights Icon, and a 48% Rise in Oil Prices.",
+    "answer": "allegations",
+    "options": [
+      "allegations",
+      "achievements",
+      "celebrations",
+      "endorsements"
+    ],
+    "translation": "公民権運動の象徴に対する虐待の申し立て、そして原油価格の48%上昇。",
+    "explanation": "\"allegations\" は「申し立て、主張、疑惑」という意味で、特にまだ証拠が不十分な段階で、不正行為や犯罪の疑いについて主張される事柄を指します。ニュース記事では、有名人や公職者に対する不祥事を報じる際によく使われます。"
   },
   {
-    "question": "Israel’s ‘Decapitation’ Strategy, and the Trump Official Who ______ Over the War",
-    "answer": "Resigned",
-    "options": ["Resigned", "Refined", "Retained", "Resolved"],
-    "translation": "イスラエルの「首脳部排除」戦略と、戦争を巡って辞任したトランプ政権の当局者。",
-    "explanation": "「Resigned」は動詞「resign（辞任する、辞職する）」の過去形・過去分詞形です。役職や地位を自発的に辞めることを意味し、TOEICではビジネスや政治のニュースで頻出する非常に重要な単語です。"
+    "question": "Inside the Justice Dept.’s Push to ________ Protesters.",
+    "answer": "prosecute",
+    "options": [
+      "prosecute",
+      "protect",
+      "pardon",
+      "promote"
+    ],
+    "translation": "司法省による抗議活動参加者らを起訴する動きの内幕。",
+    "explanation": "\"prosecute\" は「起訴する、告発する」という意味で、法律の文脈で、犯罪容疑者を裁判にかけることを指します。特に政府や検察が訴訟を起こす際に用いられる動詞であり、司法関連のニュースで頻繁に登場します。"
   }
 ]
