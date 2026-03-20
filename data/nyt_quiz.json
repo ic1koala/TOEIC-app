@@ -1,62 +1,37 @@
 [
   {
-    "question": "Inflation and its ________ for growth are a growing concern for countries where memories of the 2022 energy crisis are fresh.",
-    "answer": "consequences",
-    "options": [
-      "consequences",
-      "advantages",
-      "solutions",
-      "factors"
-    ],
-    "translation": "インフレとその成長への影響は、2022年のエネルギー危機を記憶している国々にとってますます懸念事項となっている。",
-    "explanation": "\"consequences\" は「結果、影響」という意味で、特に何らかの行動や事象によって引き起こされる、しばしばネガティブな結果を指します。この文脈では、インフレが経済成長に及ぼす悪い影響を示しており、ビジネスや経済のニュースで頻繁に使われる重要な単語です。"
+    "question": "After nearly three weeks of war, their paths are ______.",
+    "answer": "diverging",
+    "options": ["diverging", "uniting", "converging", "aligning"],
+    "translation": "約3週間の戦争の後、彼らの進路は分岐しつつある。",
+    "explanation": "Diverging は「分岐する」「分かれる」という意味で、特に意見や方向性が異なっていく状況で使われます。ここでは、米国とイスラエルのアプローチが異なってきていることを示しています。語源はラテン語の「dis- (離れて) + vergere (傾く)」から来ています。"
   },
   {
-    "question": "President Trump said Israel was responsible for the attack, but vowed to “massively” destroy the gas field if Tehran hit Qatar’s energy facilities in ________.",
-    "answer": "retaliation",
-    "options": [
-      "retaliation",
-      "negotiation",
-      "collaboration",
-      "mediation"
-    ],
-    "translation": "トランプ大統領はイスラエルが攻撃の責任を負うと述べたが、もしテヘランがカタールのエネルギー施設を報復として攻撃した場合、ガス田を「大規模に」破壊すると誓った。",
-    "explanation": "\"retaliation\" は「報復、仕返し」という意味で、何らかの攻撃や行為に対する対抗措置として行われる攻撃や行為を指します。国際関係や紛争に関するニュースで頻繁に登場する単語です。"
+    "question": "U.S. Military ______ to Clear Strait of Hormuz.",
+    "answer": "Ramps Up",
+    "options": ["Ramps Up", "Shuts Down", "Scales Back", "Slows Down"],
+    "translation": "米軍はホルムズ海峡の掃討活動を強化している。",
+    "explanation": "Ramps Up は「〜を強化する」「〜を増強する」「活動を活発化させる」という意味の句動詞です。ビジネスや軍事の文脈で、生産や活動を急増させる際に頻繁に使われます。"
   },
   {
-    "question": "Saudi Official Warns Patience Is Limited as Iranian Attacks ________ Kingdom.",
-    "answer": "barrage",
-    "options": [
-      "barrage",
-      "support",
-      "defend",
-      "inspect"
-    ],
-    "translation": "イランによる攻撃が王国に集中しているため、サウジアラビア当局者は忍耐の限界を警告している。",
-    "explanation": "\"barrage\" は名詞で「集中砲火、弾幕」を意味しますが、動詞としては「（質問や攻撃などを）浴びせる、集中砲火を浴びせる」という意味で使われます。この文脈では、イランからの攻撃がサウジアラビアに次々と行われている状況を表しており、動的な状況を伝えるのに適した表現です。"
+    "question": "Spain’s renewable energy system has softened the financial ______ from the war in Iran.",
+    "answer": "fallout",
+    "options": ["fallout", "income", "gain", "profit"],
+    "translation": "スペインの再生可能エネルギーシステムは、イランでの戦争による財政的な悪影響を緩和した。",
+    "explanation": "Fallout は、核爆発後の放射性降下物を指すことから転じて、特に戦争や災害、経済的混乱などによる「悪い影響」「余波」「結果」という意味で使われるようになりました。ここでは、戦争による経済的な負の影響を指します。"
   },
   {
-    "question": "The Abuse ________ Against a Civil Rights Icon, and a 48% Rise in Oil Prices.",
-    "answer": "allegations",
-    "options": [
-      "allegations",
-      "achievements",
-      "celebrations",
-      "endorsements"
-    ],
-    "translation": "公民権運動の象徴に対する虐待の申し立て、そして原油価格の48%上昇。",
-    "explanation": "\"allegations\" は「申し立て、主張、疑惑」という意味で、特にまだ証拠が不十分な段階で、不正行為や犯罪の疑いについて主張される事柄を指します。ニュース記事では、有名人や公職者に対する不祥事を報じる際によく使われます。"
+    "question": "The United States views Iran through a ______ of global responsibilities and strategic goals.",
+    "answer": "prism",
+    "options": ["prism", "window", "portal", "scope"],
+    "translation": "米国は、世界的な責任と戦略的目標という視点を通してイランを見ている。",
+    "explanation": "Prism は本来、光を屈折・分散させる多面体ガラスを指しますが、ここでは比喩的に「物事を特定の視点や解釈で見る枠組み、見方」という意味で使われています。様々な要素（ここでは「世界的な責任と戦略的目標」）が組み合わさって形成される複雑な視点を表現しています。"
   },
   {
-    "question": "Inside the Justice Dept.’s Push to ________ Protesters.",
-    "answer": "prosecute",
-    "options": [
-      "prosecute",
-      "protect",
-      "pardon",
-      "promote"
-    ],
-    "translation": "司法省による抗議活動参加者らを起訴する動きの内幕。",
-    "explanation": "\"prosecute\" は「起訴する、告発する」という意味で、法律の文脈で、犯罪容疑者を裁判にかけることを指します。特に政府や検察が訴訟を起こす際に用いられる動詞であり、司法関連のニュースで頻繁に登場します。"
+    "question": "Warplanes and attack helicopters are “hunting and killing” Iran’s fast-attack watercraft in ______ sea lanes.",
+    "answer": "contested",
+    "options": ["contested", "peaceful", "open", "clear"],
+    "translation": "戦闘機や攻撃ヘリコプターは、紛争中の航路でイランの高速水上艇を「狩り、破壊している」。",
+    "explanation": "Contested は「議論されている」「争われている」「係争中の」という意味の形容詞です。ここでは、複数の国や勢力によって支配や航行の権利が争われている「海路」の状態を指します。TOEICでは、特に国際関係やビジネスの文脈で、意見の相違や競争がある状況を表す際によく登場します。"
   }
 ]
