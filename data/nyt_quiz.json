@@ -1,37 +1,62 @@
 [
   {
-    "question": "After nearly three weeks of war, their paths are ______.",
-    "answer": "diverging",
-    "options": ["diverging", "uniting", "converging", "aligning"],
-    "translation": "約3週間の戦争の後、彼らの進路は分岐しつつある。",
-    "explanation": "Diverging は「分岐する」「分かれる」という意味で、特に意見や方向性が異なっていく状況で使われます。ここでは、米国とイスラエルのアプローチが異なってきていることを示しています。語源はラテン語の「dis- (離れて) + vergere (傾く)」から来ています。"
+    "question": "It’s just the latest evidence of how ______ the global economy is on a handful of choke points.",
+    "answer": "dependent",
+    "options": [
+      "dependent",
+      "reluctant",
+      "resilient",
+      "compliant"
+    ],
+    "translation": "それは、世界の経済が少数の要衝にどれほど依存しているかを示す最新の証拠にすぎない。",
+    "explanation": "\"dependent\" は「依存している、頼っている」という意味で、ここではグローバル経済が特定の地理的要衝に大きく依存している状況を指します。TOEICでは経済やビジネスの文脈で頻出します。語源はラテン語の\"dependere\"（下にぶら下がる、依存する）から。"
   },
   {
-    "question": "U.S. Military ______ to Clear Strait of Hormuz.",
-    "answer": "Ramps Up",
-    "options": ["Ramps Up", "Shuts Down", "Scales Back", "Slows Down"],
-    "translation": "米軍はホルムズ海峡の掃討活動を強化している。",
-    "explanation": "Ramps Up は「〜を強化する」「〜を増強する」「活動を活発化させる」という意味の句動詞です。ビジネスや軍事の文脈で、生産や活動を急増させる際に頻繁に使われます。"
+    "question": "Why Energy Is Such a ______ Target in the War With Iran.",
+    "answer": "Potent",
+    "options": [
+      "Potent",
+      "Modest",
+      "Fragile",
+      "Passive"
+    ],
+    "translation": "なぜエネルギーがイランとの戦争においてこれほど強力な標的となるのか。",
+    "explanation": "\"potent\" は「強力な、効力のある」という意味で、ここではエネルギーが戦争において非常に大きな影響力を持つ標的であることを表します。TOEICでは製品の効力や戦略の有効性など、様々な文脈で使われます。語源はラテン語の\"potens\"（強力な、力のある）。"
   },
   {
-    "question": "Spain’s renewable energy system has softened the financial ______ from the war in Iran.",
-    "answer": "fallout",
-    "options": ["fallout", "income", "gain", "profit"],
-    "translation": "スペインの再生可能エネルギーシステムは、イランでの戦争による財政的な悪影響を緩和した。",
-    "explanation": "Fallout は、核爆発後の放射性降下物を指すことから転じて、特に戦争や災害、経済的混乱などによる「悪い影響」「余波」「結果」という意味で使われるようになりました。ここでは、戦争による経済的な負の影響を指します。"
+    "question": "High Gas Prices, Driven Up by the Iran War, ______ Over the Midterms.",
+    "answer": "Loom",
+    "options": [
+      "Loom",
+      "Recede",
+      "Diffuse",
+      "Emerge"
+    ],
+    "translation": "イラン戦争によって高騰したガソリン価格が、中間選挙に大きく影を落としている。",
+    "explanation": "\"loom\" は「（危険や困難などが）ぼんやりと現れる、迫り来る」という意味で、ここでは高騰するガソリン価格が中間選挙に暗い影を落とし、大きな影響を及ぼそうとしている状況を示します。TOEICでは経済や政治の課題が迫っている状況を表す際に使われることがあります。"
   },
   {
-    "question": "The United States views Iran through a ______ of global responsibilities and strategic goals.",
-    "answer": "prism",
-    "options": ["prism", "window", "portal", "scope"],
-    "translation": "米国は、世界的な責任と戦略的目標という視点を通してイランを見ている。",
-    "explanation": "Prism は本来、光を屈折・分散させる多面体ガラスを指しますが、ここでは比喩的に「物事を特定の視点や解釈で見る枠組み、見方」という意味で使われています。様々な要素（ここでは「世界的な責任と戦略的目標」）が組み合わさって形成される複雑な視点を表現しています。"
+    "question": "Striking Down Pentagon Press Limits, Judge ______ Independent Journalism.",
+    "answer": "Vindicates",
+    "options": [
+      "Vindicates",
+      "Impairs",
+      "Suppresses",
+      "Nullifies"
+    ],
+    "translation": "ペンタゴンの報道制限を撤廃することで、裁判官は独立したジャーナリズムの正当性を証明した。",
+    "explanation": "\"vindicates\" は「（非難などから）潔白を証明する、正当性を立証する」という意味で、ここでは裁判官が報道制限を撤廃することで、独立したジャーナリズムの権利や価値が正当であることを示したことを意味します。TOEICでは、主張の正当性や決定の妥当性などを論じる文脈で登場することがあります。語源はラテン語の\"vindicare\"（主張する、正当性を証明する）。"
   },
   {
-    "question": "Warplanes and attack helicopters are “hunting and killing” Iran’s fast-attack watercraft in ______ sea lanes.",
-    "answer": "contested",
-    "options": ["contested", "peaceful", "open", "clear"],
-    "translation": "戦闘機や攻撃ヘリコプターは、紛争中の航路でイランの高速水上艇を「狩り、破壊している」。",
-    "explanation": "Contested は「議論されている」「争われている」「係争中の」という意味の形容詞です。ここでは、複数の国や勢力によって支配や航行の権利が争われている「海路」の状態を指します。TOEICでは、特に国際関係やビジネスの文脈で、意見の相違や競争がある状況を表す際によく登場します。"
+    "question": "Judge Rules Pentagon ______ on Press Are Unconstitutional.",
+    "answer": "Restrictions",
+    "options": [
+      "Restrictions",
+      "Endorsements",
+      "Privileges",
+      "Stipulations"
+    ],
+    "translation": "裁判官は、国防総省の報道に対する制限は違憲であると裁定した。",
+    "explanation": "\"restrictions\" は「制限、制約」という意味で、ここでは国防総省が報道機関に課した制約を指します。TOEICでは、法律、規則、契約などで課される制限を指す場合によく使われます。動詞の\"restrict\"（制限する）も合わせて覚えましょう。"
   }
 ]
