@@ -1,62 +1,37 @@
 [
   {
-    "question": "It’s just the latest evidence of how ______ the global economy is on a handful of choke points.",
-    "answer": "dependent",
-    "options": [
-      "dependent",
-      "reluctant",
-      "resilient",
-      "compliant"
-    ],
-    "translation": "それは、世界の経済が少数の要衝にどれほど依存しているかを示す最新の証拠にすぎない。",
-    "explanation": "\"dependent\" は「依存している、頼っている」という意味で、ここではグローバル経済が特定の地理的要衝に大きく依存している状況を指します。TOEICでは経済やビジネスの文脈で頻出します。語源はラテン語の\"dependere\"（下にぶら下がる、依存する）から。"
+    "question": "President Trump says he is considering “______” operations in Iran.",
+    "answer": "winding down",
+    "options": ["winding down", "gearing up", "holding off", "taking over"],
+    "translation": "トランプ大統領は、イランでの作戦を「縮小する」ことを検討していると述べている。",
+    "explanation": "\"Winding down\" (句動詞) は、物事を徐々に終息させる、あるいは事業や組織の活動を一定期間にわたって縮小することを意味します。この文脈では、軍事作戦を徐々に減らす、または停止することを指します。"
   },
   {
-    "question": "Why Energy Is Such a ______ Target in the War With Iran.",
-    "answer": "Potent",
-    "options": [
-      "Potent",
-      "Modest",
-      "Fragile",
-      "Passive"
-    ],
-    "translation": "なぜエネルギーがイランとの戦争においてこれほど強力な標的となるのか。",
-    "explanation": "\"potent\" は「強力な、効力のある」という意味で、ここではエネルギーが戦争において非常に大きな影響力を持つ標的であることを表します。TOEICでは製品の効力や戦略の有効性など、様々な文脈で使われます。語源はラテン語の\"potens\"（強力な、力のある）。"
+    "question": "Generations of Indian workers and businesses have turned the Arab side of the Gulf into a vital ______ of their own country.",
+    "answer": "appendage",
+    "options": ["appendage", "headquarters", "detachment", "recollection"],
+    "translation": "何世代にもわたるインド人労働者や企業が、湾岸地域のアラブ側を自国にとって不可欠な付属物にしてきた。",
+    "explanation": "\"Appendage\" (名詞) は、より大きなものや主要なものに付随しているものを指します。この文脈では、湾岸地域のアラブ側が、強い結びつきによりインドの経済的・社会的な領域の自然な延長、あるいは不可欠ではあるが二次的な部分になっていることを示唆しています。"
   },
   {
-    "question": "High Gas Prices, Driven Up by the Iran War, ______ Over the Midterms.",
-    "answer": "Loom",
-    "options": [
-      "Loom",
-      "Recede",
-      "Diffuse",
-      "Emerge"
-    ],
-    "translation": "イラン戦争によって高騰したガソリン価格が、中間選挙に大きく影を落としている。",
-    "explanation": "\"loom\" は「（危険や困難などが）ぼんやりと現れる、迫り来る」という意味で、ここでは高騰するガソリン価格が中間選挙に暗い影を落とし、大きな影響を及ぼそうとしている状況を示します。TOEICでは経済や政治の課題が迫っている状況を表す際に使われることがあります。"
+    "question": "Defense Minister Israel Katz instructed troops to destroy more bridges and buildings in southern Lebanon, ______ worries that Israel could expand a military-controlled buffer zone there.",
+    "answer": "stoking",
+    "options": ["stoking", "alleviating", "assuaging", "suppressing"],
+    "translation": "イスラエルのカッツ国防相は、レバノン南部でより多くの橋や建物を破壊するよう部隊に指示し、イスラエルが軍事管理下の緩衝地帯を拡大するのではないかとの懸念を煽った。",
+    "explanation": "To \"stoke\" (動詞) は、強い感情や望ましくない状況を煽る、助長するという意味です。「fears（恐れ）」「tensions（緊張）」「rumors（噂）」や「worries（懸念）」などと共に使われることが多く、元々は火に燃料を加えて燃え盛らせる行為から来ています。"
   },
   {
-    "question": "Striking Down Pentagon Press Limits, Judge ______ Independent Journalism.",
-    "answer": "Vindicates",
-    "options": [
-      "Vindicates",
-      "Impairs",
-      "Suppresses",
-      "Nullifies"
-    ],
-    "translation": "ペンタゴンの報道制限を撤廃することで、裁判官は独立したジャーナリズムの正当性を証明した。",
-    "explanation": "\"vindicates\" は「（非難などから）潔白を証明する、正当性を立証する」という意味で、ここでは裁判官が報道制限を撤廃することで、独立したジャーナリズムの権利や価値が正当であることを示したことを意味します。TOEICでは、主張の正当性や決定の妥当性などを論じる文脈で登場することがあります。語源はラテン語の\"vindicare\"（主張する、正当性を証明する）。"
+    "question": "The G.O.P. senator President Trump chose to lead the Department of Homeland Security privately discussed ______ the White House has repeatedly rejected.",
+    "answer": "concessions",
+    "options": ["concessions", "allegations", "initiatives", "proclamations"],
+    "translation": "トランプ大統領が国土安全保障省を率いるために選んだ共和党の上院議員は、ホワイトハウスが繰り返し拒否してきた譲歩案を内々に協議した。",
+    "explanation": "\"Concessions\" (名詞、複数形) は、特に要求に応じて与えられるもの、または譲歩されたものを指します。交渉においては、合意に達するために相手方に譲歩したり、提供したりするものを意味します。"
   },
   {
-    "question": "Judge Rules Pentagon ______ on Press Are Unconstitutional.",
-    "answer": "Restrictions",
-    "options": [
-      "Restrictions",
-      "Endorsements",
-      "Privileges",
-      "Stipulations"
-    ],
-    "translation": "裁判官は、国防総省の報道に対する制限は違憲であると裁定した。",
-    "explanation": "\"restrictions\" は「制限、制約」という意味で、ここでは国防総省が報道機関に課した制約を指します。TOEICでは、法律、規則、契約などで課される制限を指す場合によく使われます。動詞の\"restrict\"（制限する）も合わせて覚えましょう。"
+    "question": "A federal judge ruled on Friday that key parts of the Pentagon’s press policy were ______.",
+    "answer": "unconstitutional",
+    "options": ["unconstitutional", "unilateral", "unprecedented", "unwarranted"],
+    "translation": "連邦判事は金曜日、国防総省の報道政策の主要部分が違憲であるとの判決を下した。",
+    "explanation": "\"Unconstitutional\" (形容詞) は、政治的な憲法や手続き上の規則に違反していることを意味します。国の憲法によって定義されている、その国や組織を統治する基本的な法律や原則に違反する事柄を表します。"
   }
 ]
