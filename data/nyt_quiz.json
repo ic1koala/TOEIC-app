@@ -1,37 +1,62 @@
 [
   {
-    "question": "President Trump says he is considering “______” operations in Iran.",
-    "answer": "winding down",
-    "options": ["winding down", "gearing up", "holding off", "taking over"],
-    "translation": "トランプ大統領は、イランでの作戦を「縮小する」ことを検討していると述べている。",
-    "explanation": "\"Winding down\" (句動詞) は、物事を徐々に終息させる、あるいは事業や組織の活動を一定期間にわたって縮小することを意味します。この文脈では、軍事作戦を徐々に減らす、または停止することを指します。"
+    "question": "A new phase targeting oil and gas ______ in the Persian Gulf threatens to hurt businesses and customers around the world for months or even years.",
+    "answer": "infrastructure",
+    "options": [
+      "infrastructure",
+      "superstructure",
+      "framework",
+      "foundation"
+    ],
+    "translation": "ペルシャ湾の石油・ガス______を標的とする新たな局面は、世界中の企業や顧客に数ヶ月あるいは数年にわたる損害を与える恐れがある。",
+    "explanation": "Infrastructure (インフラ、基盤施設) は、社会や企業が機能するために必要な基本的な物理的および組織的な構造や施設（例：建物、道路、電力供給）を指します。この文脈では、石油・ガス関連の設備や施設を意味します。"
   },
   {
-    "question": "Generations of Indian workers and businesses have turned the Arab side of the Gulf into a vital ______ of their own country.",
-    "answer": "appendage",
-    "options": ["appendage", "headquarters", "detachment", "recollection"],
-    "translation": "何世代にもわたるインド人労働者や企業が、湾岸地域のアラブ側を自国にとって不可欠な付属物にしてきた。",
-    "explanation": "\"Appendage\" (名詞) は、より大きなものや主要なものに付随しているものを指します。この文脈では、湾岸地域のアラブ側が、強い結びつきによりインドの経済的・社会的な領域の自然な延長、あるいは不可欠ではあるが二次的な部分になっていることを示唆しています。"
+    "question": "Investors ______ for a fourth week of market turmoil caused by the war in the Middle East.",
+    "answer": "braced",
+    "options": [
+      "braced",
+      "prepared",
+      "hoped",
+      "ignored"
+    ],
+    "translation": "投資家たちは、中東での戦争によって引き起こされる4週目の市場の混乱に______。",
+    "explanation": "To brace for something (～に備える、身構える) とは、困難なことや不愉快なことに備えて身構えることを意味します。ここでは、市場の混乱という困難な状況に対して投資家が準備した様子を表しています。"
   },
   {
-    "question": "Defense Minister Israel Katz instructed troops to destroy more bridges and buildings in southern Lebanon, ______ worries that Israel could expand a military-controlled buffer zone there.",
-    "answer": "stoking",
-    "options": ["stoking", "alleviating", "assuaging", "suppressing"],
-    "translation": "イスラエルのカッツ国防相は、レバノン南部でより多くの橋や建物を破壊するよう部隊に指示し、イスラエルが軍事管理下の緩衝地帯を拡大するのではないかとの懸念を煽った。",
-    "explanation": "To \"stoke\" (動詞) は、強い感情や望ましくない状況を煽る、助長するという意味です。「fears（恐れ）」「tensions（緊張）」「rumors（噂）」や「worries（懸念）」などと共に使われることが多く、元々は火に燃料を加えて燃え盛らせる行為から来ています。"
+    "question": "Investors braced for a fourth week of market ______ caused by the war in the Middle East.",
+    "answer": "turmoil",
+    "options": [
+      "turmoil",
+      "stability",
+      "growth",
+      "calmness"
+    ],
+    "translation": "投資家たちは、中東での戦争によって引き起こされる4週目の市場の______に備えた。",
+    "explanation": "Turmoil (混乱、動揺) は、大きな動揺、混乱、または不確実性の状態を指します。市場の文脈では、大きな不安定さと予測不可能な変動を意味します。"
   },
   {
-    "question": "The G.O.P. senator President Trump chose to lead the Department of Homeland Security privately discussed ______ the White House has repeatedly rejected.",
-    "answer": "concessions",
-    "options": ["concessions", "allegations", "initiatives", "proclamations"],
-    "translation": "トランプ大統領が国土安全保障省を率いるために選んだ共和党の上院議員は、ホワイトハウスが繰り返し拒否してきた譲歩案を内々に協議した。",
-    "explanation": "\"Concessions\" (名詞、複数形) は、特に要求に応じて与えられるもの、または譲歩されたものを指します。交渉においては、合意に達するために相手方に譲歩したり、提供したりするものを意味します。"
+    "question": "Some are feeling the loss more ______ than others.",
+    "answer": "acutely",
+    "options": [
+      "acutely",
+      "mildly",
+      "vaguely",
+      "broadly"
+    ],
+    "translation": "他の国々よりも、ある国々はより______その損失を感じている。",
+    "explanation": "Acutely (痛切に、深刻に) は、鋭い理解や認識を示す方法、または非常に激しく、深刻にという意味です。この文脈では、損失を非常に強く、深く感じていることを表します。"
   },
   {
-    "question": "A federal judge ruled on Friday that key parts of the Pentagon’s press policy were ______.",
-    "answer": "unconstitutional",
-    "options": ["unconstitutional", "unilateral", "unprecedented", "unwarranted"],
-    "translation": "連邦判事は金曜日、国防総省の報道政策の主要部分が違憲であるとの判決を下した。",
-    "explanation": "\"Unconstitutional\" (形容詞) は、政治的な憲法や手続き上の規則に違反していることを意味します。国の憲法によって定義されている、その国や組織を統治する基本的な法律や原則に違反する事柄を表します。"
+    "question": "Nations thousands of miles away from war are feeling the pain of their energy supplies suddenly ______.",
+    "answer": "vanishing",
+    "options": [
+      "vanishing",
+      "appearing",
+      "increasing",
+      "stabilizing"
+    ],
+    "translation": "戦争から何千マイルも離れた国々も、エネルギー供給が突然______痛みを感じている。",
+    "explanation": "Vanishing (消滅する、姿を消す) は、突然かつ完全に消え去ることを意味します。この文脈では、エネルギー供給が利用できなくなる、または供給が完全に途絶えることを指します。"
   }
 ]
