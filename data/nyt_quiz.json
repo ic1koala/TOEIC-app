@@ -1,62 +1,62 @@
 [
   {
-    "question": "A new phase targeting oil and gas ______ in the Persian Gulf threatens to hurt businesses and customers around the world for months or even years.",
-    "answer": "infrastructure",
+    "question": "Prince Mohammed bin Salman sees a \u201chistoric opportunity\u201d to remake the region, according to people ______ by U.S. officials on the conversations.",
+    "answer": "briefed",
     "options": [
-      "infrastructure",
-      "superstructure",
-      "framework",
-      "foundation"
+      "briefed",
+      "assigned",
+      "delegated",
+      "consulted"
     ],
-    "translation": "ペルシャ湾の石油・ガス______を標的とする新たな局面は、世界中の企業や顧客に数ヶ月あるいは数年にわたる損害を与える恐れがある。",
-    "explanation": "Infrastructure (インフラ、基盤施設) は、社会や企業が機能するために必要な基本的な物理的および組織的な構造や施設（例：建物、道路、電力供給）を指します。この文脈では、石油・ガス関連の設備や施設を意味します。"
+    "translation": "モハメド・ビン・サルマン皇太子は、米国当局者から会話内容について______を受けた人々によると、この地域を再構築する「歴史的な機会」と見ている。",
+    "explanation": "`briefed` means to give someone a summary of facts or information, often in preparation for a meeting or task. In this context, it refers to people who were given confidential or specific information about the conversations by U.S. officials."
   },
   {
-    "question": "Investors ______ for a fourth week of market turmoil caused by the war in the Middle East.",
-    "answer": "braced",
+    "question": "Trump Faces ______ on Easing Iran Oil Sanctions",
+    "answer": "Blowback",
     "options": [
-      "braced",
-      "prepared",
-      "hoped",
-      "ignored"
+      "Blowback",
+      "Endorsement",
+      "Consent",
+      "Support"
     ],
-    "translation": "投資家たちは、中東での戦争によって引き起こされる4週目の市場の混乱に______。",
-    "explanation": "To brace for something (～に備える、身構える) とは、困難なことや不愉快なことに備えて身構えることを意味します。ここでは、市場の混乱という困難な状況に対して投資家が準備した様子を表しています。"
+    "translation": "トランプ大統領はイラン石油制裁緩和に関して______に直面している。",
+    "explanation": "`Blowback` refers to the unintended and usually unwelcome negative consequences of an action, policy, or situation. In this headline, it signifies strong negative reactions or criticism towards Trump's decision."
   },
   {
-    "question": "Investors braced for a fourth week of market ______ caused by the war in the Middle East.",
-    "answer": "turmoil",
+    "question": "President Trump once ______ the Obama administration for making cash payments to Iran.",
+    "answer": "assailed",
     "options": [
-      "turmoil",
-      "stability",
-      "growth",
-      "calmness"
+      "assailed",
+      "commended",
+      "endorsed",
+      "praised"
     ],
-    "translation": "投資家たちは、中東での戦争によって引き起こされる4週目の市場の______に備えた。",
-    "explanation": "Turmoil (混乱、動揺) は、大きな動揺、混乱、または不確実性の状態を指します。市場の文脈では、大きな不安定さと予測不可能な変動を意味します。"
+    "translation": "トランプ大統領はかつて、オバマ政権がイランに現金支払いを行ったことを______した。",
+    "explanation": "`Assailed` means to make a concerted or violent attack on (a place or person). In a verbal context, it means to criticize someone strongly or vehemently. Here, Trump is harshly criticizing the Obama administration's actions."
   },
   {
-    "question": "Some are feeling the loss more ______ than others.",
-    "answer": "acutely",
+    "question": "Now he supports sanctions relief that could give the country a $14 billion ______.",
+    "answer": "windfall",
     "options": [
-      "acutely",
-      "mildly",
-      "vaguely",
-      "broadly"
+      "windfall",
+      "deficit",
+      "liability",
+      "expense"
     ],
-    "translation": "他の国々よりも、ある国々はより______その損失を感じている。",
-    "explanation": "Acutely (痛切に、深刻に) は、鋭い理解や認識を示す方法、または非常に激しく、深刻にという意味です。この文脈では、損失を非常に強く、深く感じていることを表します。"
+    "translation": "現在、彼はその国に140億ドルの______をもたらす可能性のある制裁緩和を支持している。",
+    "explanation": "A `windfall` is a large amount of money or something valuable that you receive unexpectedly. In a financial context, it refers to a sudden, unexpected gain or profit, often due to luck or circumstances beyond one's control."
   },
   {
-    "question": "Nations thousands of miles away from war are feeling the pain of their energy supplies suddenly ______.",
-    "answer": "vanishing",
+    "question": "But Britain\u2019s decision not to join the attacks on Iran has led to ______ mocking by the president.",
+    "answer": "merciless",
     "options": [
-      "vanishing",
-      "appearing",
-      "increasing",
-      "stabilizing"
+      "merciless",
+      "lenient",
+      "compassionate",
+      "forgiving"
     ],
-    "translation": "戦争から何千マイルも離れた国々も、エネルギー供給が突然______痛みを感じている。",
-    "explanation": "Vanishing (消滅する、姿を消す) は、突然かつ完全に消え去ることを意味します。この文脈では、エネルギー供給が利用できなくなる、または供給が完全に途絶えることを指します。"
+    "translation": "しかし、英国がイラン攻撃に参加しないという決定は、大統領による______な嘲笑を招いた。",
+    "explanation": "`Merciless` means showing no mercy or pity; cruel. In this sentence, it describes the severe and relentless nature of the president's mocking, indicating a complete lack of compassion or restraint."
   }
 ]
