@@ -1,62 +1,37 @@
 [
   {
-    "question": "Prince Mohammed bin Salman sees a \u201chistoric opportunity\u201d to remake the region, according to people ______ by U.S. officials on the conversations.",
-    "answer": "briefed",
-    "options": [
-      "briefed",
-      "assigned",
-      "delegated",
-      "consulted"
-    ],
-    "translation": "モハメド・ビン・サルマン皇太子は、米国当局者から会話内容について______を受けた人々によると、この地域を再構築する「歴史的な機会」と見ている。",
-    "explanation": "`briefed` means to give someone a summary of facts or information, often in preparation for a meeting or task. In this context, it refers to people who were given confidential or specific information about the conversations by U.S. officials."
+    "question": "Trade is ____ through the vital artery connecting the Persian Gulf and the world, creating an economic shock thousands of miles away.",
+    "answer": "trickling",
+    "options": ["trickling", "gushing", "surging", "flooding"],
+    "translation": "貿易はペルシャ湾と世界を結ぶ極めて重要な動脈を細々と流れており、数千マイル離れた場所で経済的な衝撃を生み出している。",
+    "explanation": "\"trickling\" は「少しずつ流れる」「滴る」という意味です。ここでは、貿易が制限され、少量ずつしか行われていない状況を表しています。対義語は \"gushing\"（勢いよく噴出する）などです。"
   },
   {
-    "question": "Trump Faces ______ on Easing Iran Oil Sanctions",
-    "answer": "Blowback",
-    "options": [
-      "Blowback",
-      "Endorsement",
-      "Consent",
-      "Support"
-    ],
-    "translation": "トランプ大統領はイラン石油制裁緩和に関して______に直面している。",
-    "explanation": "`Blowback` refers to the unintended and usually unwelcome negative consequences of an action, policy, or situation. In this headline, it signifies strong negative reactions or criticism towards Trump's decision."
+    "question": "Trade is trickling through the ______ artery connecting the Persian Gulf and the world, creating an economic shock thousands of miles away.",
+    "answer": "vital",
+    "options": ["vital", "minor", "trivial", "insignificant"],
+    "translation": "貿易はペルシャ湾と世界を結ぶ極めて重要な動脈を細々と流れており、数千マイル離れた場所で経済的な衝撃を生み出している。",
+    "explanation": "\"vital\" は「極めて重要な」「不可欠な」という意味で、ここでは航路の重要性を示しています。TOEICでは \"essential\" や \"crucial\" と同義で頻繁に出題される重要な語彙です。"
   },
   {
-    "question": "President Trump once ______ the Obama administration for making cash payments to Iran.",
-    "answer": "assailed",
-    "options": [
-      "assailed",
-      "commended",
-      "endorsed",
-      "praised"
-    ],
-    "translation": "トランプ大統領はかつて、オバマ政権がイランに現金支払いを行ったことを______した。",
-    "explanation": "`Assailed` means to make a concerted or violent attack on (a place or person). In a verbal context, it means to criticize someone strongly or vehemently. Here, Trump is harshly criticizing the Obama administration's actions."
+    "question": "Trade is trickling through the vital ______ connecting the Persian Gulf and the world, creating an economic shock thousands of miles away.",
+    "answer": "artery",
+    "options": ["artery", "vein", "capillary", "duct"],
+    "translation": "貿易はペルシャ湾と世界を結ぶ極めて重要な動脈を細々と流れており、数千マイル離れた場所で経済的な衝撃を生み出している。",
+    "explanation": "\"artery\" は本来「動脈」を意味しますが、ここでは比喩的に「交通・通信の主要幹線」「生命線」といった意味で使われ、その場所が経済活動にとって極めて重要であることを強調しています。"
   },
   {
-    "question": "Now he supports sanctions relief that could give the country a $14 billion ______.",
-    "answer": "windfall",
-    "options": [
-      "windfall",
-      "deficit",
-      "liability",
-      "expense"
-    ],
-    "translation": "現在、彼はその国に140億ドルの______をもたらす可能性のある制裁緩和を支持している。",
-    "explanation": "A `windfall` is a large amount of money or something valuable that you receive unexpectedly. In a financial context, it refers to a sudden, unexpected gain or profit, often due to luck or circumstances beyond one's control."
+    "question": "Stopping Iran’s production of drones is ______ to opening the Strait of Hormuz and halting its attacks on Gulf nations.",
+    "answer": "critical",
+    "options": ["critical", "trivial", "optional", "secondary"],
+    "translation": "イランのドローン生産を阻止することは、ホルムズ海峡を開放し、湾岸諸国への攻撃を停止させる上で極めて重要である。",
+    "explanation": "\"critical\" は「極めて重要な」「決定的な」という意味です。ここではドローン生産の停止がホルムズ海峡の安全保障に不可欠であることを示しています。TOEICでは \"crucial\", \"essential\", \"vital\" と同様に重要な状況を表す語としてよく使われます。"
   },
   {
-    "question": "But Britain\u2019s decision not to join the attacks on Iran has led to ______ mocking by the president.",
-    "answer": "merciless",
-    "options": [
-      "merciless",
-      "lenient",
-      "compassionate",
-      "forgiving"
-    ],
-    "translation": "しかし、英国がイラン攻撃に参加しないという決定は、大統領による______な嘲笑を招いた。",
-    "explanation": "`Merciless` means showing no mercy or pity; cruel. In this sentence, it describes the severe and relentless nature of the president's mocking, indicating a complete lack of compassion or restraint."
+    "question": "A ______ in Communication Before the LaGuardia Crash",
+    "answer": "Breakdown",
+    "options": ["Breakdown", "Uplift", "Advancement", "Improvement"],
+    "translation": "ラガーディア空港での衝突事故前のコミュニケーションの途絶/不具合",
+    "explanation": "\"breakdown\" は「故障」「機能不全」「崩壊」といった意味で、ここでは「コミュニケーションの途絶」や「意思疎通の不具合」を指します。特に \"communication breakdown\" はTOEICで頻出の複合語です。"
   }
 ]
