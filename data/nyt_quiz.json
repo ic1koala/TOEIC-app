@@ -1,37 +1,62 @@
 [
   {
-    "question": "President Trump has ______ between boasting about U.S. military superiority and deep frustration that his war of choice is not always having the desired effects.",
-    "answer": "vacillated",
-    "options": ["vacillated", "asserted", "concurred", "stabilized"],
-    "translation": "トランプ大統領は、米軍の優位性を自慢することと、自身が選んだ戦争が常に望ましい効果をもたらしているわけではないという深い不満との間で、態度が揺れ動いてきた。",
-    "explanation": "\"vacillate\" は「（意見や態度が）揺れ動く、ためらう」という意味です。ラテン語の\"vacillare\"（揺れ動く、よろめく）が語源です。この文脈では、トランプ大統領の二つの相反する感情や立場が揺れ動く様子を的確に表しています。"
+    "question": "Missile and Drone Strikes Show It Can Still ______ Pain.",
+    "answer": "inflict",
+    "options": [
+      "impose",
+      "exert",
+      "inflict",
+      "deliver"
+    ],
+    "translation": "ミサイルとドローン攻撃は、それが依然として痛みを______ことができることを示している。",
+    "explanation": "inflictは「（痛み、損害、罰など）を与える、負わせる」という意味で、好ましくないものを強制的に与える文脈で使われます。語源はラテン語の'infligere'（打つ、押し付ける）です。"
   },
   {
-    "question": "Propaganda and disinformation have flooded the internet in a sophisticated effort to ______ support for U.S. and Israeli attacks.",
-    "answer": "undermine",
-    "options": ["undermine", "reinforce", "validate", "bolster"],
-    "translation": "プロパガンダと偽情報は、米軍とイスラエル軍の攻撃への支持を弱体化させる巧妙な企てとして、インターネットに氾濫した。",
-    "explanation": "\"undermine\" は「（徐々に、または密かに）弱体化させる、損なう」という意味です。文字通り「下に掘る」ことから、基礎を崩すようなニュアンスがあります。この文脈では、プロパガンダが支持を失わせる目的で使われていることを示します。"
+    "question": "A wave of strikes across the Middle East in recent days shows that Iran has not lost the ______ to retaliate.",
+    "answer": "capacity",
+    "options": [
+      "potential",
+      "capacity",
+      "aptitude",
+      "capability"
+    ],
+    "translation": "ここ数日の中東全域での一連の攻撃は、イランが報復する______を失っていないことを示している。",
+    "explanation": "capacityは「能力、資格、収容力」という意味です。この文脈では「報復する能力」を指します。TOEICでは「生産能力」や「職務上の能力」といった意味でも頻出します。"
   },
   {
-    "question": "Republicans revolted over a Senate measure to fund the Department of Homeland Security and passed a rival bill, dimming the chances of a quick end to the crisis ______ airports.",
-    "answer": "crippling",
-    "options": ["crippling", "enhancing", "operating", "facilitating"],
-    "translation": "共和党は、国土安全保障省に資金を供給するための上院法案に反発し、対抗法案を可決した。これにより、空港を麻痺させている危機が早期に終結する可能性は薄れた。",
-    "explanation": "\"crippling\" は、動詞 \"cripple\"（〜を不具にする、機能を麻痺させる）の現在分詞形で、ここでは形容詞的に使われています。「壊滅的な損害を与える、機能を麻痺させる」という意味で、危機が空港の運営に深刻な影響を与えている状況を表現しています。"
+    "question": "There has long been concern that the Houthis, an Iran-backed militia, could ______ shipping in the Red Sea if they entered the broader war.",
+    "answer": "disrupt",
+    "options": [
+      "interfere",
+      "obstruct",
+      "impede",
+      "disrupt"
+    ],
+    "translation": "イランが支援する武装勢力フーシ派がより広範な戦争に参入すれば、紅海の航行を______する可能性があるという懸念が長い間あった。",
+    "explanation": "disruptは「（物事の進行などを）混乱させる、中断させる」という意味で、既存の秩序や流れを妨げる行為を指します。ビジネスシーンでは「市場を破壊する」「業務を中断させる」といった文脈で使われます。"
   },
   {
-    "question": "Bitter ______ have opened over the defense secretary\u2019s campaign to reverse policies that he says are prejudiced against white officers.",
-    "answer": "rifts",
-    "options": ["rifts", "alliances", "concords", "unions"],
-    "translation": "国防長官が白人将校に偏見があると主張する政策を撤回しようとする運動を巡り、激しい亀裂が生じた。",
-    "explanation": "\"rift\" は「意見の不一致によって生じる深い溝、亀裂、不和」という意味です。元々は地質学で地表の亀裂を指す言葉でしたが、人間関係や組織内の対立を表す際にも用いられます。ここでは、政策を巡る激しい意見対立を指します。"
+    "question": "The war in Iran was a ______ force, but plenty of protesters focused on President Trump’s immigration crackdown.",
+    "answer": "galvanizing",
+    "options": [
+      "activating",
+      "galvanizing",
+      "provoking",
+      "stimulating"
+    ],
+    "translation": "イランでの戦争は______力であったが、多くの抗議者はトランプ大統領の移民取り締まりに焦点を当てた。",
+    "explanation": "galvanizingは「（人を）奮起させる、刺激して行動させる」という意味です。語源は電流を意味する'galvanism'に由来し、電気を与えるように人を活性化させる様子を比喩的に表現します。"
   },
   {
-    "question": "Bitter rifts have opened over the defense secretary\u2019s campaign to reverse policies that he says are ______ against white officers.",
-    "answer": "prejudiced",
-    "options": ["prejudiced", "impartial", "equitable", "unbiased"],
-    "translation": "国防長官が白人将校に偏見があると主張する政策を撤回しようとする運動を巡り、激しい亀裂が生じた。",
-    "explanation": "\"prejudiced\" は「偏見を持った、不公平な」という意味の形容詞です。\"pre-\"（前もって）と\"judicium\"（判断）が語源で、十分な情報がないまま下される判断や、特定の集団に対する不公平な見方を指します。この文脈では、白人将校に対して不公平な扱いや見方があるという主張を表現しています。"
+    "question": "Minnesota was a focal point of the protests after a ______ immigration crackdown.",
+    "answer": "tumultuous",
+    "options": [
+      "turbulent",
+      "disorderly",
+      "tumultuous",
+      "riotous"
+    ],
+    "translation": "______移民取り締まりの後、ミネソタは抗議活動の焦点となった。",
+    "explanation": "tumultuousは「騒々しい、騒がしい、荒々しい、激動の」という意味で、多くの混乱、興奮、暴力的な感情を伴う状況や出来事を表現する際に使われます。"
   }
 ]
