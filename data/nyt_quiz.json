@@ -1,62 +1,37 @@
 [
   {
-    "question": "Missile and Drone Strikes Show It Can Still ______ Pain.",
-    "answer": "inflict",
-    "options": [
-      "impose",
-      "exert",
-      "inflict",
-      "deliver"
-    ],
-    "translation": "ミサイルとドローン攻撃は、それが依然として痛みを______ことができることを示している。",
-    "explanation": "inflictは「（痛み、損害、罰など）を与える、負わせる」という意味で、好ましくないものを強制的に与える文脈で使われます。語源はラテン語の'infligere'（打つ、押し付ける）です。"
+    "question": "The Pentagon used missiles untested in combat in a deadly attack that struck civilian sites near a military ______ on Feb. 28, according to visual evidence examined by The Times and weapons experts.",
+    "answer": "compound",
+    "options": ["compound", "facility", "sector", "complex"],
+    "translation": "国防総省は、2月28日に軍事______の近くの民間施設を攻撃する致命的な攻撃で、戦闘で未テストのミサイルを使用したと、タイムズ紙と兵器専門家によって調査された視覚的証拠が示している。",
+    "explanation": "「compound」は、建物や囲われた敷地がいくつか集まった場所、特に安全のために囲われた場所を指します。軍事文脈では、兵舎や施設が集まった区域を意味します。"
   },
   {
-    "question": "A wave of strikes across the Middle East in recent days shows that Iran has not lost the ______ to retaliate.",
-    "answer": "capacity",
-    "options": [
-      "potential",
-      "capacity",
-      "aptitude",
-      "capability"
-    ],
-    "translation": "ここ数日の中東全域での一連の攻撃は、イランが報復する______を失っていないことを示している。",
-    "explanation": "capacityは「能力、資格、収容力」という意味です。この文脈では「報復する能力」を指します。TOEICでは「生産能力」や「職務上の能力」といった意味でも頻出します。"
+    "question": "While ______ a CNN crew, a soldier said that Israeli troops were motivated by ‘revenge’ against Palestinians and that all of the West Bank was ‘for the Jews.’",
+    "answer": "detaining",
+    "options": ["detaining", "releasing", "observing", "assisting"],
+    "translation": "CNNの取材班を______している間、一人の兵士は、イスラエル軍はパレスチナ人への『復讐』に駆り立てられており、ヨルダン川西岸全域が『ユダヤ人のものだ』と述べた。",
+    "explanation": "「detaining」は、一時的に拘束する、またはその場に留まらせるという意味です。公式な状況や法執行機関による行為によく用いられます。"
   },
   {
-    "question": "There has long been concern that the Houthis, an Iran-backed militia, could ______ shipping in the Red Sea if they entered the broader war.",
-    "answer": "disrupt",
-    "options": [
-      "interfere",
-      "obstruct",
-      "impede",
-      "disrupt"
-    ],
-    "translation": "イランが支援する武装勢力フーシ派がより広範な戦争に参入すれば、紅海の航行を______する可能性があるという懸念が長い間あった。",
-    "explanation": "disruptは「（物事の進行などを）混乱させる、中断させる」という意味で、既存の秩序や流れを妨げる行為を指します。ビジネスシーンでは「市場を破壊する」「業務を中断させる」といった文脈で使われます。"
+    "question": "Plus, a ______ of Catholic converts in the United States.",
+    "answer": "surge",
+    "options": ["surge", "decrease", "plateau", "stagnation"],
+    "translation": "さらに、米国ではカトリックへの改宗者の______が見られる。",
+    "explanation": "「surge」は、急激な増加や高まりを意味します。人、物、感情などの突然かつ強力な動きを表す際にも使われます。"
   },
   {
-    "question": "The war in Iran was a ______ force, but plenty of protesters focused on President Trump’s immigration crackdown.",
-    "answer": "galvanizing",
-    "options": [
-      "activating",
-      "galvanizing",
-      "provoking",
-      "stimulating"
-    ],
-    "translation": "イランでの戦争は______力であったが、多くの抗議者はトランプ大統領の移民取り締まりに焦点を当てた。",
-    "explanation": "galvanizingは「（人を）奮起させる、刺激して行動させる」という意味です。語源は電流を意味する'galvanism'に由来し、電気を与えるように人を活性化させる様子を比喩的に表現します。"
+    "question": "Private-Credit Wobbles Could Prove ______ for Trump.",
+    "answer": "Perilous",
+    "options": ["Perilous", "harmless", "advantageous", "secure"],
+    "translation": "プライベートクレジットの動揺はトランプ氏にとって______となりかねない。",
+    "explanation": "「Perilous」は、危険に満ちた、極めて危険なという意味の形容詞です。重大な損害や困難につながる可能性のある状況を示唆します。"
   },
   {
-    "question": "Minnesota was a focal point of the protests after a ______ immigration crackdown.",
-    "answer": "tumultuous",
-    "options": [
-      "turbulent",
-      "disorderly",
-      "tumultuous",
-      "riotous"
-    ],
-    "translation": "______移民取り締まりの後、ミネソタは抗議活動の焦点となった。",
-    "explanation": "tumultuousは「騒々しい、騒がしい、荒々しい、激動の」という意味で、多くの混乱、興奮、暴力的な感情を伴う状況や出来事を表現する際に使われます。"
+    "question": "The tanker full of crude oil could reach its expected destination by Monday, providing a lifeline to the island ______ intense U.S. pressure.",
+    "answer": "amid",
+    "options": ["amid", "despite", "during", "concerning"],
+    "translation": "原油を満載したタンカーは月曜日までに目的地の港に到着し、米国の激しい圧力______、その島に生命線を提供すると見られる。",
+    "explanation": "「amid」は、「〜の最中に」「〜に囲まれて」という意味で、特に困難な状況や状況に囲まれて何かが起こっていることを表す際に使われます。"
   }
 ]
