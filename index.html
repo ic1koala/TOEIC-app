@@ -22,34 +22,40 @@
     
     <style>
         :root {
-            --c-slate: #7C93C3;
-            --c-sage: #A3B18A;
-            --c-mauve: #B5A6C9;
-            --c-dusty: #E5989B;
-            --c-terra: #E29578;
+            /* うっすら紫色のガラス風デザイン（Nuance Purple Glass） */
+            --c-slate: #9F85C0;    /* パープル系アクセント1 */
+            --c-sage: #B8A4D6;     /* パープル系アクセント2 */
+            --c-mauve: #D0BDE8;    /* パープル系アクセント3 */
+            --c-dusty: #E2CDF6;    /* パープル系アクセント4 */
+            --c-terra: #8F72B3;    /* パープル系濃いめ */
             
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --bg-base: #F7F6F2;
-            --text-main: #4A4A4A;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: rgba(139, 92, 246, 0.08); /* ガラス用の影 */
+            --bg-base: #F5EEFC;    /* うっすら紫色 */
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(243,232,255,1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(250,245,255,1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(245,235,255,1) 0, transparent 50%), radial-gradient(at 0% 100%, rgba(238,224,255,1) 0, transparent 50%);
+            --text-main: #4C3C65;
         }
         
         html.dark {
-            --glass-bg: rgba(40, 40, 45, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --bg-base: #1C1C1E;
-            --text-main: #E5E5E5;
+            --glass-bg: rgba(35, 25, 50, 0.55);
+            --glass-border: rgba(139, 92, 246, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            --bg-base: #181224;    /* ダークな紫黒 */
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(59,38,89,1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(45,28,70,1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(35,22,55,1) 0, transparent 50%), radial-gradient(at 0% 100%, rgba(50,30,80,1) 0, transparent 50%);
+            --text-main: #E2D9F3;
         }
 
         body {
             margin: 0;
-            background: var(--bg-base);
+            background-color: var(--bg-base);
+            background-image: var(--bg-gradient);
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
             display: flex;
             justify-content: center;
-            transition: background 0.5s ease;
+            transition: background-color 0.5s ease;
         }
         
         .app-shell {
@@ -63,12 +69,12 @@
 
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 1.25rem !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 12px 32px var(--glass-shadow);
         }
 
         .ios-btn {
@@ -101,12 +107,12 @@
 
         .bottom-nav {
             padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.03);
+            box-shadow: 0 -10px 40px var(--glass-shadow);
             z-index: 50;
             position: relative;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border-top: 1px solid var(--glass-border);
         }
         .home-hub {
@@ -119,7 +125,7 @@
             border-radius: 50%;
             background: var(--c-slate);
             border: 4px solid var(--bg-base);
-            box-shadow: 0 8px 20px rgba(124, 147, 195, 0.3);
+            box-shadow: 0 8px 20px rgba(159, 133, 192, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -163,47 +169,15 @@
         .no-transition { transition: none !important; }
         .hidden { display: none !important; }
 
+        /* NYT専用アニメーション背景 */
         .nyt-gradient {
             background: linear-gradient(135deg, var(--c-slate), var(--c-sage));
             background-size: 200% 200%;
             animation: gradientShift 5s ease infinite;
         }
-        @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
-        /* Lock Screen Overlay */
-        #lock-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-        #lock-screen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
     </style>
 </head>
 <body class="antialiased">
-
-<div id="lock-screen">
-    <i class="fas fa-lock text-4xl mb-4 text-gray-300"></i>
-    <h2 class="text-xl font-bold mb-2">Time Limit Exceeded</h2>
-    <p class="text-sm text-gray-300 mb-6 text-center px-6">利用時間（1分）が経過しました。<br>続けるにはパスワードを入力してください。</p>
-    <div class="flex flex-col gap-3 w-3/4 max-w-[250px]">
-        <input type="password" id="pw-input" class="w-full px-4 py-3 rounded-xl text-gray-900 font-bold outline-none text-center" placeholder="Password">
-        <button onclick="ctrl.unlockApp()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg">解除する</button>
-        <p id="pw-error" class="text-red-400 text-xs font-bold text-center hidden">パスワードが違います</p>
-    </div>
-</div>
 
 <div id="correct-effect" class="effect-mark text-[var(--c-sage)]" style="animation: pop 0.6s ease-out;">○</div>
 <div id="wrong-effect" class="effect-mark text-[var(--c-dusty)]" style="animation: pop 0.6s ease-out;">×</div>
@@ -214,7 +188,7 @@
         <h1 class="text-3xl font-extrabold mt-10 mb-2 text-center w-full tracking-tight" style="color: var(--c-slate);">Word Focus</h1>
         <p class="text-sm text-gray-500 mb-8 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
         
-        <div class="space-y-4 transition-opacity duration-300 pb-8 pointer-events-none opacity-50" id="level-btns">
+        <div class="space-y-4 transition-opacity duration-300 pb-8" id="level-btns">
             <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
                 <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
                 <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
@@ -259,45 +233,21 @@
             </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 pb-10">
+        <div class="grid grid-cols-2 gap-4">
             <div onclick="ctrl.start(1)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-slate);">
                 <i class="fas fa-font text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">英 → 日</p>
             </div>
             <div onclick="ctrl.start(2)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-sage);">
                 <i class="fas fa-language text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">日 → 英</p>
             </div>
+            <div onclick="ctrl.start(5)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-mauve);">
+                <i class="fas fa-clone text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カード</p>
+            </div>
             <div onclick="ctrl.start(6)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-terra);">
                 <i class="fas fa-headphones-alt text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">Aruki</p>
             </div>
-            <div onclick="ctrl.start(4)" class="ios-btn p-6 rounded-[28px] text-white shadow-sm flex flex-col items-center justify-center aspect-square" style="background: var(--c-dusty);">
-                <i class="fas fa-redo text-3xl mb-3 opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習</p>
-            </div>
-            
-            <div onclick="ctrl.prepareFlashcards()" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-mauve);">
-                <i class="fas fa-clone text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">単語カードで学習</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="scr-cards-menu" class="flex-grow hidden p-6 flex flex-col scroll-v">
-        <button onclick="ctrl.showMode()" class="text-gray-500 font-bold mb-6 flex items-center gap-2 self-start hover:opacity-70"><i class="fas fa-arrow-left"></i> Back</button>
-        <h2 class="text-2xl font-bold mb-8 text-gray-800 dark:text-gray-100 tracking-tight text-center">Flashcards</h2>
-        
-        <div class="space-y-4">
-            <div onclick="ctrl.start(5)" class="ios-btn glass-card flex items-center p-5 border-l-4 border-blue-400">
-                <i class="fas fa-layer-group text-2xl text-blue-500 mr-4"></i>
-                <div class="text-left">
-                    <p class="font-bold text-gray-800 dark:text-gray-100">All Words</p>
-                    <p class="text-xs text-gray-500">選択したレベルの全ての単語</p>
-                </div>
-            </div>
-            
-            <div onclick="ctrl.startCardsReview()" class="ios-btn glass-card flex items-center p-5 border-l-4 border-yellow-400">
-                <i class="fas fa-star text-2xl text-yellow-500 mr-4"></i>
-                <div class="text-left">
-                    <p class="font-bold text-gray-800 dark:text-gray-100">Start Review</p>
-                    <p class="text-xs text-gray-500">スワイプで間違えた単語のみを復習</p>
-                </div>
+            <div onclick="ctrl.start(4)" class="col-span-2 ios-btn p-5 rounded-[24px] text-white shadow-sm flex items-center justify-center gap-3" style="background: var(--c-dusty);">
+                <i class="fas fa-redo text-lg opacity-90"></i><p class="font-bold text-sm tracking-wide">弱点復習モード</p>
             </div>
         </div>
     </div>
@@ -338,10 +288,8 @@
     </div>
 
     <div id="scr-flashcard" class="hidden flex-grow flex flex-col items-center justify-center p-6 w-full relative">
-        <button onclick="ctrl.exitFlashcards()" class="absolute top-6 left-6 text-gray-500 font-bold hover:opacity-70"><i class="fas fa-times text-lg"></i></button>
-        <span id="fc-count" class="absolute top-6 right-6 text-sm font-bold text-gray-500 bg-gray-200/50 dark:bg-gray-800/50 px-3 py-1 rounded-full">1 / 10</span>
-        
-        <div id="fc-container" class="card-container w-full max-w-sm aspect-[4/5] mb-8 mt-4">
+        <button onclick="ctrl.showMode()" class="absolute top-6 left-6 text-gray-500 font-bold hover:opacity-70"><i class="fas fa-times text-lg"></i></button>
+        <div id="fc-container" class="card-container w-full max-w-sm aspect-[4/5] mb-8">
             <div id="swipe-label-left">Review</div>
             <div id="swipe-label-right">Got it!</div>
             <div class="card-inner cursor-pointer h-full">
@@ -380,7 +328,7 @@
 
     <div class="bottom-nav rounded-t-[32px] flex justify-around items-center pt-4 pb-8 w-full shrink-0">
         <div onclick="ctrl.showMode()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-study"><i class="fas fa-book-open text-xl mb-1"></i><span class="text-[10px] font-bold">Study</span></div>
-        <div onclick="ctrl.prepareFlashcards()" class="flex flex-col items-center ios-btn text-gray-400" id="nav-cards"><i class="fas fa-layer-group text-xl mb-1"></i><span class="text-[10px] font-bold">Cards</span></div>
+        <div onclick="ctrl.start(5)" class="flex flex-col items-center ios-btn text-gray-400" id="nav-cards"><i class="fas fa-layer-group text-xl mb-1"></i><span class="text-[10px] font-bold">Cards</span></div>
         
         <div onclick="ctrl.showLevel()" class="home-hub ios-btn"><i class="fas fa-home"></i></div>
         <div style="width: 50px;"></div> 
@@ -393,56 +341,23 @@
 <script>
 let DB = {};
 let audioCtx = null;
-let appTimer = null; 
 
 const ctrl = {
-    state: { 
-        level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], 
-        recog: null, flashcardInit: false, isChecking: false, arukiTimer: null,
-        isUnlocked: false 
-    },
+    state: { level: 400, mode: 1, idx: 0, score: 0, questions: [], wrongPool: [], recog: null, flashcardInit: false, isChecking: false, arukiTimer: null },
 
     init: async () => {
         ctrl.applyTheme();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ctrl.applyTheme);
         
-        let loadedSource = "";
-
         try {
             const timestamp = new Date().getTime();
+            const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
             
-            try {
-                const resCsv = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
-                if (resCsv.ok) {
-                    const csvText = await resCsv.text();
-                    const parsedDB = ctrl.parseCSV(csvText);
-                    if (Object.keys(parsedDB).length > 0) {
-                        DB = parsedDB;
-                        loadedSource = "CSV";
-                    }
-                }
-            } catch(e) { console.log("CSV読み込みスキップ"); }
-
-            if (!loadedSource) {
-                const resJson = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
-                if (resJson.ok) {
-                    const jsonData = await resJson.json();
-                    if (Object.keys(jsonData).length > 0) {
-                        DB = jsonData;
-                        loadedSource = "JSON";
-                    }
-                }
-            }
-
-            if (!loadedSource) {
-                throw new Error("CSVもJSONも見つかりません。");
-            }
-            
+            if (!response.ok) throw new Error("JSON load error");
+            DB = await response.json();
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
-            document.getElementById('level-btns').classList.remove('pointer-events-none', 'opacity-50');
-            
         } catch (error) {
-            document.getElementById('loading-msg').innerText = "エラー: " + error.message;
+            document.getElementById('loading-msg').innerText = "データ取得エラー。通信環境を確認してください。";
             console.error("Data load failed:", error);
         }
 
@@ -451,85 +366,12 @@ const ctrl = {
             try { ctrl.state.wrongPool = JSON.parse(savedWrongPool); } catch(e){}
         }
         ctrl.initSwipeGestures();
-        
-        appTimer = setTimeout(() => {
-            if (!ctrl.state.isUnlocked) {
-                document.getElementById('lock-screen').classList.add('active');
-            }
-        }, 60000); 
     },
 
-    unlockApp: () => {
-        const input = document.getElementById('pw-input').value;
-        if (input === 'continue') {
-            document.getElementById('lock-screen').classList.remove('active');
-            ctrl.state.isUnlocked = true;
-        } else {
-            document.getElementById('pw-error').classList.remove('hidden');
-        }
+    saveWrongPool: () => {
+        localStorage.setItem('toeic_wrong_pool', JSON.stringify(ctrl.state.wrongPool));
     },
 
-    parseCSV: (text) => {
-        text = text.replace(/^\uFEFF/, ''); 
-        const lines = text.split(/\r?\n/);
-        const result = {};
-        
-        let startIndex = 0;
-        if (lines[0] && lines[0].includes('level')) startIndex = 1;
-        
-        for (let i = startIndex; i < lines.length; i++) {
-            let line = lines[i];
-            if (!line || line.trim() === '') continue;
-            
-            let unquotedCommas = 0;
-            let checkQuotes = false;
-            for(let c of line) {
-                if(c === '"') checkQuotes = !checkQuotes;
-                else if(c === ',' && !checkQuotes) unquotedCommas++;
-            }
-            if (unquotedCommas === 0 && line.startsWith('"') && line.endsWith('"') && line.includes(',')) {
-                line = line.slice(1, -1).replace(/""/g, '"');
-            }
-            
-            const row = [];
-            let curr = '';
-            let inQuotes = false;
-            
-            for (let j = 0; j < line.length; j++) {
-                const char = line[j];
-                if (char === '"') {
-                    if (inQuotes && line[j+1] === '"') {
-                        curr += '"';
-                        j++;
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if (char === ',' && !inQuotes) {
-                    row.push(curr.trim());
-                    curr = '';
-                } else {
-                    curr += char;
-                }
-            }
-            row.push(curr.trim());
-
-            if (row.length >= 2) {
-                let level = row[0].replace(/^"|"$/g, '').trim() || "400";
-                if (!result[level]) result[level] = { words: [] };
-                result[level].words.push({
-                    en: (row[1] || "").replace(/^"|"$/g, '').trim(),
-                    ja: (row[2] || "").replace(/^"|"$/g, '').trim(),
-                    ex: (row[3] || "").replace(/^"|"$/g, '').trim(),
-                    sEn: (row[4] || "").replace(/^"|"$/g, '').trim(),
-                    sJa: (row[5] || "").replace(/^"|"$/g, '').trim()
-                });
-            }
-        }
-        return result;
-    },
-
-    saveWrongPool: () => { localStorage.setItem('toeic_wrong_pool', JSON.stringify(ctrl.state.wrongPool)); },
-    
     applyTheme: () => {
         const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (isDark) document.documentElement.classList.add('dark');
@@ -538,7 +380,7 @@ const ctrl = {
 
     switchScr: (id) => {
         ctrl.stopVoice(); window.speechSynthesis.cancel(); clearTimeout(ctrl.state.arukiTimer);
-        ['scr-level', 'scr-mode', 'scr-cards-menu', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        ['scr-level', 'scr-mode', 'scr-quiz', 'scr-result', 'scr-flashcard'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
     },
 
@@ -547,29 +389,7 @@ const ctrl = {
     showAnalysis: () => { ctrl.updateAnalysisUI(); ctrl.switchScr('scr-result'); },
     setLevel: (l) => { ctrl.state.level = l; ctrl.showMode(); },
 
-    prepareFlashcards: () => { ctrl.switchScr('scr-cards-menu'); },
-    
-    startCardsReview: () => {
-        if (ctrl.state.wrongPool.length === 0) {
-            alert("復習リストは空です。完璧です！");
-            return;
-        }
-        ctrl.state.mode = 8;
-        ctrl.state.idx = 0;
-        ctrl.state.questions = [...ctrl.state.wrongPool].sort(() => Math.random() - 0.5);
-        ctrl.state.flashcardInit = false; 
-        ctrl.switchScr('scr-flashcard'); 
-        ctrl.nextFlash();
-    },
-
-    exitFlashcards: () => {
-        if (ctrl.state.mode === 5 || ctrl.state.mode === 8) {
-            ctrl.prepareFlashcards(); 
-        } else {
-            ctrl.showMode(); 
-        }
-    },
-
+    // ★NYTクイズ開始機能（穴埋め形式に完全対応）★
     startNYT: async () => {
         ctrl.state.mode = 7; 
         ctrl.state.idx = 0;
@@ -582,6 +402,7 @@ const ctrl = {
             const nytData = await res.json();
             
             const rawArray = Array.isArray(nytData) ? nytData : (nytData.words || []);
+
             if (rawArray.length === 0) {
                 alert("ニュース単語がまだ生成されていません。しばらく待ってから再度お試しください。");
                 return;
@@ -591,20 +412,20 @@ const ctrl = {
                 const answerWord = item.answer || item.en || item.word || "Unknown";
                 const explanation = item.explanation || item.ex || "最新ニュースからの抽出語彙";
                 const translation = item.translation || item.ja || "";
+                
                 let pureJa = translation;
                 if(pureJa && pureJa.includes('(')) pureJa = pureJa.split('(')[0].trim();
 
+                // ニュースの英文（example）を取得し、正解単語の部分を _______ に置き換えて「問題文(q)」にする
                 const originalSentence = item.example || item.sEn || item.question || answerWord;
+                // 大文字小文字を区別せずに置換する（RegExpの 'gi' フラグを使用）
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
-                let dummySource = rawArray;
-                if (DB && Object.keys(DB).length > 0) {
-                    dummySource = DB[800] ? DB[800].words : DB[Object.keys(DB)[0]].words;
-                }
-                
+                const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
                 let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
                 
+                // 選択肢は「英単語」にする
                 choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
                     let dummyJa = x.ja || x.translation || "";
                     if(dummyJa.includes('(')) dummyJa = dummyJa.split('(')[0].trim();
@@ -613,13 +434,20 @@ const ctrl = {
                 choices.sort(() => Math.random() - 0.5);
 
                 return { 
-                    en: answerWord, ja: pureJa, q: blankSentence, a: answerWord, 
-                    ex: explanation, sEn: originalSentence, sJa: translation, choiceData: choices 
+                    en: answerWord,      // 正解の英単語
+                    ja: pureJa,          // 正解の日本語
+                    q: blankSentence,    // 【修正】画面に出る問題文（穴埋めされた英文）
+                    a: answerWord,       // 【修正】正解として判定するのは「英単語」
+                    ex: explanation, 
+                    sEn: originalSentence, // 読み上げ＆解説用の完全な英文
+                    sJa: translation,
+                    choiceData: choices 
                 };
             });
 
             ctrl.switchScr('scr-quiz');
             ctrl.render();
+
         } catch (err) {
             alert("ニュース単語の読み込みに失敗しました。\n" + err.message);
         }
@@ -633,16 +461,17 @@ const ctrl = {
             return;
         }
 
-        let data = DB[ctrl.state.level];
-        if (!data && Object.keys(DB).length > 0) data = DB[Object.keys(DB)[0]];
-
+        let data = DB[ctrl.state.level] || DB[400];
         let sourceWords = [];
         
         if (mode === 4) {
             if (ctrl.state.wrongPool.length === 0) { alert("弱点はありません！完璧です！"); return; }
             sourceWords = [...ctrl.state.wrongPool];
         } else {
-            if (!data || !data.words) { alert("選択したレベルのデータが見つかりません。"); return; }
+            if (!data || !data.words) {
+                alert("選択したレベルのデータが見つかりません。");
+                return;
+            }
             sourceWords = [...data.words];
             const shuffleType = document.getElementById('shuffle-select').value;
             if (shuffleType === 'mistake' && ctrl.state.wrongPool.length > 0) {
@@ -654,20 +483,17 @@ const ctrl = {
         }
 
         ctrl.state.questions = sourceWords.map(w => {
-            let ds = data ? data.words : [];
-            if(mode === 4 && (!ds || ds.length < 4)) { ds = (DB[800] && DB[800].words) ? DB[800].words : ctrl.state.wrongPool; }
+            let ds = data.words;
+            if(mode === 4 && (!ds || ds.length < 4)) {
+                ds = (DB[800] && DB[800].words) ? DB[800].words : ctrl.state.wrongPool;
+            }
             let others = ds.filter(x => x.en !== w.en).sort(() => Math.random() - 0.5).slice(0, 3);
             let choices = [w, ...others].sort(() => Math.random() - 0.5);
             return { ...w, q: (mode === 1 || mode === 6) ? w.en : w.ja, a: (mode === 1 || mode === 6) ? w.ja : w.en, choiceData: choices };
         }).slice(0, 10);
 
-        if (mode === 5) { 
-            ctrl.state.flashcardInit = false; 
-            ctrl.switchScr('scr-flashcard'); 
-            ctrl.nextFlash(); 
-        } else { 
-            ctrl.switchScr('scr-quiz'); ctrl.render(); 
-        }
+        if (mode === 5) { ctrl.state.flashcardInit = false; ctrl.switchScr('scr-flashcard'); ctrl.nextFlash(); }
+        else { ctrl.switchScr('scr-quiz'); ctrl.render(); }
     },
 
     render: () => {
@@ -682,6 +508,7 @@ const ctrl = {
         const qTextEl = document.getElementById('q-main-text');
         qTextEl.innerText = q.q;
         
+        // NYTモード（穴埋め長文）の場合は、文字を少し小さくして左寄せにする
         if (ctrl.state.mode === 7) {
             qTextEl.className = "text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight text-left leading-relaxed";
         } else {
@@ -701,8 +528,11 @@ const ctrl = {
         q.choiceData.forEach((c, i) => {
             const btn = document.createElement('div');
             btn.className = "ios-btn bg-white dark:bg-gray-800 rounded-xl flex items-center font-bold text-sm py-3 px-4 border border-gray-100 dark:border-gray-700 shadow-sm";
+            
+            // NYTモード(7)のときは英語(c.en)を選択肢として表示する
             const displayText = (ctrl.state.mode === 1 || ctrl.state.mode === 6) ? c.ja : c.en;
             btn.innerHTML = `<span class="w-7 h-7 rounded-full flex items-center justify-center text-xs mr-3" style="background: var(--bg-base); color: var(--c-slate);">${i+1}</span> <span class="flex-1 choice-label text-gray-700 dark:text-gray-200" data-en="${c.en}" data-ja="${c.ja}">${displayText}</span>`;
+            
             btn.onclick = () => ctrl.check(btn, displayText);
             choiceArea.appendChild(btn);
         });
@@ -720,6 +550,7 @@ const ctrl = {
         const q = ctrl.state.questions[ctrl.state.idx];
         ctrl.stopVoice(); window.speechSynthesis.cancel();
         
+        // ★Arukiモードの時は「英単語のみ」を発音する★
         const msgWord = new SpeechSynthesisUtterance(q.en);
         msgWord.lang = 'en-US'; msgWord.rate = 0.85;
         msgWord.onend = () => {
@@ -749,6 +580,7 @@ const ctrl = {
             const originalJa = labelEl.getAttribute('data-ja');
             const originalEn = labelEl.getAttribute('data-en');
             
+            // NYTモード(7)の場合は、答え合わせ後に「英語 (日本語)」の表記にする
             if (ctrl.state.mode === 7) {
                 labelEl.innerText = `${originalEn} (${originalJa})`;
             } else if (ctrl.state.mode === 1 || ctrl.state.mode === 6) {
@@ -768,7 +600,8 @@ const ctrl = {
             ctrl.state.score++; 
             ctrl.triggerEffect('correct-effect'); 
             ctrl.playCorrectSound(); 
-            if (ctrl.state.mode === 4 || ctrl.state.mode === 8) {
+            
+            if (ctrl.state.mode === 4) {
                 ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
                 ctrl.saveWrongPool();
             }
@@ -776,16 +609,19 @@ const ctrl = {
             btn.style.borderColor = 'var(--c-dusty)';
             btn.style.backgroundColor = 'rgba(229, 152, 155, 0.1)';
             ctrl.triggerEffect('wrong-effect'); 
+            
             if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
                 ctrl.state.wrongPool.push({ en: q.en, ja: q.ja, ex: q.ex, sEn: q.sEn, sJa: q.sJa }); 
                 ctrl.saveWrongPool();
             }
         }
         
+        // NYTモード専用の解説パネル表示
         if (ctrl.state.mode === 7) {
-            document.getElementById('expl-text').innerText = `${q.ex}`;
+            document.getElementById('expl-text').innerText = `${q.ex}`; // AIが作った詳細な解説
+            // 英文の中で正解単語の部分に下線を引いて色付け強調
             document.getElementById('ex-en').innerHTML = q.sEn.replace(new RegExp(`\\b${q.a}\\b`, 'gi'), `<span style="color:var(--c-slate); font-weight:bold; text-decoration:underline;">${q.a}</span>`); 
-            document.getElementById('ex-ja').innerText = q.sJa;
+            document.getElementById('ex-ja').innerText = q.sJa; // ニュースの和訳
         } else {
             document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
             document.getElementById('ex-en').innerText = q.sEn; 
@@ -863,14 +699,14 @@ const ctrl = {
             }
 
             inner.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            
             if (currentX > 100) {
                 inner.classList.add('swipe-right');
+                
                 const q = ctrl.state.questions[ctrl.state.idx];
                 ctrl.state.wrongPool = ctrl.state.wrongPool.filter(w => w.en !== q.en);
                 ctrl.saveWrongPool();
+
                 setTimeout(() => ctrl.nextFlash(), 300);
-            
             } else if (currentX < -100) {
                 const q = ctrl.state.questions[ctrl.state.idx];
                 if(!ctrl.state.wrongPool.some(x => x.en === q.en)) {
@@ -895,15 +731,13 @@ const ctrl = {
             inner.style.transform = '';
             ctrl.state.idx++;
             
-            if(ctrl.state.idx >= ctrl.state.questions.length) {
-                if (ctrl.state.mode === 8) {
-                    alert("復習が一巡しました！");
-                    ctrl.prepareFlashcards(); 
-                    return;
-                } else {
-                    ctrl.state.idx = 0; 
-                }
+            if(ctrl.state.mode === 4 && ctrl.state.wrongPool.length === 0) {
+                alert("🎉 素晴らしい！すべての弱点を克服しました！");
+                ctrl.showMode();
+                return;
             }
+
+            if(ctrl.state.idx >= ctrl.state.questions.length) ctrl.state.idx = 0;
             ctrl.updateFlashcardContent();
             setTimeout(() => inner.classList.remove('no-transition'), 50);
         }, 150);
@@ -911,8 +745,6 @@ const ctrl = {
 
     updateFlashcardContent: () => {
         const q = ctrl.state.questions[ctrl.state.idx];
-        const total = ctrl.state.questions.length;
-        document.getElementById('fc-count').innerText = `${ctrl.state.idx + 1} / ${total}`;
         document.getElementById('fc-en').innerText = q.en;
         document.getElementById('fc-ja').innerText = `${q.ja} (${q.en})`;
         document.getElementById('fc-ex').innerHTML = `<div class="text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl mt-2"><span class="font-medium text-[var(--c-slate)] block mb-1 text-sm">${q.sEn}</span><span class="text-gray-500 text-xs">${q.sJa}</span></div>`;
@@ -958,12 +790,15 @@ const ctrl = {
         ctrl.showAnalysis(); 
     },
     
+    // ★発音ボタン：通常のクイズでは例文（全体）を読む★
     speak: (text) => { 
         window.speechSynthesis.cancel(); 
         let speechText = text;
         if (!speechText) {
             const q = ctrl.state.questions[ctrl.state.idx];
+            // NYTモード(7)や、例文(sEn)がある場合はそれを読む
             speechText = q.sEn ? q.sEn : q.en;
+            // 穴埋め用の ___ があれば、正解単語で埋めて自然に読む
             if (speechText.includes('___')) {
                 speechText = speechText.replace(/___/g, q.en);
             }
