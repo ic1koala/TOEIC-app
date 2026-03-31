@@ -1,37 +1,37 @@
 [
   {
-    "question": "The Pentagon used missiles untested in combat in a deadly attack that struck civilian sites near a military ______ on Feb. 28, according to visual evidence examined by The Times and weapons experts.",
-    "answer": "compound",
-    "options": ["compound", "facility", "sector", "complex"],
-    "translation": "国防総省は、2月28日に軍事______の近くの民間施設を攻撃する致命的な攻撃で、戦闘で未テストのミサイルを使用したと、タイムズ紙と兵器専門家によって調査された視覚的証拠が示している。",
-    "explanation": "「compound」は、建物や囲われた敷地がいくつか集まった場所、特に安全のために囲われた場所を指します。軍事文脈では、兵舎や施設が集まった区域を意味します。"
+    "question": "Colorado and more than 20 other states ______ therapists from trying to change the gender identity or sexual orientation of L.G.B.T.Q. clients under the age of 18.",
+    "answer": "restrict",
+    "options": ["restrict", "persuade", "promote", "approve"],
+    "translation": "コロラド州と20以上の他の州は、18歳未満のL.G.B.T.Q.の顧客の性同一性や性的指向を変えようとすることからセラピストを制限している。",
+    "explanation": "\"Restrict\" は「～を制限する」「～に制約を課す」という意味の動詞です。ここでは、州がセラピストの特定の行為を法的に禁止または制約している状況を表しています。TOEICでは、規制、規則、制約といった文脈で頻繁に登場します。"
   },
   {
-    "question": "While ______ a CNN crew, a soldier said that Israeli troops were motivated by ‘revenge’ against Palestinians and that all of the West Bank was ‘for the Jews.’",
-    "answer": "detaining",
-    "options": ["detaining", "releasing", "observing", "assisting"],
-    "translation": "CNNの取材班を______している間、一人の兵士は、イスラエル軍はパレスチナ人への『復讐』に駆り立てられており、ヨルダン川西岸全域が『ユダヤ人のものだ』と述べた。",
-    "explanation": "「detaining」は、一時的に拘束する、またはその場に留まらせるという意味です。公式な状況や法執行機関による行為によく用いられます。"
+    "question": "And while Marines and the 82nd Airborne Division offer new ______, the risks escalate quickly.",
+    "answer": "leverage",
+    "options": ["leverage", "obstacles", "expenses", "concerns"],
+    "translation": "海兵隊と第82空挺師団が新たな影響力（交渉上の優位性）を提供する一方で、リスクは急速に増大する。",
+    "explanation": "\"Leverage\" は、名詞として「影響力」「交渉上の優位性」「てこの作用」といった意味を持ちます。特にビジネスや政治の文脈で、何かを達成するための力や手段を指す際によく使われます。この文脈では、軍事力を背景とした交渉上の有利な立場を意味します。"
   },
   {
-    "question": "Plus, a ______ of Catholic converts in the United States.",
-    "answer": "surge",
-    "options": ["surge", "decrease", "plateau", "stagnation"],
-    "translation": "さらに、米国ではカトリックへの改宗者の______が見られる。",
-    "explanation": "「surge」は、急激な増加や高まりを意味します。人、物、感情などの突然かつ強力な動きを表す際にも使われます。"
+    "question": "And while Marines and the 82nd Airborne Division offer new leverage, the risks ______ quickly.",
+    "answer": "escalate",
+    "options": ["escalate", "diminish", "stabilize", "subside"],
+    "translation": "海兵隊と第82空挺師団が新たな影響力（交渉上の優位性）を提供する一方で、リスクは急速に増大する。",
+    "explanation": "\"Escalate\" は「（事態などが）エスカレートする」「急速に増大する」「悪化する」といった意味の動詞です。状況が悪化したり、対立が激しくなったりする際に使われます。TOEICでは、コストの増加や問題の悪化といった文脈でよく見られます。"
   },
   {
-    "question": "Private-Credit Wobbles Could Prove ______ for Trump.",
-    "answer": "Perilous",
-    "options": ["Perilous", "harmless", "advantageous", "secure"],
-    "translation": "プライベートクレジットの動揺はトランプ氏にとって______となりかねない。",
-    "explanation": "「Perilous」は、危険に満ちた、極めて危険なという意味の形容詞です。重大な損害や困難につながる可能性のある状況を示唆します。"
+    "question": "A month since the first U.S.-Israeli attacks and Iran’s response ______ shut off Persian Gulf oil, drivers are paying significantly more to fill up.",
+    "answer": "effectively",
+    "options": ["effectively", "occasionally", "partially", "reluctantly"],
+    "translation": "最初のアメリカ・イスラエルによる攻撃とイランの報復によってペルシャ湾の石油が実質的に遮断されてから1ヶ月、ドライバーたちはガソリンを入れるためにはるかに多く支払っている。",
+    "explanation": "\"Effectively\" は副詞で「事実上」「実質的に」「効果的に」といった意味を持ちます。この文脈では、文字通り完全に遮断されたわけではないが、その影響が「実質的に」遮断されたのと同じくらい大きいことを示しています。TOEICでは、結果や影響を強調する際によく用いられます。"
   },
   {
-    "question": "The tanker full of crude oil could reach its expected destination by Monday, providing a lifeline to the island ______ intense U.S. pressure.",
-    "answer": "amid",
-    "options": ["amid", "despite", "during", "concerning"],
-    "translation": "原油を満載したタンカーは月曜日までに目的地の港に到着し、米国の激しい圧力______、その島に生命線を提供すると見られる。",
-    "explanation": "「amid」は、「〜の最中に」「〜に囲まれて」という意味で、特に困難な状況や状況に囲まれて何かが起こっていることを表す際に使われます。"
+    "question": "Presidents since at least the Carter administration have seen their approval ratings tied to gas prices. But there are signs the ______ may be weakening.",
+    "answer": "correlation",
+    "options": ["correlation", "discrepancy", "coincidence", "exception"],
+    "translation": "カーター政権以降の歴代大統領は、支持率がガソリン価格と結びついているのを見てきた。しかし、その相関関係が弱まっている兆候がある。",
+    "explanation": "\"Correlation\" は名詞で「相関関係」「相互関係」を意味します。統計学やデータ分析の文脈で、二つ以上の事象や変数がある程度関連していること、一方が変化するともう一方も変化する傾向があることを指します。TOEICでは、ビジネスデータの分析や経済動向の記述で出題されることがあります。"
   }
 ]
