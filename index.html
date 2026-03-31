@@ -455,7 +455,7 @@ const ctrl = {
         ctrl.state.isChecking = false;
         
         try {
-            const res = await fetch('nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
+            const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
             if (!res.ok) throw new Error("JSONが見つかりません。");
             const nytData = await res.json();
             
