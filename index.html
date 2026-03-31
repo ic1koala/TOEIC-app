@@ -23,27 +23,45 @@
     <style>
         :root {
             /* うっすら紫色のガラス風デザイン（Nuance Purple Glass） */
-            --c-slate: #9F85C0;    /* パープル系アクセント1 */
-            --c-sage: #B8A4D6;     /* パープル系アクセント2 */
-            --c-mauve: #D0BDE8;    /* パープル系アクセント3 */
-            --c-dusty: #E2CDF6;    /* パープル系アクセント4 */
+            --bg-400: rgba(215, 198, 240, 0.3);
+            --theme-400: #A890CF;
+            --bg-600: rgba(198, 171, 230, 0.4);
+            --theme-600: #9376C0;
+            --bg-800: rgba(178, 143, 218, 0.5);
+            --theme-800: #7F5BB1;
+            --bg-900: rgba(158, 115, 205, 0.6);
+            --theme-900: #6B42A1;
+            
+            --c-slate: #9376C0;    /* パープル系アクセント1 */
+            --c-sage: #A890CF;     /* パープル系アクセント2 */
+            --c-mauve: #C4B1DC;    /* パープル系アクセント3 */
+            --c-dusty: #D5C6E6;    /* パープル系アクセント4 */
             --c-terra: #8F72B3;    /* パープル系濃いめ */
             
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.6);
-            --glass-shadow: rgba(139, 92, 246, 0.08); /* ガラス用の影 */
-            --bg-base: #F5EEFC;    /* うっすら紫色 */
-            --bg-gradient: radial-gradient(at 0% 0%, rgba(243,232,255,1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(250,245,255,1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(245,235,255,1) 0, transparent 50%), radial-gradient(at 0% 100%, rgba(238,224,255,1) 0, transparent 50%);
-            --text-main: #4C3C65;
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: rgba(140, 100, 200, 0.05); /* ガラス用の影 */
+            --bg-base: #FCFAFF;    /* 極めて薄い紫色 */
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(245,238,255,1) 0, transparent 55%), radial-gradient(at 100% 0%, rgba(250,248,255,1) 0, transparent 55%), radial-gradient(at 100% 100%, rgba(240,230,250,1) 0, transparent 55%), radial-gradient(at 0% 100%, rgba(235,225,255,1) 0, transparent 55%);
+            --text-main: #4A3E5A;
         }
         
         html.dark {
-            --glass-bg: rgba(35, 25, 50, 0.55);
-            --glass-border: rgba(139, 92, 246, 0.15);
-            --glass-shadow: rgba(0, 0, 0, 0.3);
-            --bg-base: #181224;    /* ダークな紫黒 */
-            --bg-gradient: radial-gradient(at 0% 0%, rgba(59,38,89,1) 0, transparent 50%), radial-gradient(at 100% 0%, rgba(45,28,70,1) 0, transparent 50%), radial-gradient(at 100% 100%, rgba(35,22,55,1) 0, transparent 50%), radial-gradient(at 0% 100%, rgba(50,30,80,1) 0, transparent 50%);
-            --text-main: #E2D9F3;
+            --bg-400: rgba(105, 85, 135, 0.4);
+            --theme-400: #C2ADDD;
+            --bg-600: rgba(125, 95, 155, 0.5);
+            --theme-600: #CFBEE4;
+            --bg-800: rgba(145, 105, 175, 0.6);
+            --theme-800: #DCD1F0;
+            --bg-900: rgba(165, 115, 195, 0.7);
+            --theme-900: #EBE5F7;
+
+            --glass-bg: rgba(40, 30, 55, 0.6);
+            --glass-border: rgba(160, 120, 220, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.25);
+            --bg-base: #181420;    /* ダークな紫黒 */
+            --bg-gradient: radial-gradient(at 0% 0%, rgba(45,30,65,1) 0, transparent 55%), radial-gradient(at 100% 0%, rgba(35,20,55,1) 0, transparent 55%), radial-gradient(at 100% 100%, rgba(25,15,45,1) 0, transparent 55%), radial-gradient(at 0% 100%, rgba(40,25,60,1) 0, transparent 55%);
+            --text-main: #EFEAF6;
         }
 
         body {
@@ -150,6 +168,7 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             border-radius: 32px;
             -webkit-transform: translate3d(0,0,0);
+            transform: translate3d(0,0,0);
         }
         .card-back { transform: rotateY(180deg); }
 
@@ -189,21 +208,21 @@
         <p class="text-sm text-gray-500 mb-8 text-center font-medium" id="loading-msg">単語データを読み込み中...</p>
         
         <div class="space-y-4 transition-opacity duration-300 pb-8" id="level-btns">
-            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">400点級 基礎固め</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-slate); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            <div onclick="ctrl.setLevel(400)" class="ios-btn glass-card flex justify-between items-center" style="background: var(--bg-400); border: 1px solid var(--glass-border); border-left: 4px solid var(--theme-400);">
+                <span class="font-bold text-base tracking-wide" style="color: var(--theme-400);">400点級 基礎固め</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm" style="background: var(--theme-400); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
             </div>
-            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">600点級 中堅突破</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-sage); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            <div onclick="ctrl.setLevel(600)" class="ios-btn glass-card flex justify-between items-center" style="background: var(--bg-600); border: 1px solid var(--glass-border); border-left: 4px solid var(--theme-600);">
+                <span class="font-bold text-base tracking-wide" style="color: var(--theme-600);">600点級 中堅突破</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm" style="background: var(--theme-600); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
             </div>
-            <div onclick="ctrl.setLevel(800)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">800点級 高得点圏</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-mauve); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            <div onclick="ctrl.setLevel(800)" class="ios-btn glass-card flex justify-between items-center" style="background: var(--bg-800); border: 1px solid var(--glass-border); border-left: 4px solid var(--theme-800);">
+                <span class="font-bold text-base tracking-wide" style="color: var(--theme-800);">800点級 高得点圏</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm" style="background: var(--theme-800); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
             </div>
-            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center">
-                <span class="font-bold text-base text-gray-700 dark:text-gray-200">900点級 満点挑戦</span>
-                <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--c-dusty); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
+            <div onclick="ctrl.setLevel(900)" class="ios-btn glass-card flex justify-between items-center" style="background: var(--bg-900); border: 1px solid var(--glass-border); border-left: 4px solid var(--theme-900);">
+                <span class="font-bold text-base tracking-wide" style="color: var(--theme-900);">900点級 満点挑戦</span>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm" style="background: var(--theme-900); color: white;"><i class="fas fa-arrow-right text-sm"></i></div>
             </div>
 
             <div onclick="ctrl.startNYT()" class="ios-btn rounded-3xl p-[2px] mt-4 nyt-gradient shadow-md">
@@ -351,10 +370,49 @@ const ctrl = {
         
         try {
             const timestamp = new Date().getTime();
-            const response = await fetch(`words.json?v=${timestamp}`, { cache: "no-store" });
+            const response = await fetch(`words.csv?v=${timestamp}`, { cache: "no-store" });
             
-            if (!response.ok) throw new Error("JSON load error");
-            DB = await response.json();
+            if (!response.ok) throw new Error("CSV load error");
+            const csvText = await response.text();
+            
+            DB = {};
+            [400, 600, 800, 900].forEach(lvl => { DB[lvl] = { words: [] }; });
+            
+            const lines = csvText.trim().split('\n');
+            for(let i = 1; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (!line) continue;
+                
+                if (line.startsWith('"') && line.endsWith('"')) {
+                    line = line.substring(1, line.length - 1).replace(/""/g, '"');
+                }
+                
+                let arr = [];
+                let cur = '';
+                let inQuote = false;
+                for (let j = 0; j < line.length; j++) {
+                    let char = line[j];
+                    if (inQuote) {
+                        if (char === '"' && line[j+1] === '"') { cur += '"'; j++; }
+                        else if (char === '"') { inQuote = false; }
+                        else { cur += char; }
+                    } else {
+                        if (char === '"') { inQuote = true; }
+                        else if (char === ',') { arr.push(cur); cur = ''; }
+                        else { cur += char; }
+                    }
+                }
+                arr.push(cur);
+                
+                if (arr.length >= 6) {
+                    const level = parseInt(arr[0], 10);
+                    if (DB[level] && DB[level].words) {
+                        DB[level].words.push({
+                            en: arr[1], ja: arr[2], ex: arr[3], sEn: arr[4], sJa: arr[5]
+                        });
+                    }
+                }
+            }
             document.getElementById('loading-msg').innerText = "目標レベルを選択してください";
         } catch (error) {
             document.getElementById('loading-msg').innerText = "データ取得エラー。通信環境を確認してください。";
@@ -397,7 +455,7 @@ const ctrl = {
         ctrl.state.isChecking = false;
         
         try {
-            const res = await fetch('./data/nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
+            const res = await fetch('nyt_quiz.json?t=' + new Date().getTime(), { cache: "no-store" });
             if (!res.ok) throw new Error("JSONが見つかりません。");
             const nytData = await res.json();
             
