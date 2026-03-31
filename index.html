@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TOEIC Nuance Words</title>
+    <link rel="apple-touch-icon" href="./data/icon.jpg">
+    <link rel="icon" href="./data/icon.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -471,33 +473,36 @@ const ctrl = {
                 const explanation = item.explanation || item.ex || "最新ニュースからの抽出語彙";
                 const translation = item.translation || item.ja || "";
                 
-                let pureJa = translation;
-                if(pureJa && pureJa.includes('(')) pureJa = pureJa.split('(')[0].trim();
+                // 【抽出】解説文の「」の中から単語の意味らしき部分を取り出す
+                let wordMeaning = explanation.match(/「(.*?)」/)?.[1] || "";
+                if (!wordMeaning && translation.includes('(')) {
+                    wordMeaning = translation.split('(').pop().replace(')', '').trim();
+                }
+                if (!wordMeaning) wordMeaning = "意味を確認中";
 
                 // ニュースの英文（example）を取得し、正解単語の部分を _______ に置き換えて「問題文(q)」にする
                 const originalSentence = item.example || item.sEn || item.question || answerWord;
-                // 大文字小文字を区別せずに置換する（RegExpの 'gi' フラグを使用）
                 const blankSentence = originalSentence.replace(new RegExp(`\\b${answerWord}\\b`, 'gi'), "_______");
 
                 let choices = [];
                 const dummySource = (DB[800] && DB[800].words) ? DB[800].words : rawArray;
-                let others = dummySource.filter(x => (x.en || x.word) !== answerWord).sort(() => Math.random() - 0.5).slice(0, 3);
+                let others = dummySource.filter(x => (x.en || x.word).toLowerCase() !== answerWord.toLowerCase()).sort(() => Math.random() - 0.5).slice(0, 3);
                 
-                // 選択肢は「英単語」にする
-                choices = [{en: answerWord, ja: pureJa}, ...others.map(x => {
+                // 【修正】すべての選択肢を小文字にする
+                choices = [{en: answerWord.toLowerCase(), ja: wordMeaning}, ...others.map(x => {
                     let dummyJa = x.ja || x.translation || "";
                     if(dummyJa.includes('(')) dummyJa = dummyJa.split('(')[0].trim();
-                    return {en: (x.en || x.word), ja: dummyJa};
+                    return {en: (x.en || x.word).toLowerCase(), ja: dummyJa};
                 })];
                 choices.sort(() => Math.random() - 0.5);
 
                 return { 
-                    en: answerWord,      // 正解の英単語
-                    ja: pureJa,          // 正解の日本語
-                    q: blankSentence,    // 【修正】画面に出る問題文（穴埋めされた英文）
-                    a: answerWord,       // 【修正】正解として判定するのは「英単語」
+                    en: answerWord.toLowerCase(), // 小文字に統一
+                    ja: wordMeaning,             // 抽出した単語の意味
+                    q: blankSentence,            // 穴埋めされた英文
+                    a: answerWord.toLowerCase(),  // 小文字で判定
                     ex: explanation, 
-                    sEn: originalSentence, // 読み上げ＆解説用の完全な英文
+                    sEn: originalSentence, 
                     sJa: translation,
                     choiceData: choices 
                 };
@@ -679,7 +684,8 @@ const ctrl = {
             document.getElementById('expl-text').innerText = `${q.ex}`; // AIが作った詳細な解説
             // 英文の中で正解単語の部分に下線を引いて色付け強調
             document.getElementById('ex-en').innerHTML = q.sEn.replace(new RegExp(`\\b${q.a}\\b`, 'gi'), `<span style="color:var(--c-slate); font-weight:bold; text-decoration:underline;">${q.a}</span>`); 
-            document.getElementById('ex-ja').innerText = q.sJa; // ニュースの和訳
+            // 【修正】和訳の______部分に正解の日本語（q.ja）を当てはめ、下線を引く
+            document.getElementById('ex-ja').innerHTML = q.sJa.replace(/______/g, `<span style="text-decoration:underline; font-weight:bold; color:var(--c-slate);">${q.ja}</span>`);
         } else {
             document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
             document.getElementById('ex-en').innerText = q.sEn; 
