@@ -474,7 +474,17 @@ const ctrl = {
                 const translation = item.translation || item.ja || "";
                 
                 // 【抽出】解説文の「」の中から単語の意味らしき部分を取り出す
-                let wordMeaning = explanation.match(/「(.*?)」/)?.[1] || "";
+                let wordMeaning = "";
+                const matches = explanation.matchAll(/「(.*?)」/g);
+                for (const match of matches) {
+                    const candidate = match[1].trim();
+                    // 英字のみの括弧（単語名そのものなど）はスキップして、日本語を含むものを探す
+                    if (!/^[a-zA-Z\s-]+$/.test(candidate)) {
+                        wordMeaning = candidate;
+                        break;
+                    }
+                }
+                
                 if (!wordMeaning && translation.includes('(')) {
                     wordMeaning = translation.split('(').pop().replace(')', '').trim();
                 }
@@ -684,8 +694,15 @@ const ctrl = {
             document.getElementById('expl-text').innerText = `${q.ex}`; // AIが作った詳細な解説
             // 英文の中で正解単語の部分に下線を引いて色付け強調
             document.getElementById('ex-en').innerHTML = q.sEn.replace(new RegExp(`\\b${q.a}\\b`, 'gi'), `<span style="color:var(--c-slate); font-weight:bold; text-decoration:underline;">${q.a}</span>`); 
-            // 【修正】和訳の______部分に正解の日本語（q.ja）を当てはめ、下線を引く
-            document.getElementById('ex-ja').innerHTML = q.sJa.replace(/______/g, `<span style="text-decoration:underline; font-weight:bold; color:var(--c-slate);">${q.ja}</span>`);
+            // 【修正】和訳の______部分、または英単語が混じっている場合に正解の日本語（q.ja）を当てはめて強調
+            let jaDisp = q.sJa;
+            const highlightedMeaning = `<span style="text-decoration:underline; font-weight:bold; color:var(--c-slate);">${q.ja}</span>`;
+            if (jaDisp.includes('______')) {
+                jaDisp = jaDisp.replace(/______/g, highlightedMeaning);
+            } else {
+                jaDisp = jaDisp.replace(new RegExp(`${q.en}`, 'gi'), highlightedMeaning);
+            }
+            document.getElementById('ex-ja').innerHTML = jaDisp;
         } else {
             document.getElementById('expl-text').innerText = `${q.ja} (${q.en}) : ${q.ex}`;
             document.getElementById('ex-en').innerText = q.sEn; 
